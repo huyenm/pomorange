@@ -1,0 +1,37 @@
+I want to build a desktop Pomodoro Timer using Electron. The app should have three main phases:
+
+1. **Planning Phase**:
+    - Let me add and list tasks I need to do today (persist tasks in a local JSON file).
+    - Display a static “Tips” section (e.g., “Turn on Focus Mode”, “Prepare your drink”).
+    - Include a “Start Setting up Session” button to go to the next phase.
+2. **Session Setup Phase**:
+    - Show a dropdown (or selectable list) of today’s tasks.
+    - Let me type a focus duration in minutes (e.g., 20, 25, 30, or any number).
+    - Let me type a break duration in minutes.
+    - When I click “Begin Timer”, switch to a Timer screen.
+3. **Timer & Completion Phase**:
+    - Display a live countdown (MM:SS).
+    - Show a real-time finish time preview (e.g., “If you start at 10:20 AM for 20 minutes, you’ll finish at 10:40 AM”).
+    - Include buttons “I’ve Finished Early” → showing up the task dropdown to choose another task and record `{ taskId, startTimestamp, endTimestamp, plannedMinutes, actualFinishedEarly, breakDuration }` to `records.json` and continue with the timer.
+    - If not click finished early button, once countdown ends, ask “Have you finished the task?” with Yes/No.
+    - **Yes**: record `{ taskId, startTimestamp, endTimestamp, plannedMinutes, actualFinishedEarly, breakDuration }` to `records.json`; start break timer and then return to the Session Setup screen.
+    - **No**: record similarly (but mark `actualFinishedEarly = false`); start break timer and then directly restart the focus timer for the same task/duration.
+4. **History View (bonus)**:
+    - Let me open a “History” screen from a tab that shows a table of past records (task name, start time, end time, planned minutes, finished early).
+5. **Persistence**:
+    - Store tasks in `tasks.json` under `app.getPath("userData")`.
+    - Store records in `records.json` under the same location.
+6. **Structure & File Layout**:
+    - `main.js` (Electron main process, sets up BrowserWindow, IPC handlers to read/write JSON).
+    - `preload.js` (expose safe `pomodoroAPI.readTasks`, `writeTasks`, `readRecords`, `writeRecords`).
+    - `src/index.html`, `src/renderer.js`, and `src/styles.css`.
+    - If you prefer React, create `components/PlanningPhase.js`, `SessionSetup.js`, etc., but React is optional.
+7. **Instructions**:
+    - Use `setInterval()` for the countdown.
+    - Calculate finish time via `new Date(Date.now() + focusDuration * 60000)`.
+    - Show a native Notification for break start.
+    - Provide clear code comments and a README explaining how to run (`npm install`, `npm start`), plus how to package (`npm run dist`).
+
+Please generate a complete, minimal working Electron project that implements all these features, including the IPC code, the HTML/CSS for the UI, and the JavaScript logic in the renderer. Organize the files exactly as specified. Do not omit any major steps—for example, include `package.json` scripts, `main.js`, `preload.js`, and the entire content of `renderer.js` (or React components).
+
+Thank you!
