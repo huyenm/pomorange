@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 210 20% 98%; /* #F8FAFC */
+  --foreground: 215 25% 15%; /* #1E293B */
+  --muted: 210 40% 95%; /* #F1F5F9 */
+  --muted-foreground: 215 25% 45%; /* #64748B */
+  --popover: 0 0% 100%; /* #FFFFFF */
+  --popover-foreground: 215 25% 15%; /* #1E293B */
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 215 25% 15%; /* #1E293B */
+  --border: 220 13% 91%; /* #E2E8F0 */
+  --input: 220 13% 91%; /* #E2E8F0 */
+  --primary: 217 91% 60%; /* #3B82F6 */
+  --primary-foreground: 210 40% 98%; /* #F8FAFC */
+  --secondary: 210 40% 95%; /* #F1F5F9 */
+  --secondary-foreground: 215 25% 27%; /* #334155 */
+  --accent: 210 40% 95%; /* #F1F5F9 */
+  --accent-foreground: 215 25% 27%; /* #334155 */
+  --destructive: 0 84% 60%; /* #EF4444 */
+  --destructive-foreground: 210 40% 98%; /* #F8FAFC */
+  --ring: 217 91% 60%; /* #3B82F6 */
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 224 71% 4%; /* #0F172A */
+  --foreground: 210 40% 98%; /* #F8FAFC */
+  --muted: 215 28% 12%; /* #1E293B */
+  --muted-foreground: 217 33% 64%; /* #94A3B8 */
+  --popover: 224 71% 4%; /* #0F172A */
+  --popover-foreground: 210 40% 98%; /* #F8FAFC */
+  --card: 224 71% 4%; /* #0F172A */
+  --card-foreground: 210 40% 98%; /* #F8FAFC */
+  --border: 215 28% 17%; /* #334155 */
+  --input: 215 28% 17%; /* #334155 */
+  --primary: 217 91% 60%; /* #3B82F6 */
+  --primary-foreground: 210 40% 98%; /* #F8FAFC */
+  --secondary: 215 28% 17%; /* #334155 */
+  --secondary-foreground: 210 40% 98%; /* #F8FAFC */
+  --accent: 215 28% 17%; /* #334155 */
+  --accent-foreground: 210 40% 98%; /* #F8FAFC */
+  --destructive: 0 63% 31%; /* #991B1B */
+  --destructive-foreground: 210 40% 98%; /* #F8FAFC */
+  --ring: 217 91% 60%; /* #3B82F6 */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/* Custom styles for better visual hierarchy */
+.phase-container {
+  @apply animate-in fade-in-50 duration-300;
+}
+
+/* Timer countdown styling */
+.timer-display {
+  font-family: 'JetBrains Mono', monospace;
+  @apply text-6xl md:text-7xl font-bold tracking-tight;
+}
+
+/* Progress bar improvements */
+.progress-bar {
+  @apply transition-all duration-1000 ease-out;
+}
+
+/* Card hover effects */
+.task-card {
+  @apply transition-all duration-200 hover:shadow-md hover:scale-[1.02];
+}
+
+/* Focus styles for better accessibility */
+.focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Notification positioning */
+.notification {
+  @apply fixed top-4 right-4 z-50;
+}
