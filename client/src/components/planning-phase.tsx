@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trash2, Plus, Clock, Coffee, Headphones, List } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { useSessions } from "@/hooks/use-sessions";
+import { PreparationTimer } from "@/components/preparation-timer";
 
 interface PlanningPhaseProps {
   onStartSession: () => void;
@@ -31,10 +32,14 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Tasks Section */}
-      <div className="lg:col-span-2">
-        <Card>
+    <div className="space-y-6">
+      {/* Preparation Timer */}
+      <PreparationTimer phase="planning" onComplete={onStartSession} />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Tasks Section */}
+        <div className="lg:col-span-2">
+          <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl font-semibold">Today's Tasks</CardTitle>
@@ -179,6 +184,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
             </div>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

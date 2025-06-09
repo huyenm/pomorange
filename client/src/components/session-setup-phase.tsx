@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Play, Clock, Pause } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { SessionSetup } from "@shared/schema";
+import { PreparationTimer } from "@/components/preparation-timer";
 
 interface SessionSetupPhaseProps {
   onStartTimer: (setup: SessionSetup) => void;
@@ -44,7 +45,10 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Preparation Timer */}
+      <PreparationTimer phase="setup" onComplete={handleBeginTimer} />
+      
       <Card>
         <CardHeader>
           <div className="text-center">
