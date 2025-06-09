@@ -43,4 +43,11 @@ export const notifications = {
       body: "Great work! Have you finished your task?",
     });
   },
+
+  showPreparationComplete(): void {
+    this.show("Preparation Time Complete!", {
+      body: "Your 10 minutes are up! Click 'Begin Timer' to start your session.",
+      icon: "🔔"
+    });
+  },
 };

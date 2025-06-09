@@ -79,10 +79,7 @@ export function usePreparationTimer() {
           }
           
           // Show notification
-          notifications.show("Preparation Time Complete!", {
-            body: "Your 10 minutes are up! Click 'Begin Timer' to start your session.",
-            icon: "🔔"
-          });
+          notifications.showPreparationComplete();
           
           return 0;
         }
