@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PlanningPhase } from "@/components/planning-phase";
 import { SessionSetupPhase } from "@/components/session-setup-phase";
 import { TimerPhase } from "@/components/timer-phase";
-import { HistoryPhase } from "@/components/history-phase";
+import { ReportsPhase } from "@/components/history-phase";
 import { TaskCompletionModal } from "@/components/task-completion-modal";
 import { BreakTimerModal } from "@/components/break-timer-modal";
 import { usePomodoro } from "@/hooks/use-pomodoro";
@@ -14,7 +14,7 @@ import { useSessions } from "@/hooks/use-sessions";
 import { notifications } from "@/lib/notifications";
 import { SessionSetup } from "@shared/schema";
 
-type Phase = "planning" | "session" | "timer" | "history";
+type Phase = "planning" | "session" | "timer" | "reports";
 
 export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
@@ -172,12 +172,12 @@ export default function PomodoroPage() {
                 Timer
               </Button>
               <Button
-                variant={currentPhase === "history" ? "default" : "ghost"}
+                variant={currentPhase === "reports" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setCurrentPhase("history")}
+                onClick={() => setCurrentPhase("reports")}
                 className="px-4 py-2 text-sm"
               >
-                History
+                Reports
               </Button>
             </nav>
           </div>
@@ -206,7 +206,7 @@ export default function PomodoroPage() {
           />
         )}
         
-        {currentPhase === "history" && <HistoryPhase />}
+        {currentPhase === "reports" && <ReportsPhase />}
       </main>
 
       {/* Modals */}
