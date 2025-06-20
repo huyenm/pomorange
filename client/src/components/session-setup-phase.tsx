@@ -48,8 +48,8 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
       <Card className="card-orange-border">
         <CardHeader>
           <div className="text-center">
-            <CardTitle className="text-2xl font-semibold mb-2 card-heading">Setup Your Session</CardTitle>
-            <p className="text-slate-600">Configure your focus and break durations</p>
+            <CardTitle className="text-2xl font-semibold mb-2 card-heading text-heading-custom">Setup Your Session</CardTitle>
+            <p className="text-muted-custom">Configure your focus and break durations</p>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -64,11 +64,24 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                 <SelectValue placeholder="Choose a task..." />
               </SelectTrigger>
               <SelectContent>
-                {tasks.filter(task => !task.completed).map((task) => (
-                  <SelectItem key={task.id} value={task.id}>
-                    {task.text}
-                  </SelectItem>
-                ))}
+                {tasks.filter(task => !task.completed).length === 0 ? (
+                  <div className="p-4 text-center">
+                    <p className="text-sm text-[#BE8669] mb-3">No active tasks available</p>
+                    <Button 
+                      onClick={onBackToPlanning}
+                      size="sm"
+                      className="btn-primary"
+                    >
+                      Add New Tasks
+                    </Button>
+                  </div>
+                ) : (
+                  tasks.filter(task => !task.completed).map((task) => (
+                    <SelectItem key={task.id} value={task.id}>
+                      {task.text}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -129,7 +142,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                   60
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">Recommended: 25 minutes</p>
+              <p className="text-xs text-muted-custom mt-1">Recommended: 25 minutes</p>
             </div>
             
             <div>
@@ -170,13 +183,13 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                   15
                 </Button>
               </div>
-              <p className="text-xs text-slate-500 mt-1">Recommended: 5 minutes</p>
+              <p className="text-xs text-muted-custom mt-1">Recommended: 5 minutes</p>
             </div>
           </div>
 
           {/* Quick Presets */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-3">
+            <label className="block text-sm font-medium text-heading-custom mb-3">
               Quick Presets
             </label>
             <div className="grid grid-cols-3 gap-3">
@@ -186,7 +199,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                 onClick={() => setPreset("25", "5")}
               >
                 <div className="font-medium">Pomodoro</div>
-                <div className="text-xs text-slate-500">25 / 5 min</div>
+                <div className="text-xs text-muted-custom">25 / 5 min</div>
               </Button>
               <Button
                 variant="outline"
@@ -194,7 +207,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                 onClick={() => setPreset("15", "3")}
               >
                 <div className="font-medium">Short</div>
-                <div className="text-xs text-slate-500">15 / 3 min</div>
+                <div className="text-xs text-muted-custom">15 / 3 min</div>
               </Button>
               <Button
                 variant="outline"
@@ -202,15 +215,15 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                 onClick={() => setPreset("45", "10")}
               >
                 <div className="font-medium">Long</div>
-                <div className="text-xs text-slate-500">45 / 10 min</div>
+                <div className="text-xs text-muted-custom">45 / 10 min</div>
               </Button>
             </div>
           </div>
 
           {/* Session Preview */}
           <div className="bg-orange-50 rounded-lg p-4 border border-[#F3793A]">
-            <h4 className="font-bold text-slate-800 mb-2">Session Preview</h4>
-            <div className="text-sm text-slate-600 space-y-1">
+            <h4 className="font-bold text-heading-custom mb-2">Session Preview</h4>
+            <div className="text-sm text-muted-custom space-y-1">
               <p><strong>Task:</strong> {selectedTask?.text || "No task selected"}</p>
               <p><strong>Focus Time:</strong> {focusDuration} minutes</p>
               <p><strong>Break Time:</strong> {breakDuration} minutes</p>

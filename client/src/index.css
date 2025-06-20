@@ -83,6 +83,14 @@
     border-color: rgb(254 215 170);
   }
   
+  .text-muted-custom {
+    color: #BE8669;
+  }
+  
+  .text-heading-custom {
+    color: #41210A;
+  }
+  
   .text-success {
     @apply text-[#147E50];
   }

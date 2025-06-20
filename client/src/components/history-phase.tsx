@@ -4,7 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { Download, BarChart3, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Download, BarChart3, Calendar as CalendarIcon, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSessions } from "@/hooks/use-sessions";
 import { format, startOfDay, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfYear, endOfYear, isWithinInterval } from "date-fns";
 
@@ -13,6 +14,7 @@ export function ReportsPhase() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState<"today" | "week" | "month" | "year" | "all">("today");
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -113,6 +115,8 @@ export function ReportsPhase() {
             end: endOfYear(now)
           })
         );
+      case "custom":
+        return selectedDate ? records.filter(record => isSameDay(record.startTimestamp, selectedDate)) : [];
       case "all":
       default:
         return records;
@@ -145,23 +149,78 @@ export function ReportsPhase() {
       <Card className="card-orange-border">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold card-heading flex items-center">
+            <CardTitle className="text-xl font-semibold card-heading text-heading-custom flex items-center">
               <BarChart3 className="mr-3 h-6 w-6 text-[#F3793A]" />
               Reports & Analytics
             </CardTitle>
             <div className="flex space-x-3">
-              <Select value={viewMode} onValueChange={(value: any) => setViewMode(value)}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                  <SelectItem value="year">This Year</SelectItem>
-                  <SelectItem value="all">All Time</SelectItem>
-                </SelectContent>
-              </Select>
+              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-48 justify-between btn-secondary">
+                    {viewMode === "today" && "Today"}
+                    {viewMode === "week" && "This Week"}
+                    {viewMode === "month" && "This Month"}
+                    {viewMode === "year" && "This Year"}
+                    {viewMode === "all" && "All Time"}
+                    {selectedDate && viewMode === "custom" && format(selectedDate, 'MMM d, yyyy')}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <div className="p-3 space-y-3">
+                    <div className="space-y-1">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => { setViewMode("today"); setCalendarOpen(false); }}
+                      >
+                        Today
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => { setViewMode("week"); setCalendarOpen(false); }}
+                      >
+                        This Week
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => { setViewMode("month"); setCalendarOpen(false); }}
+                      >
+                        This Month
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => { setViewMode("year"); setCalendarOpen(false); }}
+                      >
+                        This Year
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start"
+                        onClick={() => { setViewMode("all"); setCalendarOpen(false); }}
+                      >
+                        All Time
+                      </Button>
+                    </div>
+                    <div className="border-t pt-3">
+                      <p className="text-sm font-medium mb-2 text-[#41210A]">Custom Date</p>
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(date) => {
+                          setSelectedDate(date);
+                          setViewMode("custom" as any);
+                          setCalendarOpen(false);
+                        }}
+                        className="rounded-md border-0"
+                      />
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
               <Button variant="outline" onClick={handleExport} className="btn-secondary">
                 <Download className="mr-2 h-4 w-4" />
                 Export Data
@@ -197,72 +256,16 @@ export function ReportsPhase() {
         </CardContent>
       </Card>
 
-      {/* Google Calendar-style Task Timeline */}
+      {/* Session Timeline */}
       <Card className="card-orange-border">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold card-heading flex items-center">
+          <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
             <CalendarIcon className="mr-2 h-5 w-5 text-[#147E50]" />
-            Session Timeline & Calendar
+            Session Timeline
           </CardTitle>
-          <p className="text-sm text-muted-foreground">Google Calendar-style view with date selection</p>
+          <p className="text-sm text-muted-custom">Timeline view of your focus sessions</p>
         </CardHeader>
         <CardContent>
-          {/* Calendar for Date Selection */}
-          <div className="grid md:grid-cols-4 gap-6 mb-6">
-            <div className="md:col-span-1">
-              <h4 className="font-semibold mb-3 text-sm">Select Date</h4>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                className="rounded-md border-0 scale-75 origin-top-left"
-                modifiers={{
-                  hasSession: (date) => getSessionsForDate(date).length > 0
-                }}
-                modifiersStyles={{
-                  hasSession: { 
-                    backgroundColor: '#147E50', 
-                    color: 'white',
-                    fontWeight: 'bold'
-                  }
-                }}
-              />
-              <div className="text-xs text-muted-foreground mt-2">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-[#147E50] rounded"></div>
-                  <span>Days with sessions</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Selected Date Sessions */}
-            <div className="md:col-span-3">
-              <h4 className="font-semibold mb-3 text-sm">
-                {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Select a date'}
-              </h4>
-              {selectedDate && selectedDateSessions.length > 0 ? (
-                <div className="space-y-3 max-h-48 overflow-y-auto">
-                  {selectedDateSessions.map((session) => (
-                    <div key={session.id} className="bg-orange-50 rounded-lg p-3 border border-orange-200">
-                      <div className="flex items-center justify-between mb-2">
-                        <h5 className="font-medium text-slate-900 text-sm">{session.taskName}</h5>
-                        {getStatusBadge(session)}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        <p>{formatTime(session.startTimestamp)} - {formatTime(session.endTimestamp)} • {session.actualMinutes} min</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : selectedDate ? (
-                <p className="text-muted-foreground text-sm">No sessions on this date</p>
-              ) : (
-                <p className="text-muted-foreground text-sm">Select a date to view sessions</p>
-              )}
-            </div>
-          </div>
-
-          <div className="border-t pt-6"></div>
           {filteredRecords.length === 0 ? (
             <div className="text-center py-12">
               <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-orange-300" />

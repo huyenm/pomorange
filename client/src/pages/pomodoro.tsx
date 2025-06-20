@@ -82,6 +82,9 @@ export default function PomodoroPage() {
     
     const task = tasks.find(t => t.id === sessionSetup.taskId);
     
+    // Mark task as completed
+    toggleTaskCompletion(sessionSetup.taskId);
+    
     // Record the session
     addRecord({
       taskId: sessionSetup.taskId,
@@ -96,8 +99,16 @@ export default function PomodoroPage() {
     });
 
     setShowCompletionModal(false);
-    setShowBreakModal(true);
-    startBreak(sessionSetup.breakDuration);
+    
+    // Check if there are more active tasks
+    const activeTasks = tasks.filter(t => !t.completed && t.id !== sessionSetup.taskId);
+    if (activeTasks.length === 0) {
+      // No more tasks, go back to planning
+      setCurrentPhase("planning");
+    } else {
+      // More tasks available, go to session setup
+      setCurrentPhase("session");
+    }
   };
 
   const handleTaskNotCompleted = () => {
@@ -177,7 +188,7 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 py-8">
+      <main className="max-w-6xl mx-auto py-8">
         {currentPhase === "planning" && (
           <PlanningPhase onStartSession={handleStartSession} />
         )}

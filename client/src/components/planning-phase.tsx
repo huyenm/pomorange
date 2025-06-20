@@ -44,13 +44,13 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
       {/* Tasks Section */}
-      <div className="lg:col-span-2">
+      <div className="lg:col-span-3">
         <Card className="card-orange-border">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold card-heading">Today's Tasks</CardTitle>
+            <CardTitle className="text-xl font-semibold card-heading text-heading-custom">Today's Tasks</CardTitle>
             <Badge variant="secondary">{activeTasks.length} active</Badge>
           </div>
         </CardHeader>
@@ -66,7 +66,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 onKeyPress={handleKeyPress}
                 className="flex-1"
               />
-              <Button onClick={handleAddTask} className="btn-primary px-6">
+              <Button onClick={handleAddTask} className="btn-primary w-10 h-10 p-0">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -77,7 +77,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
             {activeTasks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <List className="h-12 w-12 mx-auto mb-3 text-orange-300" />
-                <p>No active tasks yet. Add your first task above!</p>
+                <p className="text-muted-custom">No active tasks yet. Add your first task above!</p>
               </div>
             ) : (
               activeTasks.map((task) => (
@@ -91,7 +91,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                       onCheckedChange={() => toggleTaskCompletion(task.id)}
                       className="data-[state=checked]:bg-[#147E50] data-[state=checked]:border-[#147E50]"
                     />
-                    <span className="text-slate-800 font-medium">{task.text}</span>
+                    <span className="text-heading-custom font-medium">{task.text}</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -110,7 +110,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           {completedTasks.length > 0 && (
             <div className="pt-6 border-t border-orange-200">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium text-slate-700">Completed Tasks</h4>
+                <h4 className="text-sm font-medium text-heading-custom">Completed Tasks</h4>
                 <Badge variant="outline" className="text-[#147E50] border-[#147E50]">
                   {completedTasks.length} completed
                 </Badge>
@@ -127,7 +127,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                         onCheckedChange={() => toggleTaskCompletion(task.id)}
                         className="data-[state=checked]:bg-[#147E50] data-[state=checked]:border-[#147E50]"
                       />
-                      <span className="text-slate-600 line-through text-sm">{task.text}</span>
+                      <span className="text-muted-custom line-through text-sm">{task.text}</span>
                     </div>
                     <Button
                       variant="ghost"
@@ -147,7 +147,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           <div className="pt-6 border-t border-orange-200">
             <Button
               onClick={onStartSession}
-              className="btn-primary w-full py-4 text-lg font-semibold"
+              className="btn-primary w-full py-4 text-base font-semibold"
+              style={{ fontFamily: 'Space Mono, monospace' }}
               disabled={activeTasks.length === 0}
             >
               Start Setting up Session
@@ -159,11 +160,11 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
     </div>
 
     {/* Calendar and Tips Section */}
-    <div className="lg:col-span-1 space-y-6">
+    <div className="lg:col-span-2 space-y-6">
       {/* Monthly Calendar */}
       <Card className="card-orange-border">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold card-heading flex items-center">
+          <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
             <CalendarIcon className="mr-2 h-5 w-5 text-[#F3793A]" />
             Monthly Calendar
           </CardTitle>
@@ -197,7 +198,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
       {/* Tips */}
       <Card className="card-orange-border">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold card-heading flex items-center">
+          <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
             <Clock className="mr-2 h-6 w-6 text-[#F3793A]" />
             Focus Tips
           </CardTitle>
@@ -208,8 +209,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               <Clock className="h-5 w-5 text-[#147E50]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-800">Turn on Focus Mode</p>
-              <p className="text-xs text-muted-foreground">Disable notifications and distractions</p>
+              <p className="text-sm font-medium text-heading-custom">Turn on Focus Mode</p>
+              <p className="text-xs text-muted-custom">Disable notifications and distractions</p>
             </div>
           </div>
           
@@ -218,8 +219,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               <Coffee className="h-5 w-5 text-[#F3793A]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-800">Prepare Your Drink</p>
-              <p className="text-xs text-muted-foreground">Have water or coffee ready</p>
+              <p className="text-sm font-medium text-heading-custom">Prepare Your Drink</p>
+              <p className="text-xs text-muted-custom">Have water or coffee ready</p>
             </div>
           </div>
           
@@ -228,8 +229,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               <Headphones className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-800">Use Background Music</p>
-              <p className="text-xs text-muted-foreground">Choose instrumental or nature sounds</p>
+              <p className="text-sm font-medium text-heading-custom">Use Background Music</p>
+              <p className="text-xs text-muted-custom">Choose instrumental or nature sounds</p>
             </div>
           </div>
           
@@ -238,8 +239,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               <List className="h-5 w-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-800">Clear Your Workspace</p>
-              <p className="text-xs text-muted-foreground">Remove clutter and organize materials</p>
+              <p className="text-sm font-medium text-heading-custom">Clear Your Workspace</p>
+              <p className="text-xs text-muted-custom">Remove clutter and organize materials</p>
             </div>
           </div>
         </CardContent>
