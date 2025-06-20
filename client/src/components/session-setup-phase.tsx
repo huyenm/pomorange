@@ -45,10 +45,10 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card>
+      <Card className="border-[#F3793A]">
         <CardHeader>
           <div className="text-center">
-            <CardTitle className="text-2xl font-semibold mb-2">Setup Your Session</CardTitle>
+            <CardTitle className="text-2xl font-semibold mb-2 card-heading">Setup Your Session</CardTitle>
             <p className="text-slate-600">Configure your focus and break durations</p>
           </div>
         </CardHeader>
@@ -149,6 +149,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                   variant={breakDuration === "5" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setBreakDuration("5")}
+                  className={breakDuration === "5" ? "btn-primary" : "btn-secondary"}
                 >
                   5
                 </Button>
@@ -156,6 +157,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                   variant={breakDuration === "10" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setBreakDuration("10")}
+                  className={breakDuration === "10" ? "btn-primary" : "btn-secondary"}
                 >
                   10
                 </Button>
@@ -163,6 +165,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                   variant={breakDuration === "15" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setBreakDuration("15")}
+                  className={breakDuration === "15" ? "btn-primary" : "btn-secondary"}
                 >
                   15
                 </Button>
@@ -205,8 +208,8 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
           </div>
 
           {/* Session Preview */}
-          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-            <h4 className="font-medium text-slate-800 mb-2">Session Preview</h4>
+          <div className="bg-orange-50 rounded-lg p-4 border border-[#F3793A]">
+            <h4 className="font-bold text-slate-800 mb-2">Session Preview</h4>
             <div className="text-sm text-slate-600 space-y-1">
               <p><strong>Task:</strong> {selectedTask?.text || "No task selected"}</p>
               <p><strong>Focus Time:</strong> {focusDuration} minutes</p>

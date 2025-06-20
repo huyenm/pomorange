@@ -137,13 +137,12 @@ export default function PomodoroPage() {
       <header className="bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center">
               <img 
                 src="/pomorange-logo.png" 
                 alt="Pomorange Logo" 
-                className="h-8 w-auto"
+                style={{ width: '150px', height: '38.46px' }}
               />
-              <h1 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Space Mono, monospace' }}>Pomorange</h1>
             </div>
             
             {/* Tab Navigation */}

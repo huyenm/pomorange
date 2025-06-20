@@ -43,10 +43,10 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Tasks Section */}
       <div className="lg:col-span-2">
-        <Card>
+        <Card className="border-[#F3793A]">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold">Today's Tasks</CardTitle>
+            <CardTitle className="text-xl font-semibold card-heading">Today's Tasks</CardTitle>
             <Badge variant="secondary">{tasks.length} tasks</Badge>
           </div>
         </CardHeader>
@@ -116,9 +116,9 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
     {/* Calendar and Tips Section */}
     <div className="lg:col-span-1 space-y-6">
       {/* Monthly Calendar */}
-      <Card>
+      <Card className="border-[#F3793A]">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold flex items-center">
+          <CardTitle className="text-lg font-semibold card-heading flex items-center">
             <CalendarIcon className="mr-2 h-5 w-5 text-[#F3793A]" />
             Monthly Calendar
           </CardTitle>
@@ -128,7 +128,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
-            className="rounded-md border-0"
+            className="rounded-md border-0 w-full"
             modifiers={{
               hasSession: (date) => getSessionsForDate(date).length > 0
             }}
@@ -150,17 +150,17 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
       </Card>
 
       {/* Tips */}
-      <Card>
+      <Card className="border-[#F3793A]">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold flex items-center">
-            <Clock className="mr-2 h-5 w-5 text-[#F3793A]" />
+          <CardTitle className="text-lg font-semibold card-heading flex items-center">
+            <Clock className="mr-2 h-6 w-6 text-[#F3793A]" />
             Focus Tips
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start space-x-3">
-            <div className="w-5 h-5 bg-[#147E50] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5">
-              <Clock className="h-3 w-3 text-[#147E50]" />
+            <div className="w-6 h-6 bg-[#147E50] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5">
+              <Clock className="h-4 w-4 text-[#147E50]" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-800">Turn on Focus Mode</p>
@@ -169,8 +169,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-5 h-5 bg-[#F3793A] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5">
-              <Coffee className="h-3 w-3 text-[#F3793A]" />
+            <div className="w-6 h-6 bg-[#F3793A] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5">
+              <Coffee className="h-4 w-4 text-[#F3793A]" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-800">Prepare Your Drink</p>
