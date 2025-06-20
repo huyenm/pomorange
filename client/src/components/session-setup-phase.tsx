@@ -17,6 +17,8 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
   const [selectedTaskId, setSelectedTaskId] = useState("");
   const [focusDuration, setFocusDuration] = useState("25");
   const [breakDuration, setBreakDuration] = useState("5");
+  
+  const activeTasks = tasks.filter(task => !task.completed);
 
   const selectedTask = tasks.find(task => task.id === selectedTaskId);
   
@@ -59,31 +61,31 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
               <Clock className="inline mr-2 h-4 w-4" />
               Select Task
             </label>
-            <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose a task..." />
-              </SelectTrigger>
-              <SelectContent>
-                {tasks.filter(task => !task.completed).length === 0 ? (
-                  <div className="p-4 text-center">
-                    <p className="text-sm text-[#BE8669] mb-3">No active tasks available</p>
-                    <Button 
-                      onClick={onBackToPlanning}
-                      size="sm"
-                      className="btn-primary"
-                    >
-                      Add New Tasks
-                    </Button>
-                  </div>
-                ) : (
-                  tasks.filter(task => !task.completed).map((task) => (
+            {activeTasks.length === 0 ? (
+              <div className="p-4 text-center border border-orange-200 rounded-lg bg-orange-50">
+                <p className="text-sm text-[#BE8669] mb-3">No active tasks available</p>
+                <Button 
+                  onClick={onBackToPlanning}
+                  size="sm"
+                  className="btn-primary"
+                >
+                  Add New Tasks
+                </Button>
+              </div>
+            ) : (
+              <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a task..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {activeTasks.map((task) => (
                     <SelectItem key={task.id} value={task.id}>
                       {task.text}
                     </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Duration Settings */}
@@ -223,11 +225,11 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
           {/* Session Preview */}
           <div className="bg-orange-50 rounded-lg p-4 border border-[#F3793A]">
             <h4 className="font-bold text-heading-custom mb-2">Session Preview</h4>
-            <div className="text-sm text-muted-custom space-y-1">
-              <p><strong>Task:</strong> {selectedTask?.text || "No task selected"}</p>
-              <p><strong>Focus Time:</strong> {focusDuration} minutes</p>
-              <p><strong>Break Time:</strong> {breakDuration} minutes</p>
-              <p><strong>Estimated Finish:</strong> {calculateFinishTime()}</p>
+            <div className="text-sm space-y-1">
+              <p className="text-[#F3793A]"><strong>Task:</strong> {selectedTask?.text || "No task selected"}</p>
+              <p className="text-[#F3793A]"><strong>Focus Time:</strong> {focusDuration} minutes</p>
+              <p className="text-[#F3793A]"><strong>Break Time:</strong> {breakDuration} minutes</p>
+              <p className="text-[#F3793A]"><strong>Estimated Finish:</strong> {calculateFinishTime()}</p>
             </div>
           </div>
 

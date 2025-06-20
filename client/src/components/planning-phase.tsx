@@ -162,7 +162,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
     {/* Calendar and Tips Section */}
     <div className="lg:col-span-2 space-y-6">
       {/* Monthly Calendar */}
-      <Card className="card-orange-border">
+      <Card className="card-orange-border" style={{ width: '300px' }}>
         <CardHeader>
           <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
             <CalendarIcon className="mr-2 h-5 w-5 text-[#F3793A]" />

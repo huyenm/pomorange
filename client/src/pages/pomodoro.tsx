@@ -106,8 +106,9 @@ export default function PomodoroPage() {
       // No more tasks, go back to planning
       setCurrentPhase("planning");
     } else {
-      // More tasks available, go to session setup
+      // More tasks available, go to session setup to select next task
       setCurrentPhase("session");
+      setSessionSetup(null); // Clear current session setup to force new task selection
     }
   };
 
@@ -146,13 +147,13 @@ export default function PomodoroPage() {
     <div className="min-h-screen bg-[#FEF5F0]">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-orange-200">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center flex-shrink-0">
               <img 
                 src="/pomorange-logo.png" 
                 alt="Pomorange Logo" 
-                className="w-[150px] h-[38.46px] object-contain"
+                className="w-[160px] h-[41.03px] object-contain"
               />
             </div>
             
@@ -163,6 +164,7 @@ export default function PomodoroPage() {
                 size="sm"
                 onClick={() => setCurrentPhase("planning")}
                 className={currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
+                style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Planning
               </Button>
@@ -171,6 +173,7 @@ export default function PomodoroPage() {
                 size="sm"
                 onClick={() => setCurrentPhase("session")}
                 className={currentPhase === "session" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
+                style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Setup
               </Button>
@@ -179,6 +182,7 @@ export default function PomodoroPage() {
                 size="sm"
                 onClick={() => setCurrentPhase("reports")}
                 className={currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
+                style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Reports
               </Button>

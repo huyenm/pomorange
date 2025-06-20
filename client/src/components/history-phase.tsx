@@ -150,7 +150,7 @@ export function ReportsPhase() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-semibold card-heading text-heading-custom flex items-center">
-              <BarChart3 className="mr-3 h-6 w-6 text-[#F3793A]" />
+              <BarChart3 className="mr-2 h-6 w-6 text-[#F3793A]" />
               Reports & Analytics
             </CardTitle>
             <div className="flex space-x-3">
@@ -167,56 +167,57 @@ export function ReportsPhase() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <div className="p-3 space-y-3">
-                    <div className="space-y-1">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => { setViewMode("today"); setCalendarOpen(false); }}
-                      >
-                        Today
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => { setViewMode("week"); setCalendarOpen(false); }}
-                      >
-                        This Week
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => { setViewMode("month"); setCalendarOpen(false); }}
-                      >
-                        This Month
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => { setViewMode("year"); setCalendarOpen(false); }}
-                      >
-                        This Year
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start"
-                        onClick={() => { setViewMode("all"); setCalendarOpen(false); }}
-                      >
-                        All Time
-                      </Button>
-                    </div>
-                    <div className="border-t pt-3">
-                      <p className="text-sm font-medium mb-2 text-[#41210A]">Custom Date</p>
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={(date) => {
-                          setSelectedDate(date);
-                          setViewMode("custom" as any);
-                          setCalendarOpen(false);
-                        }}
-                        className="rounded-md border-0"
-                      />
+                  <div className="p-3">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => { setViewMode("today"); setCalendarOpen(false); }}
+                        >
+                          Today
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => { setViewMode("week"); setCalendarOpen(false); }}
+                        >
+                          Last 7 days
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => { setViewMode("month"); setCalendarOpen(false); }}
+                        >
+                          This month
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => { setViewMode("year"); setCalendarOpen(false); }}
+                        >
+                          This year
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          onClick={() => { setViewMode("all"); setCalendarOpen(false); }}
+                        >
+                          All time
+                        </Button>
+                      </div>
+                      <div>
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={(date) => {
+                            setSelectedDate(date);
+                            setViewMode("custom" as any);
+                            setCalendarOpen(false);
+                          }}
+                          className="rounded-md border-0"
+                        />
+                      </div>
                     </div>
                   </div>
                 </PopoverContent>
@@ -259,11 +260,13 @@ export function ReportsPhase() {
       {/* Session Timeline */}
       <Card className="card-orange-border">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
-            <CalendarIcon className="mr-2 h-5 w-5 text-[#147E50]" />
-            Session Timeline
-          </CardTitle>
-          <p className="text-sm text-muted-custom">Timeline view of your focus sessions</p>
+          <div className="flex items-center">
+            <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
+              <CalendarIcon className="mr-2 h-6 w-6 text-[#147E50]" />
+              Session Timeline
+            </CardTitle>
+            <p className="text-sm text-muted-custom ml-2">Timeline view of your focus sessions</p>
+          </div>
         </CardHeader>
         <CardContent>
           {filteredRecords.length === 0 ? (
