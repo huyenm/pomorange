@@ -34,14 +34,14 @@ export function TaskCompletionModal({
           <Button
             variant="outline"
             onClick={onNotCompleted}
-            className="flex-1"
+            className="flex-1 btn-secondary"
           >
             <X className="mr-2 h-4 w-4" />
             No, Continue
           </Button>
           <Button
             onClick={onCompleted}
-            className="flex-1 bg-green-600 hover:bg-green-700"
+            className="flex-1 btn-primary"
           >
             <CheckCircle className="mr-2 h-4 w-4" />
             Yes, Completed

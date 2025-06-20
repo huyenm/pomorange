@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Play, Clock, Pause } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { SessionSetup } from "@shared/schema";
-import { PreparationTimer } from "@/components/preparation-timer";
 
 interface SessionSetupPhaseProps {
   onStartTimer: (setup: SessionSetup) => void;
@@ -45,10 +44,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      {/* Preparation Timer */}
-      <PreparationTimer phase="setup" onComplete={handleBeginTimer} />
-      
+    <div className="max-w-2xl mx-auto">
       <Card>
         <CardHeader>
           <div className="text-center">
@@ -93,16 +89,10 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
               />
               <div className="flex space-x-2 mt-2">
                 <Button
-                  variant={focusDuration === "20" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setFocusDuration("20")}
-                >
-                  20
-                </Button>
-                <Button
                   variant={focusDuration === "25" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("25")}
+                  className={focusDuration === "25" ? "btn-primary" : "btn-secondary"}
                 >
                   25
                 </Button>
@@ -110,6 +100,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                   variant={focusDuration === "30" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("30")}
+                  className={focusDuration === "30" ? "btn-primary" : "btn-secondary"}
                 >
                   30
                 </Button>
@@ -117,11 +108,28 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                   variant={focusDuration === "45" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("45")}
+                  className={focusDuration === "45" ? "btn-primary" : "btn-secondary"}
                 >
                   45
                 </Button>
+                <Button
+                  variant={focusDuration === "50" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFocusDuration("50")}
+                  className={focusDuration === "50" ? "btn-primary" : "btn-secondary"}
+                >
+                  50
+                </Button>
+                <Button
+                  variant={focusDuration === "60" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFocusDuration("60")}
+                  className={focusDuration === "60" ? "btn-primary" : "btn-secondary"}
+                >
+                  60
+                </Button>
               </div>
-              <p className="text-xs text-slate-500 mt-1">Recommended: 25 minutes</p>
+              <p className="text-xs text-muted-foreground mt-1">Recommended: 25 minutes</p>
             </div>
             
             <div>
@@ -212,7 +220,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
             <Button
               variant="outline"
               onClick={onBackToPlanning}
-              className="flex-1"
+              className="btn-secondary flex-1"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Planning
@@ -220,7 +228,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
             <Button
               onClick={handleBeginTimer}
               disabled={!selectedTaskId || !focusDuration || !breakDuration}
-              className="flex-1 bg-green-600 hover:bg-green-700"
+              className="btn-primary flex-1"
             >
               <Play className="mr-2 h-4 w-4" />
               Begin Timer

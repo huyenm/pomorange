@@ -3,25 +3,28 @@
 @tailwind utilities;
 
 :root {
-  --background: 210 20% 98%; /* #F8FAFC */
-  --foreground: 215 25% 15%; /* #1E293B */
-  --muted: 210 40% 95%; /* #F1F5F9 */
-  --muted-foreground: 215 25% 45%; /* #64748B */
+  --background: 25 50% 97%; /* #FEF5F0 */
+  --foreground: 25 25% 15%; /* #2D1B0F */
+  --muted: 25 30% 92%; /* #F5EDE6 */
+  --muted-foreground: 25 15% 45%; /* #6B5B4F */
   --popover: 0 0% 100%; /* #FFFFFF */
-  --popover-foreground: 215 25% 15%; /* #1E293B */
+  --popover-foreground: 25 25% 15%; /* #2D1B0F */
   --card: 0 0% 100%; /* #FFFFFF */
-  --card-foreground: 215 25% 15%; /* #1E293B */
-  --border: 220 13% 91%; /* #E2E8F0 */
-  --input: 220 13% 91%; /* #E2E8F0 */
-  --primary: 217 91% 60%; /* #3B82F6 */
-  --primary-foreground: 210 40% 98%; /* #F8FAFC */
-  --secondary: 210 40% 95%; /* #F1F5F9 */
-  --secondary-foreground: 215 25% 27%; /* #334155 */
-  --accent: 210 40% 95%; /* #F1F5F9 */
-  --accent-foreground: 215 25% 27%; /* #334155 */
+  --card-foreground: 25 25% 15%; /* #2D1B0F */
+  --border: 25 20% 85%; /* #E8DDD2 */
+  --input: 25 20% 85%; /* #E8DDD2 */
+  --primary: 18 86% 59%; /* #F3793A */
+  --primary-foreground: 47 89% 95%; /* #FDFCEA */
+  --secondary: 25 30% 92%; /* #F5EDE6 */
+  --secondary-foreground: 25 25% 27%; /* #3D2A1D */
+  --accent: 25 30% 92%; /* #F5EDE6 */
+  --accent-foreground: 25 25% 27%; /* #3D2A1D */
   --destructive: 0 84% 60%; /* #EF4444 */
-  --destructive-foreground: 210 40% 98%; /* #F8FAFC */
-  --ring: 217 91% 60%; /* #3B82F6 */
+  --destructive-foreground: 47 89% 95%; /* #FDFCEA */
+  --ring: 18 86% 59%; /* #F3793A */
+  --success: 150 69% 42%; /* #147E50 */
+  --warning: 48 100% 67%; /* #FCD34D */
+  --error: 0 84% 60%; /* #EF4444 */
   --radius: 0.5rem;
 }
 
@@ -53,7 +56,35 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Mono', monospace;
+  }
+}
+
+/* Custom button styles */
+@layer components {
+  .btn-primary {
+    @apply bg-[#F3793A] text-[#FDFCEA] border-2 border-[#4F301D] hover:bg-[#E86A2B] focus:ring-2 focus:ring-[#F3793A] focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-[#4F301D] border-2 border-[#4F301D] hover:bg-[#FEF5F0] focus:ring-2 focus:ring-[#F3793A] focus:ring-offset-2;
+  }
+  
+  .text-success {
+    @apply text-[#147E50];
+  }
+  
+  .bg-success {
+    @apply bg-[#147E50];
+  }
+  
+  .border-success {
+    @apply border-[#147E50];
   }
 }
 

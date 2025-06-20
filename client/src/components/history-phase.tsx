@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Download, BarChart3, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSessions } from "@/hooks/use-sessions";
-import { format, startOfDay, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { format, startOfDay, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfYear, endOfYear, isWithinInterval } from "date-fns";
 
 export function ReportsPhase() {
   const { records, getStats } = useSessions();
-  const stats = getStats();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [viewMode, setViewMode] = useState<"today" | "week" | "month" | "year" | "all">("today");
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -24,11 +24,11 @@ export function ReportsPhase() {
 
   const getStatusBadge = (record: any) => {
     if (record.completed && record.actualFinishedEarly) {
-      return <Badge className="bg-amber-100 text-amber-800">Early Finish</Badge>;
+      return <Badge className="bg-yellow-100 text-yellow-800">Early Finish</Badge>;
     } else if (record.completed) {
-      return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
+      return <Badge className="bg-green-100 text-[#147E50]">Completed</Badge>;
     } else {
-      return <Badge className="bg-slate-100 text-slate-800">Incomplete</Badge>;
+      return <Badge className="bg-red-100 text-red-800">Incomplete</Badge>;
     }
   };
 
@@ -86,6 +86,57 @@ export function ReportsPhase() {
     });
   };
 
+  // Get filtered records based on view mode
+  const getFilteredRecords = () => {
+    const now = new Date();
+    switch (viewMode) {
+      case "today":
+        return records.filter(record => isSameDay(record.startTimestamp, now));
+      case "week":
+        return records.filter(record => 
+          isWithinInterval(record.startTimestamp, {
+            start: startOfWeek(now),
+            end: endOfWeek(now)
+          })
+        );
+      case "month":
+        return records.filter(record => 
+          isWithinInterval(record.startTimestamp, {
+            start: startOfMonth(now),
+            end: endOfMonth(now)
+          })
+        );
+      case "year":
+        return records.filter(record => 
+          isWithinInterval(record.startTimestamp, {
+            start: startOfYear(now),
+            end: endOfYear(now)
+          })
+        );
+      case "all":
+      default:
+        return records;
+    }
+  };
+
+  const filteredRecords = getFilteredRecords();
+  
+  // Calculate stats for filtered records
+  const getFilteredStats = () => {
+    const totalSessions = filteredRecords.length;
+    const totalFocusTime = filteredRecords.reduce((sum, record) => sum + record.actualMinutes, 0);
+    const completedTasks = filteredRecords.filter(record => record.completed).length;
+    const averageSession = totalSessions > 0 ? totalFocusTime / totalSessions : 0;
+
+    return {
+      totalSessions,
+      totalFocusTime,
+      completedTasks,
+      averageSession,
+    };
+  };
+
+  const filteredStats = getFilteredStats();
   const calendarData = getCalendarData();
 
   return (
@@ -95,190 +146,133 @@ export function ReportsPhase() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-semibold flex items-center">
-              <BarChart3 className="mr-3 h-6 w-6 text-blue-600" />
+              <BarChart3 className="mr-3 h-6 w-6 text-[#F3793A]" />
               Reports & Analytics
             </CardTitle>
-            <Button variant="outline" onClick={handleExport}>
-              <Download className="mr-2 h-4 w-4" />
-              Export Data
-            </Button>
+            <div className="flex space-x-3">
+              <Select value={viewMode} onValueChange={(value: any) => setViewMode(value)}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                  <SelectItem value="year">This Year</SelectItem>
+                  <SelectItem value="all">All Time</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline" onClick={handleExport} className="btn-secondary">
+                <Download className="mr-2 h-4 w-4" />
+                Export Data
+              </Button>
+            </div>
           </div>
         </CardHeader>
         
         {/* Statistics Cards */}
         <CardContent>
           <div className="grid md:grid-cols-4 gap-4">
-            <div className="bg-slate-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600 mb-1">{records.length}</div>
-              <p className="text-sm text-slate-600">Total Sessions</p>
+            <div className="bg-orange-50 rounded-lg p-4 text-center border border-orange-200">
+              <div className="text-2xl font-bold text-[#F3793A] mb-1">{filteredStats.totalSessions}</div>
+              <p className="text-sm text-muted-foreground">Total Sessions</p>
             </div>
-            <div className="bg-slate-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-green-600 mb-1">{stats.completedTasks}</div>
-              <p className="text-sm text-slate-600">Tasks Completed</p>
+            <div className="bg-green-50 rounded-lg p-4 text-center border border-green-200">
+              <div className="text-2xl font-bold text-[#147E50] mb-1">{filteredStats.completedTasks}</div>
+              <p className="text-sm text-muted-foreground">Tasks Completed</p>
             </div>
-            <div className="bg-slate-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-amber-600 mb-1">
-                {Math.floor(stats.totalFocusTime / 60)}h {stats.totalFocusTime % 60}m
+            <div className="bg-yellow-50 rounded-lg p-4 text-center border border-yellow-200">
+              <div className="text-2xl font-bold text-yellow-600 mb-1">
+                {Math.floor(filteredStats.totalFocusTime / 60)}h {filteredStats.totalFocusTime % 60}m
               </div>
-              <p className="text-sm text-slate-600">Focus Time</p>
+              <p className="text-sm text-muted-foreground">Focus Time</p>
             </div>
-            <div className="bg-slate-50 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600 mb-1">
-                {stats.averageSession > 0 ? Math.round(stats.averageSession) : 0}m
+            <div className="bg-red-50 rounded-lg p-4 text-center border border-red-200">
+              <div className="text-2xl font-bold text-red-600 mb-1">
+                {filteredStats.averageSession > 0 ? Math.round(filteredStats.averageSession) : 0}m
               </div>
-              <p className="text-sm text-slate-600">Avg Session</p>
+              <p className="text-sm text-muted-foreground">Avg Session</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {records.length === 0 ? (
-        <Card>
-          <CardContent className="py-12">
-            <div className="text-center">
-              <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-slate-300" />
-              <h3 className="text-lg font-medium text-slate-900 mb-2">No sessions yet</h3>
-              <p className="text-slate-500">Complete your first Pomodoro session to see your reports here.</p>
+      {/* Google Calendar-style Task Timeline */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold flex items-center">
+            <CalendarIcon className="mr-2 h-5 w-5 text-[#147E50]" />
+            Session Timeline
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">Google Calendar-style view of your focus sessions</p>
+        </CardHeader>
+        <CardContent>
+          {filteredRecords.length === 0 ? (
+            <div className="text-center py-12">
+              <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-orange-300" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No sessions found</h3>
+              <p className="text-muted-foreground">Complete your first Pomodoro session to see your timeline here.</p>
             </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Calendar View */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold flex items-center">
-                <CalendarIcon className="mr-2 h-5 w-5 text-green-600" />
-                Activity Calendar
-              </CardTitle>
-              <p className="text-sm text-slate-600">Click on a date to view session details</p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Month Navigation */}
-                <div className="flex items-center justify-between">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <h3 className="font-semibold">
-                    {format(currentMonth, 'MMMM yyyy')}
-                  </h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {/* Custom Calendar Grid */}
-                <div className="grid grid-cols-7 gap-1">
-                  {/* Day headers */}
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} className="p-2 text-center text-xs font-medium text-slate-500">
-                      {day}
-                    </div>
-                  ))}
+          ) : (
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {filteredRecords
+                .sort((a, b) => b.startTimestamp.getTime() - a.startTimestamp.getTime())
+                .map((session) => {
+                  const duration = session.actualMinutes;
+                  const startTime = formatTime(session.startTimestamp);
+                  const endTime = formatTime(session.endTimestamp);
+                  const date = formatDate(session.startTimestamp);
                   
-                  {/* Calendar days */}
-                  {calendarData.map((dayData, index) => {
-                    const isSelected = selectedDate && isSameDay(dayData.date, selectedDate);
-                    const isToday = isSameDay(dayData.date, new Date());
-                    
-                    return (
-                      <Button
-                        key={index}
-                        variant={isSelected ? "default" : "ghost"}
-                        size="sm"
-                        className={`h-12 p-1 flex flex-col justify-center relative ${
-                          isToday ? 'ring-2 ring-blue-400' : ''
-                        } ${dayData.hasData ? 'bg-green-50 hover:bg-green-100' : ''}`}
-                        onClick={() => setSelectedDate(dayData.date)}
-                      >
-                        <span className="text-xs">{format(dayData.date, 'd')}</span>
-                        {dayData.hasData && (
-                          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
-                            <div className={`w-1 h-1 rounded-full ${
-                              dayData.completedCount > 0 ? 'bg-green-500' : 'bg-amber-500'
-                            }`} />
+                  return (
+                    <div 
+                      key={session.id} 
+                      className="relative border-l-4 border-[#F3793A] bg-orange-50 rounded-lg p-4 ml-4 hover:shadow-md transition-shadow"
+                    >
+                      <div className="absolute -left-2 top-4 w-4 h-4 bg-[#F3793A] rounded-full border-2 border-white"></div>
+                      
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h4 className="font-semibold text-slate-900">{session.taskName}</h4>
+                            {getStatusBadge(session)}
                           </div>
-                        )}
-                      </Button>
-                    );
-                  })}
-                </div>
-
-                {/* Legend */}
-                <div className="flex items-center justify-center space-x-4 text-xs text-slate-600">
-                  <div className="flex items-center space-x-1">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>Completed sessions</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <div className="w-2 h-2 bg-amber-500 rounded-full" />
-                    <span>Incomplete sessions</span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Session Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">
-                {selectedDate ? format(selectedDate, 'EEEE, MMMM d, yyyy') : 'Select a date'}
-              </CardTitle>
-              {selectedDate && (
-                <p className="text-sm text-slate-600">
-                  {selectedDateSessions.length} sessions on this day
-                </p>
-              )}
-            </CardHeader>
-            <CardContent>
-              {selectedDate ? (
-                selectedDateSessions.length > 0 ? (
-                  <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {selectedDateSessions
-                      .sort((a, b) => a.startTimestamp.getTime() - b.startTimestamp.getTime())
-                      .map((session) => (
-                        <div key={session.id} className="p-3 bg-slate-50 rounded-lg border">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h4 className="font-medium text-slate-800 mb-1">{session.taskName}</h4>
-                              <div className="text-sm text-slate-600 space-y-1">
-                                <p>{formatTime(session.startTimestamp)} - {formatTime(session.endTimestamp)}</p>
-                                <p>Duration: {session.actualMinutes} minutes (planned: {session.plannedMinutes})</p>
-                              </div>
+                          
+                          <div className="text-sm text-muted-foreground space-y-1">
+                            <p className="flex items-center space-x-4">
+                              <span>{date}</span>
+                              <span>{startTime} - {endTime}</span>
+                              <span className="bg-white px-2 py-1 rounded text-xs font-medium">
+                                {duration} min
+                              </span>
+                            </p>
+                          </div>
+                          
+                          {/* Progress bar showing completion */}
+                          <div className="mt-2">
+                            <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                              <span>Progress</span>
+                              <span>{session.actualFinishedEarly ? 'Finished early' : 'Full duration'}</span>
                             </div>
-                            <div className="ml-3">
-                              {getStatusBadge(session)}
+                            <div className="w-full bg-white rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full ${
+                                  session.completed ? 'bg-[#147E50]' : 'bg-red-500'
+                                }`}
+                                style={{ 
+                                  width: `${(session.actualMinutes / session.plannedMinutes) * 100}%` 
+                                }}
+                              ></div>
                             </div>
                           </div>
                         </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <CalendarIcon className="h-8 w-8 mx-auto mb-3 text-slate-300" />
-                    <p className="text-slate-500">No sessions on this date</p>
-                  </div>
-                )
-              ) : (
-                <div className="text-center py-8">
-                  <CalendarIcon className="h-8 w-8 mx-auto mb-3 text-slate-300" />
-                  <p className="text-slate-500">Select a date to view session details</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

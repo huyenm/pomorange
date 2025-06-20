@@ -132,25 +132,27 @@ export default function PomodoroPage() {
   const currentTask = sessionSetup ? tasks.find(t => t.id === sessionSetup.taskId) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-[#FEF5F0]">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-slate-200">
+      <header className="bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Clock className="h-5 w-5 text-white" />
-              </div>
-              <h1 className="text-xl font-semibold text-slate-900">Pomodoro Timer</h1>
+              <img 
+                src="/pomorange-logo.png" 
+                alt="Pomorange Logo" 
+                className="h-8 w-auto"
+              />
+              <h1 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Space Mono, monospace' }}>Pomorange</h1>
             </div>
             
             {/* Tab Navigation */}
-            <nav className="flex space-x-1 bg-slate-100 rounded-lg p-1">
+            <nav className="flex space-x-1 bg-orange-100 rounded-lg p-1">
               <Button
                 variant={currentPhase === "planning" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("planning")}
-                className="px-4 py-2 text-sm"
+                className={currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
               >
                 Planning
               </Button>
@@ -158,24 +160,15 @@ export default function PomodoroPage() {
                 variant={currentPhase === "session" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("session")}
-                className="px-4 py-2 text-sm"
+                className={currentPhase === "session" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
               >
                 Setup
-              </Button>
-              <Button
-                variant={currentPhase === "timer" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setCurrentPhase("timer")}
-                className="px-4 py-2 text-sm"
-                disabled={!sessionSetup}
-              >
-                Timer
               </Button>
               <Button
                 variant={currentPhase === "reports" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("reports")}
-                className="px-4 py-2 text-sm"
+                className={currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
               >
                 Reports
               </Button>

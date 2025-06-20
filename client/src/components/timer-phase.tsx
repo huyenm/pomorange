@@ -69,7 +69,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
         <CardContent className="text-center space-y-8">
           {/* Countdown Display */}
           <div>
-            <div className="text-6xl md:text-7xl font-bold text-blue-600 mb-4 font-mono">
+            <div className="text-6xl md:text-7xl font-bold text-[#F3793A] mb-4 font-mono">
               {formatTime(timerState.timeRemaining)}
             </div>
             <div className="text-slate-600 space-y-1">
@@ -110,7 +110,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
             {timerState.sessionType === "focus" && (
               <Button
                 onClick={onFinishEarly}
-                className="bg-green-600 hover:bg-green-700"
+                className="btn-primary"
               >
                 <Check className="mr-2 h-4 w-4" />
                 I've Finished Early
@@ -124,26 +124,26 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
       <div className="grid md:grid-cols-3 gap-6">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-blue-600 mb-1">{stats.totalSessions}</div>
-            <p className="text-sm text-slate-600">Sessions Today</p>
+            <div className="text-2xl font-bold text-[#F3793A] mb-1">{stats.totalSessions}</div>
+            <p className="text-sm text-muted-foreground">Sessions Today</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-green-600 mb-1">
+            <div className="text-2xl font-bold text-[#147E50] mb-1">
               {formatTimeSmall(stats.totalFocusTime * 60)}
             </div>
-            <p className="text-sm text-slate-600">Focus Time Today</p>
+            <p className="text-sm text-muted-foreground">Focus Time Today</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-amber-600 mb-1">
+            <div className="text-2xl font-bold text-yellow-600 mb-1">
               {sessionSetup.breakDuration} min
             </div>
-            <p className="text-sm text-slate-600">Break Duration</p>
+            <p className="text-sm text-muted-foreground">Break Duration</p>
           </CardContent>
         </Card>
       </div>
