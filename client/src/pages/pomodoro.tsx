@@ -23,7 +23,7 @@ export default function PomodoroPage() {
   const [showBreakModal, setShowBreakModal] = useState(false);
 
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
-  const { tasks } = useTasks();
+  const { tasks, addTask, deleteTask, toggleTaskCompletion } = useTasks();
   const { addRecord } = useSessions();
 
   // Request notification permission on mount
