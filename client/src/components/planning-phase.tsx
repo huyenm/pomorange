@@ -225,8 +225,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-              <Headphones className="h-5 w-5 text-blue-600" />
+            <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+              <Headphones className="h-5 w-5 text-yellow-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-heading-custom">Use Background Music</p>
@@ -235,8 +235,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-              <List className="h-5 w-5 text-purple-600" />
+            <div className="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+              <List className="h-5 w-5 text-pink-600" />
             </div>
             <div>
               <p className="text-sm font-medium text-heading-custom">Clear Your Workspace</p>

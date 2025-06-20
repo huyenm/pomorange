@@ -4,8 +4,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { Download, BarChart3, Calendar as CalendarIcon, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { Download, BarChart3, Calendar as CalendarIcon, ChevronLeft, ChevronRight, ChevronDown, Info } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSessions } from "@/hooks/use-sessions";
 import { format, startOfDay, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfYear, endOfYear, isWithinInterval } from "date-fns";
 
@@ -260,13 +261,20 @@ export function ReportsPhase() {
       {/* Session Timeline */}
       <Card className="card-orange-border">
         <CardHeader>
-          <div className="flex items-center">
-            <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
-              <CalendarIcon className="mr-2 h-6 w-6 text-[#147E50]" />
-              Session Timeline
-            </CardTitle>
-            <p className="text-sm text-muted-custom ml-2">Timeline view of your focus sessions</p>
-          </div>
+          <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
+            <CalendarIcon className="mr-2 h-6 w-6 text-[#147E50]" />
+            Session Timeline
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="ml-2 h-4 w-4 text-[#BE8669] cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Timeline view of your focus sessions</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {filteredRecords.length === 0 ? (

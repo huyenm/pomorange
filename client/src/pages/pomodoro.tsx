@@ -59,6 +59,9 @@ export default function PomodoroPage() {
     const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
     const task = tasks.find(t => t.id === sessionSetup.taskId);
     
+    // Mark task as completed first
+    toggleTaskCompletion(sessionSetup.taskId);
+    
     // Record the session
     addRecord({
       taskId: sessionSetup.taskId,
@@ -73,8 +76,17 @@ export default function PomodoroPage() {
     });
 
     stopTimer();
-    setShowBreakModal(true);
-    startBreak(sessionSetup.breakDuration);
+    
+    // Check if there are more active tasks after completing this one
+    const remainingActiveTasks = tasks.filter(t => !t.completed && t.id !== sessionSetup.taskId);
+    if (remainingActiveTasks.length === 0) {
+      // No more tasks, go back to planning
+      setCurrentPhase("planning");
+    } else {
+      // More tasks available, go to session setup to select next task
+      setCurrentPhase("session");
+      setSessionSetup(null); // Clear current session to force new task selection
+    }
   };
 
   const handleTaskCompleted = () => {
@@ -147,7 +159,7 @@ export default function PomodoroPage() {
     <div className="min-h-screen bg-[#FEF5F0]">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-orange-200">
-        <div className="max-w-6xl mx-auto px-6 py-4">
+        <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center flex-shrink-0">
               <img 
@@ -192,7 +204,7 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto py-8">
+      <main className="max-w-6xl mx-auto py-8 px-4">
         {currentPhase === "planning" && (
           <PlanningPhase onStartSession={handleStartSession} />
         )}
