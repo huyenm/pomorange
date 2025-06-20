@@ -165,7 +165,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
       <Card className="card-orange-border">
         <CardHeader>
           <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
-            <CalendarIcon className="mr-2 h-5 w-5 text-[#F3793A]" />
+            <CalendarIcon className="mr-2 h-6 w-6 text-[#F3793A]" />
             Monthly Calendar
           </CardTitle>
         </CardHeader>

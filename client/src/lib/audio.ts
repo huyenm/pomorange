@@ -64,26 +64,40 @@ class AudioManager {
     oscillator.stop(this.audioContext.currentTime + duration);
   }
 
-  // Play session start sound (ascending bell tones)
+  // Play session start sound (exciting fanfare)
   async playSessionStart() {
     await this.ensureAudioContext();
     if (!this.audioContext) return;
 
-    // Three ascending bell tones
-    this.createBellSound(440, 0.3, 0.2); // A4
-    setTimeout(() => this.createBellSound(554, 0.3, 0.2), 150); // C#5
-    setTimeout(() => this.createBellSound(659, 0.4, 0.25), 300); // E5
+    // Exciting ascending sequence with harmonics
+    this.createBellSound(440, 0.2, 0.25); // A4
+    this.createBellSound(554, 0.2, 0.15); // C#5 harmony
+    setTimeout(() => {
+      this.createBellSound(659, 0.2, 0.3); // E5
+      this.createBellSound(830, 0.2, 0.2); // G#5 harmony
+    }, 120);
+    setTimeout(() => {
+      this.createBellSound(1109, 0.3, 0.35); // C#6 - bright finish
+      this.createBellSound(880, 0.3, 0.25); // A5 harmony
+    }, 240);
   }
 
-  // Play session finish sound (descending bell tones)
+  // Play session finish sound (triumphant descending)
   async playSessionFinish() {
     await this.ensureAudioContext();
     if (!this.audioContext) return;
 
-    // Three descending bell tones
-    this.createBellSound(659, 0.3, 0.2); // E5
-    setTimeout(() => this.createBellSound(554, 0.3, 0.2), 150); // C#5
-    setTimeout(() => this.createBellSound(440, 0.4, 0.25), 300); // A4
+    // Triumphant sequence with rich harmonics
+    this.createBellSound(880, 0.25, 0.3); // A5
+    this.createBellSound(1109, 0.25, 0.2); // C#6 harmony
+    setTimeout(() => {
+      this.createBellSound(659, 0.25, 0.3); // E5
+      this.createBellSound(830, 0.25, 0.2); // G#5 harmony
+    }, 150);
+    setTimeout(() => {
+      this.createBellSound(440, 0.4, 0.35); // A4 - strong finish
+      this.createBellSound(554, 0.4, 0.25); // C#5 harmony
+    }, 300);
   }
 
   // Play break start sound (gentle chime)

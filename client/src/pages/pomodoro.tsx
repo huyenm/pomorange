@@ -35,13 +35,53 @@ export default function PomodoroPage() {
   useEffect(() => {
     if (timerState.isRunning && timerState.timeRemaining === 0) {
       if (timerState.sessionType === "focus") {
-        setShowCompletionModal(true);
+        // Focus session completed - record and start break
+        if (sessionSetup) {
+          const task = tasks.find(t => t.id === sessionSetup.taskId);
+          
+          // Record the completed session
+          addRecord({
+            taskId: sessionSetup.taskId,
+            taskName: task?.text || "Unknown Task",
+            startTimestamp: timerState.startTime || new Date(),
+            endTimestamp: new Date(),
+            plannedMinutes: sessionSetup.focusDuration,
+            actualMinutes: sessionSetup.focusDuration,
+            actualFinishedEarly: false,
+            breakDuration: sessionSetup.breakDuration,
+            completed: false, // Don't auto-complete unless user confirms
+          });
+
+          // Show completion modal and start break
+          setShowCompletionModal(true);
+          notifications.showSessionComplete();
+          setShowBreakModal(true);
+          startBreak(sessionSetup.breakDuration);
+        }
       } else {
-        // Break ended, return to session setup
-        setCurrentPhase("session");
+        // Break ended - continue with same task or go to session setup
+        setShowBreakModal(false);
+        
+        if (sessionSetup) {
+          const task = tasks.find(t => t.id === sessionSetup.taskId);
+          if (task && !task.completed) {
+            // Continue with same task
+            setCurrentPhase("timer");
+            startTimer(sessionSetup, "focus");
+            notifications.showSessionStart();
+          } else {
+            // Task completed, go to session setup
+            setCurrentPhase("session");
+            setSessionSetup(null);
+          }
+        } else {
+          setCurrentPhase("session");
+        }
+        
+        notifications.showBreakEnd();
       }
     }
-  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType]);
+  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, sessionSetup, tasks, addRecord, startBreak, startTimer]);
 
   const handleStartSession = () => {
     setCurrentPhase("session");
@@ -92,61 +132,33 @@ export default function PomodoroPage() {
   };
 
   const handleTaskCompleted = () => {
-    if (!sessionSetup || !timerState.startTime) return;
-    
-    const task = tasks.find(t => t.id === sessionSetup.taskId);
+    if (!sessionSetup) return;
     
     // Mark task as completed
     toggleTaskCompletion(sessionSetup.taskId);
     
-    // Record the session
-    addRecord({
-      taskId: sessionSetup.taskId,
-      taskName: task?.text || "Unknown Task",
-      startTimestamp: timerState.startTime,
-      endTimestamp: new Date(),
-      plannedMinutes: sessionSetup.focusDuration,
-      actualMinutes: sessionSetup.focusDuration,
-      actualFinishedEarly: false,
-      breakDuration: sessionSetup.breakDuration,
-      completed: true,
-    });
+    // Update the existing record to mark as completed
+    const existingRecords = JSON.parse(localStorage.getItem('pomodoroRecords') || '[]');
+    const lastRecord = existingRecords[existingRecords.length - 1];
+    if (lastRecord && lastRecord.taskId === sessionSetup.taskId) {
+      lastRecord.completed = true;
+      localStorage.setItem('pomodoroRecords', JSON.stringify(existingRecords));
+    }
 
     setShowCompletionModal(false);
     
     // Check if there are more active tasks
     const activeTasks = tasks.filter(t => !t.completed && t.id !== sessionSetup.taskId);
     if (activeTasks.length === 0) {
-      // No more tasks, go back to planning
-      setCurrentPhase("planning");
-    } else {
-      // More tasks available, go to session setup to select next task
-      setCurrentPhase("session");
-      setSessionSetup(null); // Clear current session setup to force new task selection
+      // No more tasks, go back to planning after break
+      setSessionSetup(null);
     }
+    // Continue with break - flow will handle next steps
   };
 
   const handleTaskNotCompleted = () => {
-    if (!sessionSetup || !timerState.startTime) return;
-    
-    const task = tasks.find(t => t.id === sessionSetup.taskId);
-    
-    // Record the session as incomplete
-    addRecord({
-      taskId: sessionSetup.taskId,
-      taskName: task?.text || "Unknown Task",
-      startTimestamp: timerState.startTime,
-      endTimestamp: new Date(),
-      plannedMinutes: sessionSetup.focusDuration,
-      actualMinutes: sessionSetup.focusDuration,
-      actualFinishedEarly: false,
-      breakDuration: sessionSetup.breakDuration,
-      completed: false,
-    });
-
     setShowCompletionModal(false);
-    setShowBreakModal(true);
-    startBreak(sessionSetup.breakDuration);
+    // Task remains active, continue with break and then same task
   };
 
   const handleSkipBreak = () => {
