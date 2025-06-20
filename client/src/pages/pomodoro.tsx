@@ -163,7 +163,7 @@ export default function PomodoroPage() {
                 variant={currentPhase === "planning" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("planning")}
-                className={currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
+                className={currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}
                 style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Planning
@@ -172,7 +172,7 @@ export default function PomodoroPage() {
                 variant={currentPhase === "session" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("session")}
-                className={currentPhase === "session" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
+                className={currentPhase === "session" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}
                 style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Setup
@@ -181,7 +181,7 @@ export default function PomodoroPage() {
                 variant={currentPhase === "reports" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("reports")}
-                className={currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm" : "btn-secondary px-4 py-2 text-sm"}
+                className={currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}
                 style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Reports

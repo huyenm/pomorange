@@ -44,9 +44,9 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-      {/* Tasks Section */}
-      <div className="lg:col-span-3">
+    <div className="flex gap-8">
+      {/* Tasks Section - Flexible width */}
+      <div className="flex-1">
         <Card className="card-orange-border">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -159,10 +159,10 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
       </Card>
     </div>
 
-    {/* Calendar and Tips Section */}
-    <div className="lg:col-span-2 space-y-6">
+    {/* Calendar and Tips Section - Fixed width */}
+    <div className="flex flex-col space-y-6 w-[300px] flex-shrink-0">
       {/* Monthly Calendar */}
-      <Card className="card-orange-border" style={{ width: '300px' }}>
+      <Card className="card-orange-border">
         <CardHeader>
           <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
             <CalendarIcon className="mr-2 h-5 w-5 text-[#F3793A]" />

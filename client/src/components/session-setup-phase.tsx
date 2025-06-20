@@ -61,31 +61,42 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
               <Clock className="inline mr-2 h-4 w-4" />
               Select Task
             </label>
-            {activeTasks.length === 0 ? (
-              <div className="p-4 text-center border border-orange-200 rounded-lg bg-orange-50">
-                <p className="text-sm text-[#BE8669] mb-3">No active tasks available</p>
-                <Button 
-                  onClick={onBackToPlanning}
-                  size="sm"
-                  className="btn-primary"
-                >
-                  Add New Tasks
-                </Button>
-              </div>
-            ) : (
-              <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a task..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {activeTasks.map((task) => (
-                    <SelectItem key={task.id} value={task.id}>
-                      {task.text}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
+              <SelectTrigger>
+                <SelectValue placeholder={activeTasks.length === 0 ? "No active tasks" : "Choose a task..."} />
+              </SelectTrigger>
+              <SelectContent>
+                {activeTasks.map((task) => (
+                  <SelectItem key={task.id} value={task.id}>
+                    {task.text}
+                  </SelectItem>
+                ))}
+                {activeTasks.length === 0 && (
+                  <div className="p-3 text-center border-t">
+                    <p className="text-sm text-[#BE8669] mb-3">No active tasks available</p>
+                    <Button 
+                      onClick={onBackToPlanning}
+                      size="sm"
+                      className="btn-primary w-full"
+                    >
+                      + Add New Tasks
+                    </Button>
+                  </div>
+                )}
+                {activeTasks.length > 0 && (
+                  <div className="p-2 border-t">
+                    <Button 
+                      onClick={onBackToPlanning}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-[#F3793A] hover:bg-orange-50"
+                    >
+                      + Add New Task
+                    </Button>
+                  </div>
+                )}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Duration Settings */}

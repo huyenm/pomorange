@@ -166,7 +166,7 @@ export function ReportsPhase() {
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-[600px] p-0" align="start">
                   <div className="p-3">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
