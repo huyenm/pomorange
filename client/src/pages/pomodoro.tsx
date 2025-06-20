@@ -51,6 +51,8 @@ export default function PomodoroPage() {
     setSessionSetup(setup);
     setCurrentPhase("timer");
     startTimer(setup, "focus");
+    // Play session start sound and notification
+    notifications.showSessionStart();
   };
 
   const handleFinishEarly = () => {
