@@ -1,3 +1,5 @@
+import { audioManager } from "./audio";
+
 export const notifications = {
   async requestPermission(): Promise<boolean> {
     if (!("Notification" in window)) {
@@ -26,28 +28,43 @@ export const notifications = {
     }
   },
 
-  showBreakStart(breakDuration: number): void {
-    this.show("Break Time!", {
-      body: `Time for a ${breakDuration}-minute break. You've earned it!`,
+  showSessionStart(): void {
+    this.show("Focus Session Started! 🎯", {
+      body: "Your focus session has begun. Stay concentrated!",
+      tag: "session-start",
     });
+    audioManager.playSessionStart();
+  },
+
+  showBreakStart(breakDuration: number): void {
+    this.show("Break Time! 🧘", {
+      body: `Take a ${breakDuration}-minute break. You've earned it!`,
+      tag: "break-start",
+    });
+    audioManager.playBreakStart();
   },
 
   showBreakEnd(): void {
-    this.show("Break Complete!", {
-      body: "Ready to get back to work? Let's start another session.",
+    this.show("Break's Over! 💪", {
+      body: "Time to get back to work. You've got this!",
+      tag: "break-end",
     });
+    audioManager.playBreakFinish();
   },
 
   showSessionComplete(): void {
-    this.show("Session Complete!", {
-      body: "Great work! Have you finished your task?",
+    this.show("Session Complete! 🎉", {
+      body: "Great job! You've completed your focus session.",
+      tag: "session-complete",
     });
+    audioManager.playSessionFinish();
   },
 
   showPreparationComplete(): void {
-    this.show("Preparation Time Complete!", {
-      body: "Your 10 minutes are up! Click 'Begin Timer' to start your session.",
-      icon: "🔔"
+    this.show("Ready to Focus! 🎯", {
+      body: "Preparation time is over. Let's start your focus session!",
+      tag: "preparation-complete",
     });
+    audioManager.playSessionStart();
   },
 };
