@@ -137,11 +137,11 @@ export default function PomodoroPage() {
       <header className="bg-white shadow-sm border-b border-orange-200">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
+            <div className="flex items-center flex-shrink-0">
               <img 
                 src="/pomorange-logo.png" 
                 alt="Pomorange Logo" 
-                style={{ width: '150px', height: '38.46px' }}
+                className="w-[150px] h-[38.46px] object-contain"
               />
             </div>
             

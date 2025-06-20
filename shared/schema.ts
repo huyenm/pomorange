@@ -5,6 +5,7 @@ export const taskSchema = z.object({
   id: z.string(),
   text: z.string().min(1, "Task text is required"),
   createdAt: z.date(),
+  completed: z.boolean().default(false),
 });
 
 export type Task = z.infer<typeof taskSchema>;

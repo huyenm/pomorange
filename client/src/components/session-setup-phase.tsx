@@ -45,7 +45,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="border-[#F3793A]">
+      <Card className="card-orange-border">
         <CardHeader>
           <div className="text-center">
             <CardTitle className="text-2xl font-semibold mb-2 card-heading">Setup Your Session</CardTitle>
@@ -64,7 +64,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
                 <SelectValue placeholder="Choose a task..." />
               </SelectTrigger>
               <SelectContent>
-                {tasks.map((task) => (
+                {tasks.filter(task => !task.completed).map((task) => (
                   <SelectItem key={task.id} value={task.id}>
                     {task.text}
                   </SelectItem>

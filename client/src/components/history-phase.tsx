@@ -142,7 +142,7 @@ export function ReportsPhase() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="border-[#F3793A]">
+      <Card className="card-orange-border">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-semibold card-heading flex items-center">
@@ -198,15 +198,71 @@ export function ReportsPhase() {
       </Card>
 
       {/* Google Calendar-style Task Timeline */}
-      <Card className="border-[#F3793A]">
+      <Card className="card-orange-border">
         <CardHeader>
           <CardTitle className="text-lg font-semibold card-heading flex items-center">
             <CalendarIcon className="mr-2 h-5 w-5 text-[#147E50]" />
-            Session Timeline
+            Session Timeline & Calendar
           </CardTitle>
-          <p className="text-sm text-muted-foreground">Google Calendar-style view of your focus sessions</p>
+          <p className="text-sm text-muted-foreground">Google Calendar-style view with date selection</p>
         </CardHeader>
         <CardContent>
+          {/* Calendar for Date Selection */}
+          <div className="grid md:grid-cols-4 gap-6 mb-6">
+            <div className="md:col-span-1">
+              <h4 className="font-semibold mb-3 text-sm">Select Date</h4>
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                className="rounded-md border-0 scale-75 origin-top-left"
+                modifiers={{
+                  hasSession: (date) => getSessionsForDate(date).length > 0
+                }}
+                modifiersStyles={{
+                  hasSession: { 
+                    backgroundColor: '#147E50', 
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }
+                }}
+              />
+              <div className="text-xs text-muted-foreground mt-2">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-[#147E50] rounded"></div>
+                  <span>Days with sessions</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Selected Date Sessions */}
+            <div className="md:col-span-3">
+              <h4 className="font-semibold mb-3 text-sm">
+                {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Select a date'}
+              </h4>
+              {selectedDate && selectedDateSessions.length > 0 ? (
+                <div className="space-y-3 max-h-48 overflow-y-auto">
+                  {selectedDateSessions.map((session) => (
+                    <div key={session.id} className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-medium text-slate-900 text-sm">{session.taskName}</h5>
+                        {getStatusBadge(session)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        <p>{formatTime(session.startTimestamp)} - {formatTime(session.endTimestamp)} • {session.actualMinutes} min</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : selectedDate ? (
+                <p className="text-muted-foreground text-sm">No sessions on this date</p>
+              ) : (
+                <p className="text-muted-foreground text-sm">Select a date to view sessions</p>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t pt-6"></div>
           {filteredRecords.length === 0 ? (
             <div className="text-center py-12">
               <CalendarIcon className="h-12 w-12 mx-auto mb-4 text-orange-300" />
@@ -345,72 +401,6 @@ export function ReportsPhase() {
               )}
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Calendar View for Date Selection */}
-      <Card className="border-[#F3793A]">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold card-heading flex items-center">
-            <CalendarIcon className="mr-2 h-5 w-5 text-[#F3793A]" />
-            Calendar View
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">Select a specific date to view sessions</p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                className="rounded-md border w-full"
-                modifiers={{
-                  hasSession: (date) => getSessionsForDate(date).length > 0
-                }}
-                modifiersStyles={{
-                  hasSession: { 
-                    backgroundColor: '#147E50', 
-                    color: 'white',
-                    fontWeight: 'bold'
-                  }
-                }}
-              />
-              <div className="mt-3 text-xs text-muted-foreground">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-[#147E50] rounded"></div>
-                  <span>Days with completed sessions</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Selected Date Sessions */}
-            <div>
-              <h4 className="font-semibold mb-3">
-                {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Select a date'}
-              </h4>
-              {selectedDate && selectedDateSessions.length > 0 ? (
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {selectedDateSessions.map((session) => (
-                    <div key={session.id} className="bg-orange-50 rounded-lg p-3 border border-orange-200">
-                      <div className="flex items-center justify-between mb-2">
-                        <h5 className="font-medium text-slate-900">{session.taskName}</h5>
-                        {getStatusBadge(session)}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        <p>{formatTime(session.startTimestamp)} - {formatTime(session.endTimestamp)}</p>
-                        <p>{session.actualMinutes} minutes</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : selectedDate ? (
-                <p className="text-muted-foreground text-sm">No sessions on this date</p>
-              ) : (
-                <p className="text-muted-foreground text-sm">Select a date to view sessions</p>
-              )}
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>

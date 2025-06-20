@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CheckCircle, X } from "lucide-react";
 
 interface TaskCompletionModalProps {
@@ -24,9 +24,9 @@ export function TaskCompletionModal({
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <DialogTitle className="text-xl font-semibold mb-2">Time's Up!</DialogTitle>
-            <p className="text-slate-600">
+            <DialogDescription className="text-slate-600">
               Have you finished the task "{taskName}"?
-            </p>
+            </DialogDescription>
           </div>
         </DialogHeader>
         

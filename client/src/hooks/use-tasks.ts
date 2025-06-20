@@ -42,10 +42,23 @@ export function useTasks() {
     }
   };
 
+  const toggleTaskCompletion = (id: string) => {
+    try {
+      storage.toggleTaskCompletion(id);
+      setTasks(prev => prev.map(task => 
+        task.id === id ? { ...task, completed: !task.completed } : task
+      ));
+    } catch (error) {
+      console.error("Failed to toggle task completion:", error);
+      throw error;
+    }
+  };
+
   return {
     tasks,
     addTask,
     deleteTask,
+    toggleTaskCompletion,
     isLoading,
   };
 }

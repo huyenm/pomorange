@@ -79,6 +79,10 @@
     font-family: 'Space Mono', monospace;
   }
   
+  .card-orange-border {
+    border-color: rgb(254 215 170);
+  }
+  
   .text-success {
     @apply text-[#147E50];
   }

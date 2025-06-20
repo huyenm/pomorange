@@ -33,6 +33,7 @@ export const storage = {
       id: crypto.randomUUID(),
       text,
       createdAt: new Date(),
+      completed: false,
     };
     
     const tasks = this.getTasks();
@@ -44,6 +45,14 @@ export const storage = {
   deleteTask(id: string): void {
     const tasks = this.getTasks().filter(task => task.id !== id);
     this.saveTasks(tasks);
+  },
+
+  toggleTaskCompletion(id: string): void {
+    const tasks = this.getTasks();
+    const updatedTasks = tasks.map(task => 
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    this.saveTasks(updatedTasks);
   },
 
   // Session Records
