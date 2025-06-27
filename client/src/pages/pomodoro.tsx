@@ -54,11 +54,15 @@ export default function PomodoroPage() {
             completed: false, // Don't auto-complete unless user confirms
           });
 
-          // Show completion modal and start break immediately
+          // Show completion modal first, then start break
           setShowCompletionModal(true);
           notifications.showSessionComplete();
-          setShowBreakModal(true);
-          startBreak(sessionSetup.breakDuration);
+          
+          // Start break after a short delay to let user see the modal
+          setTimeout(() => {
+            setShowBreakModal(true);
+            startBreak(sessionSetup.breakDuration);
+          }, 500);
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task or go to session setup
