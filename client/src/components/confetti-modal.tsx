@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Trophy } from "lucide-react";
 
@@ -24,6 +24,8 @@ export function ConfettiModal({ isOpen, taskName, onClose }: ConfettiModalProps)
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md text-center border-none bg-gradient-to-b from-yellow-50 to-orange-50">
+        <DialogTitle className="sr-only">Task Completed</DialogTitle>
+        <DialogDescription className="sr-only">Celebration for completing a task</DialogDescription>
         <div className="py-8">
           {/* Celebration Icon */}
           <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -33,9 +35,9 @@ export function ConfettiModal({ isOpen, taskName, onClose }: ConfettiModalProps)
           {/* Celebration GIF */}
           <div className="mb-6">
             <img 
-              src="https://media.giphy.com/media/26u4cqiYI30juCOGY/giphy.gif"
+              src="/confetti.gif"
               alt="Celebration confetti"
-              className="w-32 h-32 mx-auto rounded-lg"
+              className="w-48 h-32 mx-auto rounded-lg object-cover"
             />
           </div>
           

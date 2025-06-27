@@ -56,15 +56,9 @@ export default function PomodoroPage() {
             completed: false, // Don't auto-complete unless user confirms
           });
 
-          // Show completion modal first, then start break
+          // Show completion modal first - break will start based on user choice
           setShowCompletionModal(true);
           notifications.showSessionComplete();
-          
-          // Start break after a short delay to let user see the modal
-          setTimeout(() => {
-            setShowBreakModal(true);
-            startBreak(sessionSetup.breakDuration);
-          }, 500);
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task or go to session setup
@@ -129,16 +123,8 @@ export default function PomodoroPage() {
 
     stopTimer();
     
-    // Check if there are more active tasks after completing this one
-    const remainingActiveTasks = tasks.filter(t => !t.completed && t.id !== sessionSetup.taskId);
-    if (remainingActiveTasks.length === 0) {
-      // No more tasks, go back to planning
-      setCurrentPhase("planning");
-    } else {
-      // More tasks available, go to session setup to select next task
-      setCurrentPhase("session");
-      setSessionSetup(null); // Clear current session to force new task selection
-    }
+    // Show confetti celebration for early finish
+    setShowConfettiModal(true);
   };
 
   const handleTaskCompleted = () => {
@@ -156,7 +142,11 @@ export default function PomodoroPage() {
 
   const handleTaskNotCompleted = () => {
     setShowCompletionModal(false);
-    // Task remains active, continue with break and then same task
+    // Task not completed, start break and continue with same task after
+    if (sessionSetup) {
+      setShowBreakModal(true);
+      startBreak(sessionSetup.breakDuration);
+    }
   };
 
   const handleSkipBreak = () => {
