@@ -46,8 +46,7 @@ export default function PomodoroPage() {
           notifications.showSessionComplete();
         }
       } else if (timerState.sessionType === "break") {
-        // Break ended - continue with same task or go to session setup
-        setShowBreakModal(false);
+        // Break ended - continue with same task
         notifications.showBreakEnd();
         
         if (sessionSetup) {
@@ -159,16 +158,14 @@ export default function PomodoroPage() {
     }
     
     setShowCompletionModal(false);
-    // Task not completed, start break and continue with same task after
+    // Task not completed, start break automatically and continue with same task after
     if (sessionSetup) {
-      setShowBreakModal(true);
       startBreak(sessionSetup.breakDuration);
     }
   };
 
   const handleSkipBreak = () => {
     stopTimer();
-    setShowBreakModal(false);
     
     if (sessionSetup) {
       const task = tasks.find(t => t.id === sessionSetup.taskId);
@@ -201,6 +198,7 @@ export default function PomodoroPage() {
   };
 
   const currentTask = sessionSetup ? tasks.find(t => t.id === sessionSetup.taskId) : null;
+  const currentTaskName = currentTask?.text || "Unknown task";
 
   return (
     <div className="min-h-screen bg-[#FEF5F0]">
@@ -350,16 +348,12 @@ export default function PomodoroPage() {
         onNotCompleted={handleTaskNotCompleted}
       />
 
-      <BreakTimerModal
-        isOpen={showBreakModal}
-        timerState={timerState}
-        onSkipBreak={handleSkipBreak}
-      />
+
 
       {/* Confetti Celebration Modal */}
       <ConfettiModal
         isOpen={showConfettiModal}
-        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Unknown task") : "Unknown task"}
+        taskName={currentTaskName}
         onClose={handleConfettiClose}
       />
     </div>
