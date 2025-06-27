@@ -49,12 +49,7 @@ export function usePomodoro() {
         if (newTimeRemaining <= 0) {
           clearTimer();
           
-          if (prev.sessionType === "focus") {
-            notifications.showSessionComplete();
-          } else {
-            notifications.showBreakEnd();
-          }
-          
+          // Timer completed - return updated state
           return {
             ...prev,
             timeRemaining: 0,

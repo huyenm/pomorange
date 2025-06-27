@@ -35,7 +35,7 @@ export default function PomodoroPage() {
 
   // Handle timer completion
   useEffect(() => {
-    if (timerState.isRunning && timerState.timeRemaining === 0) {
+    if (!timerState.isRunning && timerState.timeRemaining === 0 && timerState.startTime) {
       if (timerState.sessionType === "focus") {
         // Focus session completed - record and start break
         if (sessionSetup) {
@@ -45,7 +45,7 @@ export default function PomodoroPage() {
           addRecord({
             taskId: sessionSetup.taskId,
             taskName: task?.text || "Unknown Task",
-            startTimestamp: timerState.startTime || new Date(),
+            startTimestamp: timerState.startTime,
             endTimestamp: new Date(),
             plannedMinutes: sessionSetup.focusDuration,
             actualMinutes: sessionSetup.focusDuration,
@@ -54,29 +54,24 @@ export default function PomodoroPage() {
             completed: false, // Don't auto-complete unless user confirms
           });
 
-          // Show completion modal and start break
+          // Show completion modal and start break immediately
           setShowCompletionModal(true);
           notifications.showSessionComplete();
-          
-          // Automatically start break
-          setTimeout(() => {
-            setShowBreakModal(true);
-            startBreak(sessionSetup.breakDuration);
-          }, 1000); // Small delay to let user see the completion modal
+          setShowBreakModal(true);
+          startBreak(sessionSetup.breakDuration);
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task or go to session setup
         setShowBreakModal(false);
+        notifications.showBreakEnd();
         
         if (sessionSetup) {
           const task = tasks.find(t => t.id === sessionSetup.taskId);
           if (task && !task.completed) {
-            // Continue with same task - start new focus session
-            setTimeout(() => {
-              setCurrentPhase("timer");
-              startTimer(sessionSetup, "focus");
-              notifications.showSessionStart();
-            }, 500); // Small delay for smooth transition
+            // Continue with same task - start new focus session immediately
+            setCurrentPhase("timer");
+            startTimer(sessionSetup, "focus");
+            notifications.showSessionStart();
           } else {
             // Task completed, go to session setup
             setCurrentPhase("session");
@@ -85,11 +80,9 @@ export default function PomodoroPage() {
         } else {
           setCurrentPhase("session");
         }
-        
-        notifications.showBreakEnd();
       }
     }
-  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, sessionSetup, tasks, addRecord, startBreak, startTimer]);
+  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, tasks, addRecord, startBreak, startTimer]);
 
   const handleStartSession = () => {
     setCurrentPhase("session");
