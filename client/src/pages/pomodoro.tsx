@@ -21,6 +21,7 @@ export default function PomodoroPage() {
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showBreakModal, setShowBreakModal] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
   const { tasks, addTask, deleteTask, toggleTaskCompletion } = useTasks();
@@ -214,6 +215,62 @@ export default function PomodoroPage() {
               </Button>
             </nav>
           </div>
+
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden mt-4 pt-4 border-t border-[#BE8669]/20">
+              <nav className="flex flex-col space-y-2">
+                <Button
+                  variant={currentPhase === "planning" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("planning");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Planning
+                </Button>
+                <Button
+                  variant={currentPhase === "session" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("session");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "session" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Session
+                </Button>
+                <Button
+                  variant={currentPhase === "timer" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("timer");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "timer" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Timer
+                </Button>
+                <Button
+                  variant={currentPhase === "reports" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("reports");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Reports
+                </Button>
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 
