@@ -25,7 +25,7 @@ export function TaskCompletionModal({
             </div>
             <DialogTitle className="text-xl font-semibold mb-2">Time's Up!</DialogTitle>
             <DialogDescription className="text-slate-600">
-              Have you finished the task "{taskName}"?
+              Have you finished the task "<span style={{ fontFamily: 'Space Mono, monospace' }}>{taskName}</span>"?
             </DialogDescription>
           </div>
         </DialogHeader>

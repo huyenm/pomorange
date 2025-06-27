@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Pause, Play, Check, Clock } from "lucide-react";
+import { Pause, Play, Check, Clock, X } from "lucide-react";
 import { TimerState, SessionSetup } from "@shared/schema";
 import { useTasks } from "@/hooks/use-tasks";
 import { useSessions } from "@/hooks/use-sessions";
@@ -13,9 +13,10 @@ interface TimerPhaseProps {
   sessionSetup: SessionSetup;
   onPauseTimer: () => void;
   onFinishEarly: () => void;
+  onQuitSession?: () => void;
 }
 
-export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEarly }: TimerPhaseProps) {
+export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEarly, onQuitSession }: TimerPhaseProps) {
   const { tasks } = useTasks();
   const { getStats } = useSessions();
   const stats = getStats();
@@ -61,7 +62,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
               <Clock className="mr-2 h-4 w-4" />
               {timerState.sessionType === "focus" ? "Focus Session" : "Break Time"}
             </Badge>
-            <CardTitle className="text-lg font-medium mb-2">
+            <CardTitle className="text-lg font-medium mb-2" style={{ fontFamily: 'Space Mono, monospace' }}>
               {currentTask?.text || "Unknown Task"}
             </CardTitle>
           </div>
@@ -106,6 +107,16 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
                 </>
               )}
             </Button>
+            
+            {timerState.isPaused && onQuitSession && (
+              <Button
+                variant="destructive"
+                onClick={onQuitSession}
+              >
+                <X className="mr-2 h-4 w-4" />
+                Quit
+              </Button>
+            )}
             
             {timerState.sessionType === "focus" && (
               <Button

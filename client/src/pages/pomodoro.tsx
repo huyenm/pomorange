@@ -9,6 +9,7 @@ import { TimerPhase } from "@/components/timer-phase";
 import { ReportsPhase } from "@/components/history-phase";
 import { TaskCompletionModal } from "@/components/task-completion-modal";
 import { BreakTimerModal } from "@/components/break-timer-modal";
+import { ConfettiModal } from "@/components/confetti-modal";
 import { usePomodoro } from "@/hooks/use-pomodoro";
 import { useTasks } from "@/hooks/use-tasks";
 import { useSessions } from "@/hooks/use-sessions";
@@ -22,6 +23,7 @@ export default function PomodoroPage() {
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showBreakModal, setShowBreakModal] = useState(false);
+  const [showConfettiModal, setShowConfettiModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
@@ -140,28 +142,16 @@ export default function PomodoroPage() {
   };
 
   const handleTaskCompleted = () => {
-    if (!sessionSetup) return;
-    
-    // Mark task as completed
-    toggleTaskCompletion(sessionSetup.taskId);
-    
-    // Update the existing record to mark as completed
-    const existingRecords = JSON.parse(localStorage.getItem('pomodoroRecords') || '[]');
-    const lastRecord = existingRecords[existingRecords.length - 1];
-    if (lastRecord && lastRecord.taskId === sessionSetup.taskId) {
-      lastRecord.completed = true;
-      localStorage.setItem('pomodoroRecords', JSON.stringify(existingRecords));
+    if (sessionSetup) {
+      // Mark task as completed
+      toggleTaskCompletion(sessionSetup.taskId);
     }
-
+    
     setShowCompletionModal(false);
+    setShowBreakModal(false); // Close break if it's open
     
-    // Check if there are more active tasks
-    const activeTasks = tasks.filter(t => !t.completed && t.id !== sessionSetup.taskId);
-    if (activeTasks.length === 0) {
-      // No more tasks, go back to planning after break
-      setSessionSetup(null);
-    }
-    // Continue with break - flow will handle next steps
+    // Show confetti celebration
+    setShowConfettiModal(true);
   };
 
   const handleTaskNotCompleted = () => {
@@ -172,7 +162,35 @@ export default function PomodoroPage() {
   const handleSkipBreak = () => {
     stopTimer();
     setShowBreakModal(false);
+    
+    if (sessionSetup) {
+      const task = tasks.find(t => t.id === sessionSetup.taskId);
+      if (task && !task.completed) {
+        // Continue with same task after skipping break
+        setCurrentPhase("timer");
+        startTimer(sessionSetup, "focus");
+        notifications.showSessionStart();
+      } else {
+        // Task was completed, go to session setup
+        setCurrentPhase("session");
+        setSessionSetup(null);
+      }
+    } else {
+      setCurrentPhase("session");
+    }
+  };
+
+  const handleQuitSession = () => {
+    stopTimer();
+    setCurrentPhase("planning");
+    setSessionSetup(null);
+  };
+
+  const handleConfettiClose = () => {
+    setShowConfettiModal(false);
+    // Go back to session setup to choose next task
     setCurrentPhase("session");
+    setSessionSetup(null);
   };
 
   const currentTask = sessionSetup ? tasks.find(t => t.id === sessionSetup.taskId) : null;
@@ -310,6 +328,7 @@ export default function PomodoroPage() {
             sessionSetup={sessionSetup}
             onPauseTimer={pauseTimer}
             onFinishEarly={handleFinishEarly}
+            onQuitSession={handleQuitSession}
           />
         )}
         
@@ -328,6 +347,13 @@ export default function PomodoroPage() {
         isOpen={showBreakModal}
         timerState={timerState}
         onSkipBreak={handleSkipBreak}
+      />
+
+      {/* Confetti Celebration Modal */}
+      <ConfettiModal
+        isOpen={showConfettiModal}
+        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Unknown task") : "Unknown task"}
+        onClose={handleConfettiClose}
       />
     </div>
   );
