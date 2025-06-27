@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Clock } from "lucide-react";
+import { Clock, Menu, X } from "lucide-react";
+import pomorangeLogo from "@assets/pomologo_1751004068165.png";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlanningPhase } from "@/components/planning-phase";
@@ -56,20 +57,26 @@ export default function PomodoroPage() {
           // Show completion modal and start break
           setShowCompletionModal(true);
           notifications.showSessionComplete();
-          setShowBreakModal(true);
-          startBreak(sessionSetup.breakDuration);
+          
+          // Automatically start break
+          setTimeout(() => {
+            setShowBreakModal(true);
+            startBreak(sessionSetup.breakDuration);
+          }, 1000); // Small delay to let user see the completion modal
         }
-      } else {
+      } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task or go to session setup
         setShowBreakModal(false);
         
         if (sessionSetup) {
           const task = tasks.find(t => t.id === sessionSetup.taskId);
           if (task && !task.completed) {
-            // Continue with same task
-            setCurrentPhase("timer");
-            startTimer(sessionSetup, "focus");
-            notifications.showSessionStart();
+            // Continue with same task - start new focus session
+            setTimeout(() => {
+              setCurrentPhase("timer");
+              startTimer(sessionSetup, "focus");
+              notifications.showSessionStart();
+            }, 500); // Small delay for smooth transition
           } else {
             // Task completed, go to session setup
             setCurrentPhase("session");
@@ -101,6 +108,9 @@ export default function PomodoroPage() {
     
     const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
     const task = tasks.find(t => t.id === sessionSetup.taskId);
+    
+    // Play finish sound and show notification
+    notifications.showSessionComplete();
     
     // Mark task as completed first
     toggleTaskCompletion(sessionSetup.taskId);
@@ -178,14 +188,14 @@ export default function PomodoroPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center flex-shrink-0">
               <img 
-                src="/pomorange-logo.png" 
+                src="/pomologo.png" 
                 alt="Pomorange Logo" 
                 className="w-[160px] h-[41.03px] object-contain"
               />
             </div>
             
-            {/* Tab Navigation */}
-            <nav className="flex space-x-1 bg-orange-100 rounded-lg p-1">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-1 bg-orange-100 rounded-lg p-1">
               <Button
                 variant={currentPhase === "planning" ? "default" : "ghost"}
                 size="sm"
@@ -214,6 +224,16 @@ export default function PomodoroPage() {
                 Reports
               </Button>
             </nav>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
 
           {/* Mobile Navigation */}
