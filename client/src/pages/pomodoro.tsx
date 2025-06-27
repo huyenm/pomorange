@@ -131,6 +131,14 @@ export default function PomodoroPage() {
     if (sessionSetup) {
       // Mark task as completed
       toggleTaskCompletion(sessionSetup.taskId);
+      
+      // Update the existing record to mark as completed
+      const existingRecords = JSON.parse(localStorage.getItem('pomodoroRecords') || '[]');
+      const lastRecord = existingRecords[existingRecords.length - 1];
+      if (lastRecord && lastRecord.taskId === sessionSetup.taskId) {
+        lastRecord.completed = true;
+        localStorage.setItem('pomodoroRecords', JSON.stringify(existingRecords));
+      }
     }
     
     setShowCompletionModal(false);

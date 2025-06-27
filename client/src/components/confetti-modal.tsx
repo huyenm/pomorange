@@ -1,7 +1,4 @@
 import { useEffect } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Trophy } from "lucide-react";
 
 interface ConfettiModalProps {
   isOpen: boolean;
@@ -12,53 +9,27 @@ interface ConfettiModalProps {
 export function ConfettiModal({ isOpen, taskName, onClose }: ConfettiModalProps) {
   useEffect(() => {
     if (isOpen) {
-      // Auto close after 3 seconds
+      // Auto close after 2 seconds and proceed to next flow
       const timer = setTimeout(() => {
         onClose();
-      }, 3000);
+      }, 2000);
       
       return () => clearTimeout(timer);
     }
   }, [isOpen, onClose]);
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md text-center border-none bg-gradient-to-b from-yellow-50 to-orange-50">
-        <DialogTitle className="sr-only">Task Completed</DialogTitle>
-        <DialogDescription className="sr-only">Celebration for completing a task</DialogDescription>
-        <div className="py-8">
-          {/* Celebration Icon */}
-          <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Trophy className="h-10 w-10 text-yellow-600" />
-          </div>
-          
-          {/* Celebration GIF */}
-          <div className="mb-6">
-            <img 
-              src="/confetti.gif"
-              alt="Celebration confetti"
-              className="w-48 h-32 mx-auto rounded-lg object-cover"
-            />
-          </div>
-          
-          {/* Success Message */}
-          <h2 className="text-2xl font-bold text-gray-800 mb-2" style={{ fontFamily: 'Space Mono, monospace' }}>
-            🎉 Task Completed!
-          </h2>
-          
-          <p className="text-lg text-gray-600 mb-6">
-            Great job completing: <span className="font-semibold" style={{ fontFamily: 'Space Mono, monospace' }}>"{taskName}"</span>
-          </p>
-          
-          <Button 
-            onClick={onClose}
-            className="btn-primary px-8 py-2"
-            style={{ fontFamily: 'Space Mono, monospace' }}
-          >
-            Continue
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+      <div className="text-center">
+        {/* Celebration GIF */}
+        <img 
+          src="/confetti.gif"
+          alt="Celebration confetti"
+          className="w-64 h-48 mx-auto object-cover"
+        />
+      </div>
+    </div>
   );
 }
