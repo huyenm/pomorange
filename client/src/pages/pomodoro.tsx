@@ -41,22 +41,7 @@ export default function PomodoroPage() {
       if (timerState.sessionType === "focus") {
         // Focus session completed - record and start break
         if (sessionSetup) {
-          const task = tasks.find(t => t.id === sessionSetup.taskId);
-          
-          // Record the completed session
-          addRecord({
-            taskId: sessionSetup.taskId,
-            taskName: task?.text || "Unknown Task",
-            startTimestamp: timerState.startTime,
-            endTimestamp: new Date(),
-            plannedMinutes: sessionSetup.focusDuration,
-            actualMinutes: sessionSetup.focusDuration,
-            actualFinishedEarly: false,
-            breakDuration: sessionSetup.breakDuration,
-            completed: false, // Don't auto-complete unless user confirms
-          });
-
-          // Show completion modal first - break will start based on user choice
+          // Show completion modal first - session will be recorded based on user choice
           setShowCompletionModal(true);
           notifications.showSessionComplete();
         }
@@ -128,27 +113,51 @@ export default function PomodoroPage() {
   };
 
   const handleTaskCompleted = () => {
-    if (sessionSetup) {
+    if (sessionSetup && timerState.startTime) {
+      const task = tasks.find(t => t.id === sessionSetup.taskId);
+      
+      // Record the completed session
+      addRecord({
+        taskId: sessionSetup.taskId,
+        taskName: task?.text || "Unknown Task",
+        startTimestamp: timerState.startTime,
+        endTimestamp: new Date(),
+        plannedMinutes: sessionSetup.focusDuration,
+        actualMinutes: sessionSetup.focusDuration,
+        actualFinishedEarly: false,
+        breakDuration: sessionSetup.breakDuration,
+        completed: true, // Task was completed
+      });
+      
       // Mark task as completed
       toggleTaskCompletion(sessionSetup.taskId);
-      
-      // Update the existing record to mark as completed
-      const existingRecords = JSON.parse(localStorage.getItem('pomodoroRecords') || '[]');
-      const lastRecord = existingRecords[existingRecords.length - 1];
-      if (lastRecord && lastRecord.taskId === sessionSetup.taskId) {
-        lastRecord.completed = true;
-        localStorage.setItem('pomodoroRecords', JSON.stringify(existingRecords));
-      }
     }
     
     setShowCompletionModal(false);
-    setShowBreakModal(false); // Close break if it's open
+    setShowBreakModal(false);
     
     // Show confetti celebration
     setShowConfettiModal(true);
   };
 
   const handleTaskNotCompleted = () => {
+    if (sessionSetup && timerState.startTime) {
+      const task = tasks.find(t => t.id === sessionSetup.taskId);
+      
+      // Record the session but not completed
+      addRecord({
+        taskId: sessionSetup.taskId,
+        taskName: task?.text || "Unknown Task",
+        startTimestamp: timerState.startTime,
+        endTimestamp: new Date(),
+        plannedMinutes: sessionSetup.focusDuration,
+        actualMinutes: sessionSetup.focusDuration,
+        actualFinishedEarly: false,
+        breakDuration: sessionSetup.breakDuration,
+        completed: false, // Task was not completed
+      });
+    }
+    
     setShowCompletionModal(false);
     // Task not completed, start break and continue with same task after
     if (sessionSetup) {

@@ -101,12 +101,12 @@ export const storage = {
   } {
     const records = this.getRecords();
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
     
     const todaysRecords = records.filter(record => {
       const recordDate = new Date(record.startTimestamp);
-      recordDate.setHours(0, 0, 0, 0);
-      return recordDate.getTime() === today.getTime();
+      return recordDate >= todayStart && recordDate < todayEnd;
     });
 
     const totalSessions = todaysRecords.length;
