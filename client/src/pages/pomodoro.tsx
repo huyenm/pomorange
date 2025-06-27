@@ -218,7 +218,7 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto py-8 px-4">
+      <main className="max-w-6xl mx-auto py-8 px-4 min-h-screen">
         {currentPhase === "planning" && (
           <PlanningPhase onStartSession={handleStartSession} />
         )}

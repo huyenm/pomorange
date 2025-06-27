@@ -160,7 +160,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
     </div>
 
     {/* Calendar and Tips Section - Fixed width */}
-    <div className="flex flex-col space-y-6 w-[300px] flex-shrink-0">
+    <div className="flex flex-col space-y-6 lg:w-[300px] lg:flex-shrink-0 w-full">
       {/* Monthly Calendar */}
       <Card className="card-orange-border">
         <CardHeader>
