@@ -53,17 +53,25 @@ export const storage = {
       console.log("Debug - Storage: Current tasks before toggle:", tasks);
       console.log("Debug - Storage: Toggling task with ID:", id);
       
-      const updatedTasks = tasks.map(task => 
-        task.id === id ? { ...task, completed: !task.completed } : task
-      );
+      const updatedTasks = tasks.map(task => {
+        if (task.id === id) {
+          console.log(`Debug - Storage: Found task to toggle: ${task.text}, completed: ${task.completed} -> ${!task.completed}`);
+          return { ...task, completed: !task.completed };
+        }
+        return task;
+      });
       console.log("Debug - Storage: Tasks after toggle:", updatedTasks);
       
       this.saveTasks(updatedTasks);
-      console.log("Debug - Storage: Tasks saved to localStorage");
+      console.log("Debug - Storage: Tasks saved to localStorage with key 'pomorange-tasks'");
       
       // Verify the save worked
       const verifyTasks = this.getTasks();
       console.log("Debug - Storage: Verification read from localStorage:", verifyTasks);
+      
+      // Double check localStorage directly
+      const rawData = localStorage.getItem('pomorange-tasks');
+      console.log("Debug - Storage: Raw localStorage data:", rawData);
     } catch (error) {
       console.error("Error toggling task completion:", error);
       throw error;

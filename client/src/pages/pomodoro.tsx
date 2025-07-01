@@ -32,6 +32,8 @@ export default function PomodoroPage() {
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
   const { tasks, addTask, deleteTask, toggleTaskCompletion } = useTasks();
   const { addRecord } = useSessions();
+  
+  console.log("Debug - Pomodoro: toggleTaskCompletion function:", toggleTaskCompletion);
 
   // Request notification permission on mount
   useEffect(() => {
@@ -143,7 +145,9 @@ export default function PomodoroPage() {
       });
       
       // Mark task as completed
+      console.log("Debug - About to call toggleTaskCompletion with ID:", sessionSetup.taskId);
       toggleTaskCompletion(sessionSetup.taskId);
+      console.log("Debug - toggleTaskCompletion called");
     }
     
     // Close completion modal immediately
