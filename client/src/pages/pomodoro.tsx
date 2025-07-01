@@ -110,7 +110,9 @@ export default function PomodoroPage() {
 
     stopTimer();
     
-    // Show confetti celebration and go directly to setup (equivalent to "Yes completed")
+    // Close any open modals and show confetti directly (bypass Time's Up modal)
+    setShowCompletionModal(false);
+    setShowBreakModal(false);
     setShowConfettiModal(true);
   };
 
@@ -199,7 +201,7 @@ export default function PomodoroPage() {
 
   const handleConfettiClose = () => {
     setShowConfettiModal(false);
-    // Go back to session setup to choose next task
+    // Go back to session setup to choose next task (equivalent to "Yes completed" flow)
     setCurrentPhase("session");
     setSessionSetup(null);
   };
