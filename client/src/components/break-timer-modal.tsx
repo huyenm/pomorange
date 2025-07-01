@@ -56,6 +56,7 @@ export function BreakTimerModal({ isOpen, timerState, onSkipBreak }: BreakTimerM
             variant="outline" 
             onClick={onSkipBreak}
             className="w-full btn-secondary"
+            style={{ fontFamily: 'Space Mono, monospace' }}
           >
             <SkipForward className="mr-2 h-4 w-4" />
             Skip Break

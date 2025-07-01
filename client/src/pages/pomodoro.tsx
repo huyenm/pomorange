@@ -23,6 +23,7 @@ export default function PomodoroPage() {
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showBreakModal, setShowBreakModal] = useState(false);
+  const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showConfettiModal, setShowConfettiModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -47,6 +48,8 @@ export default function PomodoroPage() {
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task
+        setIsBreakRunning(false);
+        setShowBreakModal(false);
         notifications.showBreakEnd();
         
         if (sessionSetup) {
@@ -89,10 +92,10 @@ export default function PomodoroPage() {
     // Play finish sound and show notification
     notifications.showSessionComplete();
     
-    // Mark task as completed first
+    // Mark task as completed
     toggleTaskCompletion(sessionSetup.taskId);
     
-    // Record the session
+    // Record the session as completed
     addRecord({
       taskId: sessionSetup.taskId,
       taskName: task?.text || "Unknown Task",
@@ -107,7 +110,7 @@ export default function PomodoroPage() {
 
     stopTimer();
     
-    // Show confetti celebration for early finish
+    // Show confetti celebration and go directly to setup (equivalent to "Yes completed")
     setShowConfettiModal(true);
   };
 
@@ -158,14 +161,18 @@ export default function PomodoroPage() {
     }
     
     setShowCompletionModal(false);
-    // Task not completed, start break automatically and continue with same task after
+    // Task not completed, start break and show break interface
     if (sessionSetup) {
+      setIsBreakRunning(true);
+      setShowBreakModal(true);
       startBreak(sessionSetup.breakDuration);
     }
   };
 
   const handleSkipBreak = () => {
     stopTimer();
+    setIsBreakRunning(false);
+    setShowBreakModal(false);
     
     if (sessionSetup) {
       const task = tasks.find(t => t.id === sessionSetup.taskId);
@@ -327,7 +334,7 @@ export default function PomodoroPage() {
           />
         )}
         
-        {currentPhase === "timer" && sessionSetup && (
+        {currentPhase === "timer" && sessionSetup && !isBreakRunning && (
           <TimerPhase
             timerState={timerState}
             sessionSetup={sessionSetup}
@@ -337,18 +344,42 @@ export default function PomodoroPage() {
           />
         )}
         
+        {isBreakRunning && (
+          <div className="max-w-md mx-auto text-center py-12">
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Coffee className="h-8 w-8 text-amber-600" />
+              </div>
+              <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Mono, monospace' }}>
+                Break Time!
+              </h2>
+              <div className="text-4xl font-bold text-amber-600 mb-6" style={{ fontFamily: 'Space Mono, monospace' }}>
+                {Math.floor(timerState.timeRemaining / 60)}:{(timerState.timeRemaining % 60).toString().padStart(2, '0')}
+              </div>
+              <p className="text-gray-600 mb-6">
+                Take a well-deserved break
+              </p>
+            </div>
+          </div>
+        )}
+        
         {currentPhase === "reports" && <ReportsPhase />}
       </main>
 
       {/* Modals */}
       <TaskCompletionModal
         isOpen={showCompletionModal}
-        taskName={currentTask?.text || "Unknown Task"}
+        taskName={currentTaskName}
         onCompleted={handleTaskCompleted}
         onNotCompleted={handleTaskNotCompleted}
       />
 
-
+      {/* Break Timer Modal */}
+      <BreakTimerModal
+        isOpen={showBreakModal}
+        timerState={timerState}
+        onSkipBreak={handleSkipBreak}
+      />
 
       {/* Confetti Celebration Modal */}
       <ConfettiModal

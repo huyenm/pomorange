@@ -23,10 +23,12 @@ export function ConfettiModal({ isOpen, taskName, onClose }: ConfettiModalProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
       <div className="text-center">
-        {/* Celebration GIF */}
-        <img 
-          src="/confetti.gif"
-          alt="Celebration confetti"
+        {/* Celebration Video */}
+        <video 
+          src="/confetti.webm"
+          autoPlay
+          muted
+          loop
           className="w-64 h-48 mx-auto object-cover"
         />
       </div>
