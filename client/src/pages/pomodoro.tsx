@@ -15,6 +15,7 @@ import { useTasks } from "@/hooks/use-tasks";
 import { useSessions } from "@/hooks/use-sessions";
 import { notifications } from "@/lib/notifications";
 import { audioManager } from "@/lib/audio";
+import { storage } from "@/lib/storage";
 import { SessionSetup } from "@shared/schema";
 
 type Phase = "planning" | "session" | "timer" | "reports";
@@ -146,8 +147,19 @@ export default function PomodoroPage() {
       
       // Mark task as completed
       console.log("Debug - About to call toggleTaskCompletion with ID:", sessionSetup.taskId);
-      toggleTaskCompletion(sessionSetup.taskId);
-      console.log("Debug - toggleTaskCompletion called");
+      if (toggleTaskCompletion) {
+        toggleTaskCompletion(sessionSetup.taskId);
+        console.log("Debug - toggleTaskCompletion called");
+      } else {
+        console.error("Debug - toggleTaskCompletion is null/undefined!");
+        // Manually update the task
+        const updatedTasks = tasks.map(task => 
+          task.id === sessionSetup.taskId ? { ...task, completed: true } : task
+        );
+        console.log("Debug - Manually updating tasks:", updatedTasks);
+        // We need to access the storage directly
+        storage.toggleTaskCompletion(sessionSetup.taskId);
+      }
     }
     
     // Close completion modal immediately

@@ -60,7 +60,11 @@ export function useTasks() {
       throw error;
     }
   };
+  
+  console.log("Debug - useTasks: toggleTaskCompletion function defined:", toggleTaskCompletion);
 
+  console.log("Debug - useTasks: About to return toggleTaskCompletion:", toggleTaskCompletion);
+  
   return {
     tasks,
     addTask,
