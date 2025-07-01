@@ -68,6 +68,9 @@ export default function PomodoroPage() {
           audioManager.playAchievement();
           notifications.showSessionComplete();
           setShowConfettiModal(true);
+          
+          // Stop the timer to prevent re-triggers
+          stopTimer();
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task
@@ -89,9 +92,12 @@ export default function PomodoroPage() {
         } else {
           setCurrentPhase("session");
         }
+        
+        // Stop the timer to prevent re-triggers
+        stopTimer();
       }
     }
-  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, tasks, addRecord, startBreak, startTimer, isEarlyFinish]);
+  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, isEarlyFinish]); // Removed functions that cause re-renders
 
   const handleStartSession = () => {
     setCurrentPhase("session");
@@ -144,31 +150,7 @@ export default function PomodoroPage() {
 
   // handleTaskCompleted removed - now handled directly in timer completion useEffect
 
-  const handleTaskNotCompleted = () => {
-    if (sessionSetup && timerState.startTime) {
-      const task = tasks.find(t => t.id === sessionSetup.taskId);
-      
-      // Record the session but not completed
-      addRecord({
-        taskId: sessionSetup.taskId,
-        taskName: task?.text || "Unknown Task",
-        startTimestamp: timerState.startTime,
-        endTimestamp: new Date(),
-        plannedMinutes: sessionSetup.focusDuration,
-        actualMinutes: sessionSetup.focusDuration,
-        actualFinishedEarly: false,
-        breakDuration: sessionSetup.breakDuration,
-        completed: false, // Task was not completed
-      });
-    }
-    
-    setShowCompletionModal(false);
-    // Task not completed, start break and show break interface
-    if (sessionSetup) {
-      setIsBreakRunning(true);
-      startBreak(sessionSetup.breakDuration);
-    }
-  };
+  // handleTaskNotCompleted removed - tasks are now auto-completed on timer finish
 
   const handleSkipBreak = () => {
     stopTimer();
@@ -383,7 +365,7 @@ export default function PomodoroPage() {
       {/* Confetti Celebration Modal */}
       <ConfettiModal
         isOpen={showConfettiModal}
-        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Unknown task") : "Unknown task"}
+        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Task completed") : "Task completed"}
         onClose={handleConfettiClose}
       />
     </div>
