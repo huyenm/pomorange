@@ -125,18 +125,27 @@ export default function PomodoroPage() {
   };
 
   const handleTaskCompleted = () => {
-    if (!sessionSetup || !timerState.startTime) return;
+    console.log("handleTaskCompleted called");
+    if (!sessionSetup || !timerState.startTime) {
+      console.log("Missing sessionSetup or startTime");
+      return;
+    }
     
-    const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
+    console.log("Proceeding with task completion for:", sessionSetup.taskId);
+    
+    // First stop timer and close modal
+    stopTimer();
+    setShowCompletionModal(false);
+    setIsEarlyFinish(true);
+    
     const task = tasks.find(t => t.id === sessionSetup.taskId);
+    console.log("Found task:", task);
     
-    // Play finish sound and show notification
-    notifications.showSessionComplete();
-    
-    // Mark task as completed
+    // Mark task as completed in storage
     storage.toggleTaskCompletion(sessionSetup.taskId);
+    console.log("Task toggled in storage");
     
-    // Record the session as completed
+    // Record the session
     addRecord({
       taskId: sessionSetup.taskId,
       taskName: task?.text || "Unknown Task",
@@ -148,26 +157,20 @@ export default function PomodoroPage() {
       breakDuration: sessionSetup.breakDuration,
       completed: true,
     });
-
-    // Stop timer first, then set flag and show confetti
-    stopTimer();
+    console.log("Session recorded");
     
-    // Set flag to prevent useEffect from triggering completion modal
-    setIsEarlyFinish(true);
-    
-    // Close completion modal immediately
-    setShowCompletionModal(false);
-    
-    // Play achievement sound and show confetti
+    // Show confetti and play sound
     audioManager.playAchievement();
     setShowConfettiModal(true);
+    console.log("Confetti modal shown");
     
-    // Force reload tasks after completion
+    // Force tasks refresh after a short delay
     setTimeout(() => {
-      const updatedTasks = storage.getTasks();
-      // Force component re-render by updating tasks state manually
-      window.location.reload = () => window.location.reload();
-    }, 100);
+      const freshTasks = storage.getTasks();
+      console.log("Fresh tasks from storage:", freshTasks);
+      // This will force the useTasks hook to re-render with new data
+      window.dispatchEvent(new Event('storage'));
+    }, 50);
   };
 
   const handleTaskNotCompleted = () => {
@@ -228,10 +231,14 @@ export default function PomodoroPage() {
 
   const handleConfettiClose = () => {
     setShowConfettiModal(false);
-    setIsEarlyFinish(false); // Reset flag when confetti closes
-    // Go back to session setup to choose next task (same for both "Yes completed" and "Finish Early")
+    setIsEarlyFinish(false);
+    
+    // Go back to session setup with fresh state
     setCurrentPhase("session");
     setSessionSetup(null);
+    
+    // Trigger one final tasks refresh
+    window.dispatchEvent(new Event('storage'));
   };
 
   const currentTask = sessionSetup ? tasks.find(t => t.id === sessionSetup.taskId) : null;
