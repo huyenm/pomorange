@@ -140,6 +140,8 @@ export default function PomodoroPage() {
       toggleTaskCompletion(sessionSetup.taskId);
     }
     
+    // Clear timer state to prevent duplicate modals
+    stopTimer();
     setShowCompletionModal(false);
     
     // Show confetti celebration
