@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Clock, Menu, X } from "lucide-react";
+import { Clock, Menu, X, Coffee } from "lucide-react";
 import pomorangeLogo from "@assets/pomologo_1751004068165.png";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
