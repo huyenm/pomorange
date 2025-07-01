@@ -7,7 +7,7 @@ import { PlanningPhase } from "@/components/planning-phase";
 import { SessionSetupPhase } from "@/components/session-setup-phase";
 import { TimerPhase } from "@/components/timer-phase";
 import { ReportsPhase } from "@/components/history-phase";
-// import { TaskCompletionModal } from "@/components/task-completion-modal"; // Removed for direct confetti flow
+import { TaskCompletionModal } from "@/components/task-completion-modal";
 
 import { ConfettiModal } from "@/components/confetti-modal";
 import { usePomodoro } from "@/hooks/use-pomodoro";
@@ -22,7 +22,7 @@ type Phase = "planning" | "session" | "timer" | "reports";
 export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
-  // const [showCompletionModal, setShowCompletionModal] = useState(false); // Removed for direct confetti flow
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showConfettiModal, setShowConfettiModal] = useState(false);
@@ -43,34 +43,11 @@ export default function PomodoroPage() {
     // Only handle natural timer completion (not early finish)
     if (!timerState.isRunning && timerState.timeRemaining === 0 && timerState.startTime && !isEarlyFinish) {
       if (timerState.sessionType === "focus") {
-        // Focus session completed naturally
+        // Focus session completed naturally - show completion modal
         if (sessionSetup) {
-          // Auto-complete the task and go directly to confetti
-          const task = tasks.find(t => t.id === sessionSetup.taskId);
-          
-          // Record the completed session
-          addRecord({
-            taskId: sessionSetup.taskId,
-            taskName: task?.text || "Unknown Task",
-            startTimestamp: timerState.startTime,
-            endTimestamp: new Date(),
-            plannedMinutes: sessionSetup.focusDuration,
-            actualMinutes: sessionSetup.focusDuration,
-            actualFinishedEarly: false,
-            breakDuration: sessionSetup.breakDuration,
-            completed: true,
-          });
-          
-          // Mark task as completed
-          toggleTaskCompletion(sessionSetup.taskId);
-          
-          // Play achievement sound and show confetti directly
-          audioManager.playAchievement();
+          setShowCompletionModal(true);
           notifications.showSessionComplete();
-          setShowConfettiModal(true);
-          
-          // Stop the timer to prevent re-triggers
-          stopTimer();
+          stopTimer(); // Stop timer to prevent re-triggers
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task
@@ -148,9 +125,63 @@ export default function PomodoroPage() {
     setShowConfettiModal(true);
   };
 
-  // handleTaskCompleted removed - now handled directly in timer completion useEffect
+  const handleTaskCompleted = () => {
+    if (sessionSetup && timerState.startTime) {
+      const task = tasks.find(t => t.id === sessionSetup.taskId);
+      
+      // Record the completed session
+      addRecord({
+        taskId: sessionSetup.taskId,
+        taskName: task?.text || "Unknown Task",
+        startTimestamp: timerState.startTime,
+        endTimestamp: new Date(),
+        plannedMinutes: sessionSetup.focusDuration,
+        actualMinutes: sessionSetup.focusDuration,
+        actualFinishedEarly: false,
+        breakDuration: sessionSetup.breakDuration,
+        completed: true,
+      });
+      
+      // Mark task as completed
+      toggleTaskCompletion(sessionSetup.taskId);
+    }
+    
+    // Close completion modal immediately
+    setShowCompletionModal(false);
+    
+    // Play achievement sound and show confetti directly
+    audioManager.playAchievement();
+    setShowConfettiModal(true);
+  };
 
-  // handleTaskNotCompleted removed - tasks are now auto-completed on timer finish
+  const handleTaskNotCompleted = () => {
+    if (sessionSetup && timerState.startTime) {
+      const task = tasks.find(t => t.id === sessionSetup.taskId);
+      
+      // Record the session but not completed
+      addRecord({
+        taskId: sessionSetup.taskId,
+        taskName: task?.text || "Unknown Task",
+        startTimestamp: timerState.startTime,
+        endTimestamp: new Date(),
+        plannedMinutes: sessionSetup.focusDuration,
+        actualMinutes: sessionSetup.focusDuration,
+        actualFinishedEarly: false,
+        breakDuration: sessionSetup.breakDuration,
+        completed: false,
+      });
+    }
+    
+    // Close completion modal and start break
+    setShowCompletionModal(false);
+    
+    // Start break automatically
+    if (sessionSetup) {
+      setIsBreakRunning(true);
+      startBreak(sessionSetup.breakDuration);
+      notifications.showBreakStart(sessionSetup.breakDuration);
+    }
+  };
 
   const handleSkipBreak = () => {
     stopTimer();
@@ -358,7 +389,13 @@ export default function PomodoroPage() {
         {currentPhase === "reports" && <ReportsPhase />}
       </main>
 
-      {/* Task Completion Modal - Removed for direct confetti flow */}
+      {/* Task Completion Modal */}
+      <TaskCompletionModal
+        isOpen={showCompletionModal}
+        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Task completed") : "Task completed"}
+        onCompleted={handleTaskCompleted}
+        onNotCompleted={handleTaskNotCompleted}
+      />
 
 
 
