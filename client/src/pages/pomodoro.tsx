@@ -14,6 +14,7 @@ import { usePomodoro } from "@/hooks/use-pomodoro";
 import { useTasks } from "@/hooks/use-tasks";
 import { useSessions } from "@/hooks/use-sessions";
 import { notifications } from "@/lib/notifications";
+import { audioManager } from "@/lib/audio";
 import { SessionSetup } from "@shared/schema";
 
 type Phase = "planning" | "session" | "timer" | "reports";
@@ -115,7 +116,8 @@ export default function PomodoroPage() {
     // Set flag to prevent useEffect from triggering completion modal
     setIsEarlyFinish(true);
     
-    // Show confetti directly without any modal
+    // Play achievement sound and show confetti
+    audioManager.playAchievement();
     setShowConfettiModal(true);
   };
 
@@ -144,7 +146,8 @@ export default function PomodoroPage() {
     stopTimer();
     setShowCompletionModal(false);
     
-    // Show confetti celebration (same flow as "Finish Early")
+    // Play achievement sound and show confetti celebration (same flow as "Finish Early")
+    audioManager.playAchievement();
     setShowConfettiModal(true);
   };
 
