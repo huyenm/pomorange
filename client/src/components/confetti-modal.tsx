@@ -21,7 +21,7 @@ export function ConfettiModal({ isOpen, taskName, onClose }: ConfettiModalProps)
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/40">
+    <div className="fixed inset-0 z-[9999] bg-black/80">
       <div className="absolute inset-0 flex items-center justify-center">
         {/* Centered Confetti Video */}
         <div className="relative">
