@@ -23,6 +23,7 @@ type Phase = "planning" | "session" | "timer" | "reports";
 export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
+  const [completionSessionSetup, setCompletionSessionSetup] = useState<SessionSetup | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   const [isBreakRunning, setIsBreakRunning] = useState(false);
@@ -46,6 +47,8 @@ export default function PomodoroPage() {
       if (timerState.sessionType === "focus") {
         // Focus session completed naturally - show completion modal
         if (sessionSetup) {
+          // Save sessionSetup for the completion modal before showing it
+          setCompletionSessionSetup(sessionSetup);
           setShowCompletionModal(true);
           notifications.showSessionComplete();
           stopTimer(); // Stop timer to prevent re-triggers
@@ -126,35 +129,37 @@ export default function PomodoroPage() {
 
   const handleTaskCompleted = () => {
     console.log("handleTaskCompleted called");
-    if (!sessionSetup || !timerState.startTime) {
-      console.log("Missing sessionSetup or startTime");
+    const setupToUse = completionSessionSetup || sessionSetup;
+    
+    if (!setupToUse || !timerState.startTime) {
+      console.log("Missing sessionSetup or startTime", { setupToUse, startTime: timerState.startTime });
       return;
     }
     
-    console.log("Proceeding with task completion for:", sessionSetup.taskId);
+    console.log("Proceeding with task completion for:", setupToUse.taskId);
     
     // First stop timer and close modal
     stopTimer();
     setShowCompletionModal(false);
     setIsEarlyFinish(true);
     
-    const task = tasks.find(t => t.id === sessionSetup.taskId);
+    const task = tasks.find(t => t.id === setupToUse.taskId);
     console.log("Found task:", task);
     
     // Mark task as completed in storage
-    storage.toggleTaskCompletion(sessionSetup.taskId);
+    storage.toggleTaskCompletion(setupToUse.taskId);
     console.log("Task toggled in storage");
     
     // Record the session
     addRecord({
-      taskId: sessionSetup.taskId,
+      taskId: setupToUse.taskId,
       taskName: task?.text || "Unknown Task",
       startTimestamp: timerState.startTime,
       endTimestamp: new Date(),
-      plannedMinutes: sessionSetup.focusDuration,
-      actualMinutes: sessionSetup.focusDuration,
+      plannedMinutes: setupToUse.focusDuration,
+      actualMinutes: setupToUse.focusDuration,
       actualFinishedEarly: false,
-      breakDuration: sessionSetup.breakDuration,
+      breakDuration: setupToUse.breakDuration,
       completed: true,
     });
     console.log("Session recorded");
@@ -163,6 +168,9 @@ export default function PomodoroPage() {
     audioManager.playAchievement();
     setShowConfettiModal(true);
     console.log("Confetti modal shown");
+    
+    // Clear the completion session setup
+    setCompletionSessionSetup(null);
     
     // Force tasks refresh after a short delay
     setTimeout(() => {
@@ -174,19 +182,21 @@ export default function PomodoroPage() {
   };
 
   const handleTaskNotCompleted = () => {
-    if (sessionSetup && timerState.startTime) {
-      const task = tasks.find(t => t.id === sessionSetup.taskId);
+    const setupToUse = completionSessionSetup || sessionSetup;
+    
+    if (setupToUse && timerState.startTime) {
+      const task = tasks.find(t => t.id === setupToUse.taskId);
       
       // Record the session but not completed
       addRecord({
-        taskId: sessionSetup.taskId,
+        taskId: setupToUse.taskId,
         taskName: task?.text || "Unknown Task",
         startTimestamp: timerState.startTime,
         endTimestamp: new Date(),
-        plannedMinutes: sessionSetup.focusDuration,
-        actualMinutes: sessionSetup.focusDuration,
+        plannedMinutes: setupToUse.focusDuration,
+        actualMinutes: setupToUse.focusDuration,
         actualFinishedEarly: false,
-        breakDuration: sessionSetup.breakDuration,
+        breakDuration: setupToUse.breakDuration,
         completed: false,
       });
     }
@@ -243,6 +253,10 @@ export default function PomodoroPage() {
 
   const currentTask = sessionSetup ? tasks.find(t => t.id === sessionSetup.taskId) : null;
   const currentTaskName = currentTask?.text || "Unknown task";
+  
+  // For the completion modal, use the saved completion setup
+  const completionTask = completionSessionSetup ? tasks.find(t => t.id === completionSessionSetup.taskId) : null;
+  const completionTaskName = completionTask?.text || "Unknown task";
 
   return (
     <div className="min-h-screen bg-[#FEF5F0]">
@@ -415,7 +429,7 @@ export default function PomodoroPage() {
       {/* Task Completion Modal */}
       <TaskCompletionModal
         isOpen={showCompletionModal}
-        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Task completed") : "Task completed"}
+        taskName={completionTaskName}
         onCompleted={handleTaskCompleted}
         onNotCompleted={handleTaskNotCompleted}
       />
