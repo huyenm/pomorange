@@ -7,7 +7,7 @@ import { PlanningPhase } from "@/components/planning-phase";
 import { SessionSetupPhase } from "@/components/session-setup-phase";
 import { TimerPhase } from "@/components/timer-phase";
 import { ReportsPhase } from "@/components/history-phase";
-import { TaskCompletionModal } from "@/components/task-completion-modal";
+// import { TaskCompletionModal } from "@/components/task-completion-modal"; // Removed for direct confetti flow
 
 import { ConfettiModal } from "@/components/confetti-modal";
 import { usePomodoro } from "@/hooks/use-pomodoro";
@@ -22,7 +22,7 @@ type Phase = "planning" | "session" | "timer" | "reports";
 export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  // const [showCompletionModal, setShowCompletionModal] = useState(false); // Removed for direct confetti flow
 
   const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showConfettiModal, setShowConfettiModal] = useState(false);
@@ -45,11 +45,29 @@ export default function PomodoroPage() {
       if (timerState.sessionType === "focus") {
         // Focus session completed naturally
         if (sessionSetup) {
-          // Normal completion - show completion modal with correct task name
-          console.log("Debug - Timer completed for sessionSetup:", sessionSetup);
-          console.log("Debug - Available tasks:", tasks);
-          setShowCompletionModal(true);
+          // Auto-complete the task and go directly to confetti
+          const task = tasks.find(t => t.id === sessionSetup.taskId);
+          
+          // Record the completed session
+          addRecord({
+            taskId: sessionSetup.taskId,
+            taskName: task?.text || "Unknown Task",
+            startTimestamp: timerState.startTime,
+            endTimestamp: new Date(),
+            plannedMinutes: sessionSetup.focusDuration,
+            actualMinutes: sessionSetup.focusDuration,
+            actualFinishedEarly: false,
+            breakDuration: sessionSetup.breakDuration,
+            completed: true,
+          });
+          
+          // Mark task as completed
+          toggleTaskCompletion(sessionSetup.taskId);
+          
+          // Play achievement sound and show confetti directly
+          audioManager.playAchievement();
           notifications.showSessionComplete();
+          setShowConfettiModal(true);
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task
@@ -124,35 +142,7 @@ export default function PomodoroPage() {
     setShowConfettiModal(true);
   };
 
-  const handleTaskCompleted = () => {
-    if (sessionSetup && timerState.startTime) {
-      const task = tasks.find(t => t.id === sessionSetup.taskId);
-      
-      // Record the completed session
-      addRecord({
-        taskId: sessionSetup.taskId,
-        taskName: task?.text || "Unknown Task",
-        startTimestamp: timerState.startTime,
-        endTimestamp: new Date(),
-        plannedMinutes: sessionSetup.focusDuration,
-        actualMinutes: sessionSetup.focusDuration,
-        actualFinishedEarly: false,
-        breakDuration: sessionSetup.breakDuration,
-        completed: true,
-      });
-      
-      // Mark task as completed
-      toggleTaskCompletion(sessionSetup.taskId);
-    }
-    
-    // Clear timer state and immediately close modal
-    stopTimer();
-    setShowCompletionModal(false);
-    
-    // Directly show confetti with achievement sound
-    audioManager.playAchievement();
-    setShowConfettiModal(true);
-  };
+  // handleTaskCompleted removed - now handled directly in timer completion useEffect
 
   const handleTaskNotCompleted = () => {
     if (sessionSetup && timerState.startTime) {
@@ -386,13 +376,7 @@ export default function PomodoroPage() {
         {currentPhase === "reports" && <ReportsPhase />}
       </main>
 
-      {/* Modals */}
-      <TaskCompletionModal
-        isOpen={showCompletionModal}
-        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || `Task ${sessionSetup.taskId.slice(0, 8)}`) : "Unknown task"}
-        onCompleted={handleTaskCompleted}
-        onNotCompleted={handleTaskNotCompleted}
-      />
+      {/* Task Completion Modal - Removed for direct confetti flow */}
 
 
 
