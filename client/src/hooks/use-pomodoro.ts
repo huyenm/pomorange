@@ -79,6 +79,7 @@ export function usePomodoro() {
       isRunning: false,
       isPaused: false,
       timeRemaining: 0,
+      startTime: prev.startTime, // Keep start time for completion detection
     }));
   }, [clearTimer]);
 

@@ -39,16 +39,11 @@ export default function PomodoroPage() {
 
   // Handle timer completion
   useEffect(() => {
-    if (!timerState.isRunning && timerState.timeRemaining === 0 && timerState.startTime) {
+    // Only handle natural timer completion (not early finish)
+    if (!timerState.isRunning && timerState.timeRemaining === 0 && timerState.startTime && !isEarlyFinish) {
       if (timerState.sessionType === "focus") {
-        // Focus session completed
+        // Focus session completed naturally
         if (sessionSetup) {
-          // If early finish flag is set, don't show completion modal
-          if (isEarlyFinish) {
-            setIsEarlyFinish(false); // Reset flag
-            return; // Exit early, confetti is already shown
-          }
-          
           // Normal completion - show completion modal
           setShowCompletionModal(true);
           notifications.showSessionComplete();
@@ -76,7 +71,7 @@ export default function PomodoroPage() {
         }
       }
     }
-  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, tasks, addRecord, startBreak, startTimer]);
+  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, tasks, addRecord, startBreak, startTimer, isEarlyFinish]);
 
   const handleStartSession = () => {
     setCurrentPhase("session");
@@ -92,9 +87,6 @@ export default function PomodoroPage() {
 
   const handleFinishEarly = () => {
     if (!sessionSetup || !timerState.startTime) return;
-    
-    // Set flag to prevent Time's Up modal from showing
-    setIsEarlyFinish(true);
     
     const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
     const task = tasks.find(t => t.id === sessionSetup.taskId);
@@ -118,9 +110,13 @@ export default function PomodoroPage() {
       completed: true,
     });
 
+    // Stop timer first, then set flag and show confetti
     stopTimer();
     
-    // Show confetti directly (bypass Time's Up modal completely)
+    // Set flag to prevent useEffect from triggering completion modal
+    setIsEarlyFinish(true);
+    
+    // Show confetti directly without any modal
     setShowConfettiModal(true);
   };
 
