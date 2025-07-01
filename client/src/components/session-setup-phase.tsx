@@ -19,9 +19,6 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
   const [breakDuration, setBreakDuration] = useState("5");
   
   const activeTasks = tasks.filter(task => !task.completed);
-  
-  console.log("Debug - SessionSetup: All tasks:", tasks);
-  console.log("Debug - SessionSetup: Active tasks:", activeTasks);
 
   const selectedTask = tasks.find(task => task.id === selectedTaskId);
   
@@ -40,8 +37,6 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
       breakDuration: parseInt(breakDuration),
     };
     
-    console.log("Debug - Creating setup with taskId:", selectedTaskId);
-    console.log("Debug - Selected task object:", selectedTask);
     onStartTimer(setup);
   };
 

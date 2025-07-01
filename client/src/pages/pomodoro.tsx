@@ -33,8 +33,6 @@ export default function PomodoroPage() {
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
   const { tasks, addTask, deleteTask, toggleTaskCompletion } = useTasks();
   const { addRecord } = useSessions();
-  
-  console.log("Debug - Pomodoro: toggleTaskCompletion function:", toggleTaskCompletion);
 
   // Request notification permission on mount
   useEffect(() => {
@@ -84,8 +82,6 @@ export default function PomodoroPage() {
   };
 
   const handleStartTimer = (setup: SessionSetup) => {
-    console.log("Debug - Setting sessionSetup:", setup);
-    console.log("Debug - Current tasks:", tasks);
     setSessionSetup(setup);
     setCurrentPhase("timer");
     startTimer(setup, "focus");
@@ -138,11 +134,7 @@ export default function PomodoroPage() {
     notifications.showSessionComplete();
     
     // Mark task as completed
-    if (toggleTaskCompletion) {
-      toggleTaskCompletion(sessionSetup.taskId);
-    } else {
-      storage.toggleTaskCompletion(sessionSetup.taskId);
-    }
+    storage.toggleTaskCompletion(sessionSetup.taskId);
     
     // Record the session as completed
     addRecord({
@@ -169,6 +161,13 @@ export default function PomodoroPage() {
     // Play achievement sound and show confetti
     audioManager.playAchievement();
     setShowConfettiModal(true);
+    
+    // Force reload tasks after completion
+    setTimeout(() => {
+      const updatedTasks = storage.getTasks();
+      // Force component re-render by updating tasks state manually
+      window.location.reload = () => window.location.reload();
+    }, 100);
   };
 
   const handleTaskNotCompleted = () => {
