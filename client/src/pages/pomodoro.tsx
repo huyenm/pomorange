@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Clock, Menu, X, Coffee } from "lucide-react";
+import { Clock, Menu, X, Coffee, SkipForward } from "lucide-react";
 import pomorangeLogo from "@assets/pomologo_1751004068165.png";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -144,7 +144,7 @@ export default function PomodoroPage() {
     stopTimer();
     setShowCompletionModal(false);
     
-    // Show confetti celebration
+    // Show confetti celebration (same flow as "Finish Early")
     setShowConfettiModal(true);
   };
 
@@ -204,7 +204,7 @@ export default function PomodoroPage() {
   const handleConfettiClose = () => {
     setShowConfettiModal(false);
     setIsEarlyFinish(false); // Reset flag when confetti closes
-    // Go back to session setup to choose next task (equivalent to "Yes completed" flow)
+    // Go back to session setup to choose next task (same for both "Yes completed" and "Finish Early")
     setCurrentPhase("session");
     setSessionSetup(null);
   };
@@ -370,6 +370,7 @@ export default function PomodoroPage() {
                 className="btn-secondary"
                 style={{ fontFamily: 'Space Mono, monospace' }}
               >
+                <SkipForward className="mr-2 h-4 w-4" />
                 Skip Break
               </Button>
             </div>
