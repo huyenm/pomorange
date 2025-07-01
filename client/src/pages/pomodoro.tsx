@@ -142,11 +142,11 @@ export default function PomodoroPage() {
       toggleTaskCompletion(sessionSetup.taskId);
     }
     
-    // Clear timer state to prevent duplicate modals
+    // Clear timer state and close completion modal
     stopTimer();
     setShowCompletionModal(false);
     
-    // Play achievement sound and show confetti celebration (same flow as "Finish Early")
+    // Skip directly to confetti - no modal needed
     audioManager.playAchievement();
     setShowConfettiModal(true);
   };
@@ -386,7 +386,7 @@ export default function PomodoroPage() {
       {/* Modals */}
       <TaskCompletionModal
         isOpen={showCompletionModal}
-        taskName={currentTaskName}
+        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Unknown task") : "Unknown task"}
         onCompleted={handleTaskCompleted}
         onNotCompleted={handleTaskNotCompleted}
       />
@@ -396,7 +396,7 @@ export default function PomodoroPage() {
       {/* Confetti Celebration Modal */}
       <ConfettiModal
         isOpen={showConfettiModal}
-        taskName={currentTaskName}
+        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Unknown task") : "Unknown task"}
         onClose={handleConfettiClose}
       />
     </div>
