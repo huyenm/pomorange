@@ -26,6 +26,7 @@ export default function PomodoroPage() {
   const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showConfettiModal, setShowConfettiModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isEarlyFinish, setIsEarlyFinish] = useState(false);
 
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
   const { tasks, addTask, deleteTask, toggleTaskCompletion } = useTasks();
@@ -40,9 +41,15 @@ export default function PomodoroPage() {
   useEffect(() => {
     if (!timerState.isRunning && timerState.timeRemaining === 0 && timerState.startTime) {
       if (timerState.sessionType === "focus") {
-        // Focus session completed - record and start break
+        // Focus session completed
         if (sessionSetup) {
-          // Show completion modal first - session will be recorded based on user choice
+          // If early finish flag is set, don't show completion modal
+          if (isEarlyFinish) {
+            setIsEarlyFinish(false); // Reset flag
+            return; // Exit early, confetti is already shown
+          }
+          
+          // Normal completion - show completion modal
           setShowCompletionModal(true);
           notifications.showSessionComplete();
         }
@@ -86,6 +93,9 @@ export default function PomodoroPage() {
   const handleFinishEarly = () => {
     if (!sessionSetup || !timerState.startTime) return;
     
+    // Set flag to prevent Time's Up modal from showing
+    setIsEarlyFinish(true);
+    
     const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
     const task = tasks.find(t => t.id === sessionSetup.taskId);
     
@@ -110,9 +120,7 @@ export default function PomodoroPage() {
 
     stopTimer();
     
-    // Close any open modals and show confetti directly (bypass Time's Up modal)
-    setShowCompletionModal(false);
-    setShowBreakModal(false);
+    // Show confetti directly (bypass Time's Up modal completely)
     setShowConfettiModal(true);
   };
 
@@ -201,6 +209,7 @@ export default function PomodoroPage() {
 
   const handleConfettiClose = () => {
     setShowConfettiModal(false);
+    setIsEarlyFinish(false); // Reset flag when confetti closes
     // Go back to session setup to choose next task (equivalent to "Yes completed" flow)
     setCurrentPhase("session");
     setSessionSetup(null);
