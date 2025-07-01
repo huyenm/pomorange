@@ -44,10 +44,17 @@ export function useTasks() {
 
   const toggleTaskCompletion = (id: string) => {
     try {
+      console.log("Debug - Toggling task completion for ID:", id);
+      console.log("Debug - Tasks before toggle:", tasks);
+      
       storage.toggleTaskCompletion(id);
-      setTasks(prev => prev.map(task => 
-        task.id === id ? { ...task, completed: !task.completed } : task
-      ));
+      
+      // Reload tasks from storage to ensure consistency
+      const updatedTasks = storage.getTasks();
+      console.log("Debug - Tasks after storage update:", updatedTasks);
+      setTasks(updatedTasks);
+      
+      console.log("Debug - React state updated");
     } catch (error) {
       console.error("Failed to toggle task completion:", error);
       throw error;

@@ -48,11 +48,26 @@ export const storage = {
   },
 
   toggleTaskCompletion(id: string): void {
-    const tasks = this.getTasks();
-    const updatedTasks = tasks.map(task => 
-      task.id === id ? { ...task, completed: !task.completed } : task
-    );
-    this.saveTasks(updatedTasks);
+    try {
+      const tasks = this.getTasks();
+      console.log("Debug - Storage: Current tasks before toggle:", tasks);
+      console.log("Debug - Storage: Toggling task with ID:", id);
+      
+      const updatedTasks = tasks.map(task => 
+        task.id === id ? { ...task, completed: !task.completed } : task
+      );
+      console.log("Debug - Storage: Tasks after toggle:", updatedTasks);
+      
+      this.saveTasks(updatedTasks);
+      console.log("Debug - Storage: Tasks saved to localStorage");
+      
+      // Verify the save worked
+      const verifyTasks = this.getTasks();
+      console.log("Debug - Storage: Verification read from localStorage:", verifyTasks);
+    } catch (error) {
+      console.error("Error toggling task completion:", error);
+      throw error;
+    }
   },
 
   // Session Records
