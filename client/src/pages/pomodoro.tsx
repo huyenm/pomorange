@@ -22,7 +22,7 @@ export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const [showBreakModal, setShowBreakModal] = useState(false);
+
   const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showConfettiModal, setShowConfettiModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -51,7 +51,6 @@ export default function PomodoroPage() {
       } else if (timerState.sessionType === "break") {
         // Break ended - continue with same task
         setIsBreakRunning(false);
-        setShowBreakModal(false);
         notifications.showBreakEnd();
         
         if (sessionSetup) {
@@ -170,7 +169,6 @@ export default function PomodoroPage() {
     // Task not completed, start break and show break interface
     if (sessionSetup) {
       setIsBreakRunning(true);
-      setShowBreakModal(true);
       startBreak(sessionSetup.breakDuration);
     }
   };
@@ -178,7 +176,6 @@ export default function PomodoroPage() {
   const handleSkipBreak = () => {
     stopTimer();
     setIsBreakRunning(false);
-    setShowBreakModal(false);
     
     if (sessionSetup) {
       const task = tasks.find(t => t.id === sessionSetup.taskId);
@@ -366,6 +363,14 @@ export default function PomodoroPage() {
               <p className="text-gray-600 mb-6">
                 Take a well-deserved break
               </p>
+              <Button 
+                variant="outline" 
+                onClick={handleSkipBreak}
+                className="btn-secondary"
+                style={{ fontFamily: 'Space Mono, monospace' }}
+              >
+                Skip Break
+              </Button>
             </div>
           </div>
         )}
@@ -381,12 +386,7 @@ export default function PomodoroPage() {
         onNotCompleted={handleTaskNotCompleted}
       />
 
-      {/* Break Timer Modal */}
-      <BreakTimerModal
-        isOpen={showBreakModal}
-        timerState={timerState}
-        onSkipBreak={handleSkipBreak}
-      />
+
 
       {/* Confetti Celebration Modal */}
       <ConfettiModal
