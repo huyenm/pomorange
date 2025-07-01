@@ -24,6 +24,7 @@ export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
   const [completionSessionSetup, setCompletionSessionSetup] = useState<SessionSetup | null>(null);
+  const [completionStartTime, setCompletionStartTime] = useState<Date | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   const [isBreakRunning, setIsBreakRunning] = useState(false);
@@ -47,8 +48,9 @@ export default function PomodoroPage() {
       if (timerState.sessionType === "focus") {
         // Focus session completed naturally - show completion modal
         if (sessionSetup) {
-          // Save sessionSetup for the completion modal before showing it
+          // Save sessionSetup and startTime for the completion modal before showing it
           setCompletionSessionSetup(sessionSetup);
+          setCompletionStartTime(timerState.startTime);
           setShowCompletionModal(true);
           notifications.showSessionComplete();
           stopTimer(); // Stop timer to prevent re-triggers
@@ -130,9 +132,10 @@ export default function PomodoroPage() {
   const handleTaskCompleted = () => {
     console.log("handleTaskCompleted called");
     const setupToUse = completionSessionSetup || sessionSetup;
+    const startTimeToUse = completionStartTime || timerState.startTime;
     
-    if (!setupToUse || !timerState.startTime) {
-      console.log("Missing sessionSetup or startTime", { setupToUse, startTime: timerState.startTime });
+    if (!setupToUse || !startTimeToUse) {
+      console.log("Missing sessionSetup or startTime", { setupToUse, startTime: startTimeToUse });
       return;
     }
     
@@ -154,7 +157,7 @@ export default function PomodoroPage() {
     addRecord({
       taskId: setupToUse.taskId,
       taskName: task?.text || "Unknown Task",
-      startTimestamp: timerState.startTime,
+      startTimestamp: startTimeToUse,
       endTimestamp: new Date(),
       plannedMinutes: setupToUse.focusDuration,
       actualMinutes: setupToUse.focusDuration,
@@ -169,8 +172,9 @@ export default function PomodoroPage() {
     setShowConfettiModal(true);
     console.log("Confetti modal shown");
     
-    // Clear the completion session setup
+    // Clear the completion session setup and start time
     setCompletionSessionSetup(null);
+    setCompletionStartTime(null);
     
     // Force tasks refresh after a short delay
     setTimeout(() => {

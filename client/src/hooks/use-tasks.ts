@@ -19,6 +19,17 @@ export function useTasks() {
     };
 
     loadTasks();
+    
+    // Listen for storage events to refresh tasks
+    const handleStorageChange = () => {
+      loadTasks();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const addTask = (text: string) => {
