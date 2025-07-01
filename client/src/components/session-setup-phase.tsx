@@ -37,6 +37,8 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
       breakDuration: parseInt(breakDuration),
     };
     
+    console.log("Debug - Creating setup with taskId:", selectedTaskId);
+    console.log("Debug - Selected task object:", selectedTask);
     onStartTimer(setup);
   };
 

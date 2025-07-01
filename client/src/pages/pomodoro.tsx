@@ -45,7 +45,9 @@ export default function PomodoroPage() {
       if (timerState.sessionType === "focus") {
         // Focus session completed naturally
         if (sessionSetup) {
-          // Normal completion - show completion modal
+          // Normal completion - show completion modal with correct task name
+          console.log("Debug - Timer completed for sessionSetup:", sessionSetup);
+          console.log("Debug - Available tasks:", tasks);
           setShowCompletionModal(true);
           notifications.showSessionComplete();
         }
@@ -78,10 +80,11 @@ export default function PomodoroPage() {
   };
 
   const handleStartTimer = (setup: SessionSetup) => {
+    console.log("Debug - Setting sessionSetup:", setup);
+    console.log("Debug - Current tasks:", tasks);
     setSessionSetup(setup);
     setCurrentPhase("timer");
     startTimer(setup, "focus");
-    // Play session start sound and notification
     notifications.showSessionStart();
   };
 
@@ -135,18 +138,18 @@ export default function PomodoroPage() {
         actualMinutes: sessionSetup.focusDuration,
         actualFinishedEarly: false,
         breakDuration: sessionSetup.breakDuration,
-        completed: true, // Task was completed
+        completed: true,
       });
       
       // Mark task as completed
       toggleTaskCompletion(sessionSetup.taskId);
     }
     
-    // Clear timer state and close completion modal
+    // Clear timer state and immediately close modal
     stopTimer();
     setShowCompletionModal(false);
     
-    // Skip directly to confetti - no modal needed
+    // Directly show confetti with achievement sound
     audioManager.playAchievement();
     setShowConfettiModal(true);
   };
@@ -386,7 +389,7 @@ export default function PomodoroPage() {
       {/* Modals */}
       <TaskCompletionModal
         isOpen={showCompletionModal}
-        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || "Unknown task") : "Unknown task"}
+        taskName={sessionSetup ? (tasks.find(t => t.id === sessionSetup.taskId)?.text || `Task ${sessionSetup.taskId.slice(0, 8)}`) : "Unknown task"}
         onCompleted={handleTaskCompleted}
         onNotCompleted={handleTaskNotCompleted}
       />
