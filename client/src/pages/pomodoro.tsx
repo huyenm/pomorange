@@ -152,6 +152,8 @@ export default function PomodoroPage() {
     // Play achievement sound and show confetti directly
     audioManager.playAchievement();
     setShowConfettiModal(true);
+    
+    console.log("Debug - Task completed, should update task list");
   };
 
   const handleTaskNotCompleted = () => {
