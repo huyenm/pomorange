@@ -8,7 +8,7 @@ import { SessionSetupPhase } from "@/components/session-setup-phase";
 import { TimerPhase } from "@/components/timer-phase";
 import { ReportsPhase } from "@/components/history-phase";
 import { TaskCompletionModal } from "@/components/task-completion-modal";
-import { BreakTimerModal } from "@/components/break-timer-modal";
+
 import { ConfettiModal } from "@/components/confetti-modal";
 import { usePomodoro } from "@/hooks/use-pomodoro";
 import { useTasks } from "@/hooks/use-tasks";
@@ -141,7 +141,6 @@ export default function PomodoroPage() {
     }
     
     setShowCompletionModal(false);
-    setShowBreakModal(false);
     
     // Show confetti celebration
     setShowConfettiModal(true);
