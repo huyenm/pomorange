@@ -12,12 +12,15 @@ class AudioManager {
     // Preload audio files
     const bellBegin = new Audio(bellBeginSound);
     const bellAchieve = new Audio(bellAchieveSound);
+    const achievement = new Audio("/mixkit-achievement-completed-2068_1751336528070.wav");
     
     bellBegin.volume = 0.7;
     bellAchieve.volume = 0.7;
+    achievement.volume = 0.8;
     
     this.audioCache.set('bell-begin', bellBegin);
     this.audioCache.set('bell-achieve', bellAchieve);
+    this.audioCache.set('achievement', achievement);
   }
 
   private async playAudio(key: string) {
@@ -46,6 +49,10 @@ class AudioManager {
 
   async playBreakFinish() {
     await this.playAudio('bell-achieve');
+  }
+
+  async playAchievement() {
+    await this.playAudio('achievement');
   }
 }
 
