@@ -129,47 +129,46 @@ export default function PomodoroPage() {
   };
 
   const handleTaskCompleted = () => {
-    if (sessionSetup && timerState.startTime) {
-      const task = tasks.find(t => t.id === sessionSetup.taskId);
-      
-      // Record the completed session
-      addRecord({
-        taskId: sessionSetup.taskId,
-        taskName: task?.text || "Unknown Task",
-        startTimestamp: timerState.startTime,
-        endTimestamp: new Date(),
-        plannedMinutes: sessionSetup.focusDuration,
-        actualMinutes: sessionSetup.focusDuration,
-        actualFinishedEarly: false,
-        breakDuration: sessionSetup.breakDuration,
-        completed: true,
-      });
-      
-      // Mark task as completed
-      console.log("Debug - About to call toggleTaskCompletion with ID:", sessionSetup.taskId);
-      if (toggleTaskCompletion) {
-        toggleTaskCompletion(sessionSetup.taskId);
-        console.log("Debug - toggleTaskCompletion called");
-      } else {
-        console.error("Debug - toggleTaskCompletion is null/undefined!");
-        // Manually update the task
-        const updatedTasks = tasks.map(task => 
-          task.id === sessionSetup.taskId ? { ...task, completed: true } : task
-        );
-        console.log("Debug - Manually updating tasks:", updatedTasks);
-        // We need to access the storage directly
-        storage.toggleTaskCompletion(sessionSetup.taskId);
-      }
+    if (!sessionSetup || !timerState.startTime) return;
+    
+    const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
+    const task = tasks.find(t => t.id === sessionSetup.taskId);
+    
+    // Play finish sound and show notification
+    notifications.showSessionComplete();
+    
+    // Mark task as completed
+    if (toggleTaskCompletion) {
+      toggleTaskCompletion(sessionSetup.taskId);
+    } else {
+      storage.toggleTaskCompletion(sessionSetup.taskId);
     }
+    
+    // Record the session as completed
+    addRecord({
+      taskId: sessionSetup.taskId,
+      taskName: task?.text || "Unknown Task",
+      startTimestamp: timerState.startTime,
+      endTimestamp: new Date(),
+      plannedMinutes: sessionSetup.focusDuration,
+      actualMinutes: sessionSetup.focusDuration,
+      actualFinishedEarly: false,
+      breakDuration: sessionSetup.breakDuration,
+      completed: true,
+    });
+
+    // Stop timer first, then set flag and show confetti
+    stopTimer();
+    
+    // Set flag to prevent useEffect from triggering completion modal
+    setIsEarlyFinish(true);
     
     // Close completion modal immediately
     setShowCompletionModal(false);
     
-    // Play achievement sound and show confetti directly
+    // Play achievement sound and show confetti
     audioManager.playAchievement();
     setShowConfettiModal(true);
-    
-    console.log("Debug - Task completed, should update task list");
   };
 
   const handleTaskNotCompleted = () => {
