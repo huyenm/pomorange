@@ -65,11 +65,25 @@ export function useTasks() {
       throw error;
     }
   };
+
+  const updateTask = (id: string, newText: string) => {
+    try {
+      storage.updateTask(id, newText);
+      
+      // Reload tasks from storage to ensure consistency
+      const updatedTasks = storage.getTasks();
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      throw error;
+    }
+  };
   
   return {
     tasks,
     addTask,
     deleteTask,
+    updateTask,
     toggleTaskCompletion,
     isLoading,
   };
