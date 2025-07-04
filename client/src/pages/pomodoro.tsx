@@ -33,7 +33,7 @@ export default function PomodoroPage() {
   const [isEarlyFinish, setIsEarlyFinish] = useState(false);
 
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
-  const { tasks, addTask, deleteTask, toggleTaskCompletion } = useTasks();
+  const { tasks, addTask, deleteTask, updateTask, toggleTaskCompletion } = useTasks();
   const { addRecord } = useSessions();
 
   // Request notification permission on mount

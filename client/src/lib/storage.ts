@@ -47,6 +47,22 @@ export const storage = {
     this.saveTasks(tasks);
   },
 
+  updateTask(id: string, newText: string): void {
+    try {
+      const tasks = this.getTasks();
+      const updatedTasks = tasks.map(task => {
+        if (task.id === id) {
+          return { ...task, text: newText };
+        }
+        return task;
+      });
+      this.saveTasks(updatedTasks);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      throw error;
+    }
+  },
+
   toggleTaskCompletion(id: string): void {
     try {
       const tasks = this.getTasks();
