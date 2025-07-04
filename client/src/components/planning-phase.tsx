@@ -157,7 +157,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEditTask(task)}
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          className="text-slate-400 hover:text-blue-500"
                         >
                           <Edit2 className="h-4 w-4" />
                         </Button>
