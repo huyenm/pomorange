@@ -46,7 +46,8 @@ export default function PomodoroPage() {
     // Only handle natural timer completion (not early finish)
     if (!timerState.isRunning && timerState.timeRemaining === 0 && timerState.startTime && !isEarlyFinish) {
       if (timerState.sessionType === "focus") {
-        // Focus session completed naturally - show completion modal
+        // Focus session completed naturally - play sound and show completion modal
+        audioManager.playSessionFinish();
         if (sessionSetup) {
           // Save sessionSetup and startTime for the completion modal before showing it
           setCompletionSessionSetup(sessionSetup);
@@ -67,6 +68,7 @@ export default function PomodoroPage() {
             setCurrentPhase("timer");
             startTimer(sessionSetup, "focus");
             notifications.showSessionStart();
+            audioManager.playSessionStart();
           } else {
             // Task completed, go to session setup
             setCurrentPhase("session");
@@ -91,6 +93,7 @@ export default function PomodoroPage() {
     setCurrentPhase("timer");
     startTimer(setup, "focus");
     notifications.showSessionStart();
+    audioManager.playSessionStart();
   };
 
   const handleFinishEarly = () => {
@@ -100,6 +103,7 @@ export default function PomodoroPage() {
     const task = tasks.find(t => t.id === sessionSetup.taskId);
     
     // Play finish sound and show notification
+    audioManager.playSessionFinish();
     notifications.showSessionComplete();
     
     // Mark task as completed
@@ -227,6 +231,7 @@ export default function PomodoroPage() {
         setCurrentPhase("timer");
         startTimer(sessionSetup, "focus");
         notifications.showSessionStart();
+        audioManager.playSessionStart();
       } else {
         // Task was completed, go to session setup
         setCurrentPhase("session");
@@ -266,23 +271,23 @@ export default function PomodoroPage() {
     <div className="min-h-screen bg-[#FEF5F0]">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-orange-200">
-        <div className="max-w-6xl mx-auto px-4 py-4">
+        <div className="max-w-6xl mx-auto px-4 py-4 mobile-container">
           <div className="flex items-center justify-between">
             <div className="flex items-center flex-shrink-0">
               <img 
                 src="/pomologo.png" 
                 alt="Pomorange Logo" 
-                className="w-[160px] h-[41.03px] object-contain"
+                className="w-[120px] h-[30px] sm:w-[160px] sm:h-[41.03px] object-contain"
               />
             </div>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-1 bg-orange-100 rounded-lg p-1">
+            <nav className="hidden md:flex space-x-1 bg-orange-100 rounded-lg p-1 mobile-navigation">
               <Button
                 variant={currentPhase === "planning" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("planning")}
-                className={currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}
+                className={currentPhase === "planning" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
                 style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Planning
@@ -291,7 +296,7 @@ export default function PomodoroPage() {
                 variant={currentPhase === "session" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("session")}
-                className={currentPhase === "session" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}
+                className={currentPhase === "session" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
                 style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Setup
@@ -300,7 +305,7 @@ export default function PomodoroPage() {
                 variant={currentPhase === "reports" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("reports")}
-                className={currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}
+                className={currentPhase === "reports" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
                 style={{ fontFamily: 'Space Mono, monospace' }}
               >
                 Reports

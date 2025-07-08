@@ -72,17 +72,17 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   };
 
   return (
-    <div className="flex gap-8">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 px-4">
       {/* Tasks Section - Flexible width */}
       <div className="flex-1">
         <Card className="card-orange-border">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold card-heading text-heading-custom">Today's Tasks</CardTitle>
+            <CardTitle className="text-lg sm:text-xl font-semibold card-heading text-heading-custom mobile-text-small">Today's Tasks</CardTitle>
             <Badge variant="secondary">{activeTasks.length} active</Badge>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6 mobile-task-card">
           {/* Add Task Form */}
           <div className="p-4 bg-orange-50 rounded-lg border-2 border-dashed border-orange-200">
             <div className="flex space-x-3">
@@ -111,7 +111,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               activeTasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-center justify-between p-4 bg-orange-50 rounded-lg border border-orange-200 hover:border-orange-300 transition-colors"
+                  className="flex items-center justify-between p-3 sm:p-4 bg-orange-50 rounded-lg border border-orange-200 hover:border-orange-300 transition-colors mobile-task-card"
                 >
                   <div className="flex items-center space-x-3 flex-1">
                     <Checkbox

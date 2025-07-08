@@ -53,7 +53,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 px-4">
       {/* Timer Display */}
       <Card>
         <CardHeader>
@@ -62,18 +62,18 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
               <Clock className="mr-2 h-4 w-4" />
               {timerState.sessionType === "focus" ? "Focus Session" : "Break Time"}
             </Badge>
-            <CardTitle className="text-lg font-medium mb-2" style={{ fontFamily: 'Space Mono, monospace' }}>
+            <CardTitle className="text-base sm:text-lg font-medium mb-2 mobile-text-small" style={{ fontFamily: 'Space Mono, monospace' }}>
               {currentTask?.text || "Unknown Task"}
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="text-center space-y-8">
+        <CardContent className="text-center space-y-6 sm:space-y-8 mobile-task-card">
           {/* Countdown Display */}
           <div>
-            <div className="text-6xl md:text-7xl font-bold text-[#F3793A] mb-4 font-mono">
+            <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#F3793A] mb-4 font-mono mobile-timer-display">
               {formatTime(timerState.timeRemaining)}
             </div>
-            <div className="text-slate-600 space-y-1">
+            <div className="text-slate-600 space-y-1 text-sm sm:text-base mobile-text-small">
               <p>Started at {formatStartTime(timerState.startTime)}</p>
               <p>Will finish at {formatFinishTime(timerState.finishTime)}</p>
             </div>
@@ -89,11 +89,12 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
           </div>
 
           {/* Timer Controls */}
-          <div className="flex justify-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <Button
               variant="outline"
               onClick={onPauseTimer}
               disabled={!timerState.isRunning}
+              className="mobile-button-compact"
             >
               {timerState.isPaused ? (
                 <>
@@ -112,6 +113,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
               <Button
                 variant="destructive"
                 onClick={onQuitSession}
+                className="mobile-button-compact"
               >
                 <X className="mr-2 h-4 w-4" />
                 Quit
@@ -121,7 +123,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
             {timerState.sessionType === "focus" && (
               <Button
                 onClick={onFinishEarly}
-                className="btn-primary"
+                className="btn-primary mobile-button-compact"
               >
                 <Check className="mr-2 h-4 w-4" />
                 I've Finished Early
@@ -132,7 +134,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
       </Card>
 
       {/* Session Info */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-[#F3793A] mb-1">{stats.totalSessions}</div>
