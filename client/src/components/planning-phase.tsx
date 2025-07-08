@@ -78,7 +78,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
         <Card className="card-orange-border">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg sm:text-xl font-semibold card-heading text-heading-custom mobile-text-small">Today's Tasks</CardTitle>
+            <CardTitle className="text-lg sm:text-xl font-semibold card-heading text-heading-custom mobile-text-2xl">Today's Tasks</CardTitle>
             <Badge variant="secondary">{activeTasks.length} active</Badge>
           </div>
         </CardHeader>
@@ -235,7 +235,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
       {/* Monthly Calendar */}
       <Card className="card-orange-border">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold card-heading text-heading-custom flex items-center">
+          <CardTitle className="text-base sm:text-lg font-semibold card-heading text-heading-custom flex items-center mobile-text-2xl">
             <CalendarIcon className="mr-2 h-6 w-6 text-[#F3793A]" />
             Monthly Calendar
           </CardTitle>

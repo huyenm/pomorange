@@ -47,13 +47,16 @@ export default function PomodoroPage() {
     if (!timerState.isRunning && timerState.timeRemaining === 0 && timerState.startTime && !isEarlyFinish) {
       if (timerState.sessionType === "focus") {
         // Focus session completed naturally - play sound and show completion modal
-        audioManager.playSessionFinish();
         if (sessionSetup) {
           // Save sessionSetup and startTime for the completion modal before showing it
           setCompletionSessionSetup(sessionSetup);
           setCompletionStartTime(timerState.startTime);
-          setShowCompletionModal(true);
+          
+          // Play session finish sound when Time's up modal appears
+          audioManager.playSessionFinish();
           notifications.showSessionComplete();
+          
+          setShowCompletionModal(true);
           stopTimer(); // Stop timer to prevent re-triggers
         }
       } else if (timerState.sessionType === "break") {
@@ -384,7 +387,7 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto py-4 sm:py-8 px-4 min-h-screen mobile-container">
+      <main className="max-w-6xl mx-auto py-4 sm:py-8 min-h-screen mobile-container" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
         {currentPhase === "planning" && (
           <PlanningPhase onStartSession={handleStartSession} />
         )}

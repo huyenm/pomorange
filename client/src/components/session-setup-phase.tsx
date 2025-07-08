@@ -50,8 +50,8 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
       <Card className="card-orange-border">
         <CardHeader>
           <div className="text-center">
-            <CardTitle className="text-2xl font-semibold mb-2 card-heading text-heading-custom">Setup Your Session</CardTitle>
-            <p className="text-muted-custom">Configure your focus and break durations</p>
+            <CardTitle className="text-xl sm:text-2xl font-semibold mb-2 card-heading text-heading-custom mobile-text-2xl">Setup Your Session</CardTitle>
+            <p className="text-sm sm:text-base text-muted-custom mobile-text-p">Configure your focus and break durations</p>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -245,11 +245,11 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
           </div>
 
           {/* Action Buttons */}
-          <div className="flex space-x-4 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
             <Button
               variant="outline"
               onClick={onBackToPlanning}
-              className="btn-secondary flex-1"
+              className="btn-secondary flex-1 mobile-button-compact"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Planning
@@ -257,7 +257,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
             <Button
               onClick={handleBeginTimer}
               disabled={!selectedTaskId || !focusDuration || !breakDuration}
-              className="btn-primary flex-1"
+              className="btn-primary flex-1 mobile-button-compact"
             >
               <Play className="mr-2 h-4 w-4" />
               Begin Timer

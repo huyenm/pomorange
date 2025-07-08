@@ -62,7 +62,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
               <Clock className="mr-2 h-4 w-4" />
               {timerState.sessionType === "focus" ? "Focus Session" : "Break Time"}
             </Badge>
-            <CardTitle className="text-base sm:text-lg font-medium mb-2 mobile-text-small" style={{ fontFamily: 'Space Mono, monospace' }}>
+            <CardTitle className="text-base sm:text-lg font-medium mb-2 mobile-text-p" style={{ fontFamily: 'Space Mono, monospace' }}>
               {currentTask?.text || "Unknown Task"}
             </CardTitle>
           </div>

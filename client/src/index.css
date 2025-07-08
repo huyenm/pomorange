@@ -195,4 +195,13 @@
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
+  
+  /* Mobile text size adjustments */
+  .mobile-text-2xl {
+    font-size: 20px !important;
+  }
+  
+  .mobile-text-p {
+    font-size: 16px !important;
+  }
 }
