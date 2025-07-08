@@ -212,11 +212,13 @@ export default function PomodoroPage() {
     // Close completion modal and start break
     setShowCompletionModal(false);
     
-    // Start break automatically
-    if (sessionSetup) {
+    // Start break automatically - keeping the same setup to continue after break
+    if (setupToUse) {
+      setSessionSetup(setupToUse); // Ensure sessionSetup is preserved
       setIsBreakRunning(true);
-      startBreak(sessionSetup.breakDuration);
-      notifications.showBreakStart(sessionSetup.breakDuration);
+      startBreak(setupToUse.breakDuration);
+      notifications.showBreakStart(setupToUse.breakDuration);
+      audioManager.playBreakStart();
     }
   };
 
@@ -382,7 +384,7 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto py-8 px-4 min-h-screen">
+      <main className="max-w-6xl mx-auto py-4 sm:py-8 px-4 min-h-screen mobile-container">
         {currentPhase === "planning" && (
           <PlanningPhase onStartSession={handleStartSession} />
         )}
@@ -438,7 +440,14 @@ export default function PomodoroPage() {
       {/* Task Completion Modal */}
       <TaskCompletionModal
         isOpen={showCompletionModal}
-        taskName={completionTaskName}
+        taskName={(() => {
+          const setupToUse = completionSessionSetup || sessionSetup;
+          if (setupToUse) {
+            const task = tasks.find(t => t.id === setupToUse.taskId);
+            return task?.text || setupToUse.taskName || "Focus Session";
+          }
+          return "Focus Session";
+        })()}
         onCompleted={handleTaskCompleted}
         onNotCompleted={handleTaskNotCompleted}
       />

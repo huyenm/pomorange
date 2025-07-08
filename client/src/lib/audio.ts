@@ -14,8 +14,8 @@ class AudioManager {
     const bellAchieve = new Audio("/bell-achieve.wav"); // Use the renamed file
     const achievement = new Audio(achievementSound);
     
-    bellBegin.volume = 0.7;
-    bellAchieve.volume = 0.7;
+    bellBegin.volume = 0.9; // Increased for clarity
+    bellAchieve.volume = 0.9; // Increased for clarity
     achievement.volume = 0.8;
     
     this.audioCache.set('bell-begin', bellBegin);

@@ -164,3 +164,35 @@
 .notification {
   @apply fixed top-4 right-4 z-50;
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .mobile-task-card {
+    padding: 12px;
+  }
+  
+  .mobile-timer-display {
+    font-size: 3rem;
+    line-height: 1.1;
+  }
+  
+  .mobile-text-small {
+    font-size: 0.9rem;
+  }
+  
+  .mobile-button-compact {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+  
+  /* Ensure 16px padding on mobile */
+  .mobile-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  main.mobile-container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
