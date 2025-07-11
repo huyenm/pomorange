@@ -221,4 +221,17 @@
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
+  
+  /* Tablet/Medium desktop specific padding (769px - 1192px) */
+  @media (min-width: 769px) and (max-width: 1192px) {
+    .page-padding {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+    
+    .nav-padding {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+  }
 }
