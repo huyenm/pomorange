@@ -72,7 +72,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-custom">
       {/* Tasks Section - Flexible width */}
       <div className="flex-1">
         <Card className="card-orange-border">

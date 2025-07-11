@@ -233,5 +233,38 @@
       padding-left: 16px !important;
       padding-right: 16px !important;
     }
+    
+    /* Force padding on main containers in this viewport range */
+    main {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+    
+    header > div {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+    
+    /* Override max-width containers to ensure padding */
+    .max-w-6xl {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+    
+    /* Ensure all child containers respect padding */
+    .max-w-6xl > * {
+      box-sizing: border-box;
+    }
+  }
+  
+  /* Change lg:gap-8 to 24px and create custom gap class */
+  @media (min-width: 1024px) {
+    .lg\:gap-8 {
+      gap: 24px !important;
+    }
+    
+    .lg\:gap-custom {
+      gap: 24px !important;
+    }
   }
 }

@@ -278,7 +278,7 @@ export default function PomodoroPage() {
     <div className="min-h-screen bg-[#FEF5F0]">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-orange-200">
-        <div className="max-w-6xl mx-auto nav-padding py-4">
+        <div className="max-w-6xl mx-auto py-4" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center flex-shrink-0">
               <img 
@@ -389,7 +389,7 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto py-4 sm:py-8 min-h-screen page-padding">
+      <main className="max-w-6xl mx-auto py-4 sm:py-8 min-h-screen" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
           {currentPhase === "planning" && (
             <PlanningPhase onStartSession={handleStartSession} />
           )}
