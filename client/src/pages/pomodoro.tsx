@@ -61,13 +61,17 @@ export default function PomodoroPage() {
         }
       } else if (timerState.sessionType === "break") {
         // Break ended - automatically continue with same task
+        console.log("Break completed! Current sessionSetup:", sessionSetup);
         setIsBreakRunning(false);
         notifications.showBreakEnd();
         
         if (sessionSetup) {
           const task = tasks.find(t => t.id === sessionSetup.taskId);
+          console.log("Found task after break:", task);
+          
           if (task && !task.completed) {
             // Automatically start a new focus session with the same task
+            console.log("Starting new focus session after break with same task");
             setTimeout(() => {
               setCurrentPhase("timer");
               startTimer(sessionSetup, "focus");
@@ -76,10 +80,12 @@ export default function PomodoroPage() {
             }, 100); // Small delay to ensure clean state transition
           } else {
             // Task completed, go to session setup
+            console.log("Task was completed during break, going to session setup");
             setCurrentPhase("session");
             setSessionSetup(null);
           }
         } else {
+          console.log("No sessionSetup found after break, going to session setup");
           setCurrentPhase("session");
         }
         
@@ -196,15 +202,16 @@ export default function PomodoroPage() {
 
   const handleTaskNotCompleted = () => {
     const setupToUse = completionSessionSetup || sessionSetup;
+    const startTimeToUse = completionStartTime || timerState.startTime;
     
-    if (setupToUse && timerState.startTime) {
+    if (setupToUse && startTimeToUse) {
       const task = tasks.find(t => t.id === setupToUse.taskId);
       
       // Record the session but not completed
       addRecord({
         taskId: setupToUse.taskId,
         taskName: task?.text || "Unknown Task",
-        startTimestamp: timerState.startTime,
+        startTimestamp: startTimeToUse,
         endTimestamp: new Date(),
         plannedMinutes: setupToUse.focusDuration,
         actualMinutes: setupToUse.focusDuration,
@@ -219,11 +226,21 @@ export default function PomodoroPage() {
     
     // Start break automatically - keeping the same setup to continue after break
     if (setupToUse) {
-      setSessionSetup(setupToUse); // Ensure sessionSetup is preserved
+      // CRITICAL: Ensure sessionSetup is preserved for after-break continuation
+      setSessionSetup(setupToUse); 
       setIsBreakRunning(true);
+      
+      // Clear completion state since we're moving to break
+      setCompletionSessionSetup(null);
+      setCompletionStartTime(null);
+      
+      // Start break timer
       startBreak(setupToUse.breakDuration);
       notifications.showBreakStart(setupToUse.breakDuration);
       audioManager.playBreakStart();
+      
+      console.log("Break started with preserved sessionSetup:", setupToUse);
+      console.log("Current sessionSetup state after setting:", sessionSetup);
     }
   };
 
