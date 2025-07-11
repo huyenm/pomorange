@@ -60,18 +60,20 @@ export default function PomodoroPage() {
           stopTimer(); // Stop timer to prevent re-triggers
         }
       } else if (timerState.sessionType === "break") {
-        // Break ended - continue with same task
+        // Break ended - automatically continue with same task
         setIsBreakRunning(false);
         notifications.showBreakEnd();
         
         if (sessionSetup) {
           const task = tasks.find(t => t.id === sessionSetup.taskId);
           if (task && !task.completed) {
-            // Continue with same task - start new focus session immediately
-            setCurrentPhase("timer");
-            startTimer(sessionSetup, "focus");
-            notifications.showSessionStart();
-            audioManager.playSessionStart();
+            // Automatically start a new focus session with the same task
+            setTimeout(() => {
+              setCurrentPhase("timer");
+              startTimer(sessionSetup, "focus");
+              notifications.showSessionStart();
+              audioManager.playSessionStart();
+            }, 100); // Small delay to ensure clean state transition
           } else {
             // Task completed, go to session setup
             setCurrentPhase("session");
@@ -387,57 +389,59 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto py-4 sm:py-8 min-h-screen mobile-container" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-        {currentPhase === "planning" && (
-          <PlanningPhase onStartSession={handleStartSession} />
-        )}
-        
-        {currentPhase === "session" && (
-          <SessionSetupPhase
-            onStartTimer={handleStartTimer}
-            onBackToPlanning={() => setCurrentPhase("planning")}
-          />
-        )}
-        
-        {currentPhase === "timer" && sessionSetup && !isBreakRunning && (
-          <TimerPhase
-            timerState={timerState}
-            sessionSetup={sessionSetup}
-            onPauseTimer={pauseTimer}
-            onFinishEarly={handleFinishEarly}
-            onQuitSession={handleQuitSession}
-          />
-        )}
-        
-        {isBreakRunning && (
-          <div className="max-w-md mx-auto text-center py-12">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Coffee className="h-8 w-8 text-amber-600" />
+      <main className="max-w-6xl mx-auto py-4 sm:py-8 min-h-screen">
+        <div className="px-4 sm:px-0">
+          {currentPhase === "planning" && (
+            <PlanningPhase onStartSession={handleStartSession} />
+          )}
+          
+          {currentPhase === "session" && (
+            <SessionSetupPhase
+              onStartTimer={handleStartTimer}
+              onBackToPlanning={() => setCurrentPhase("planning")}
+            />
+          )}
+          
+          {currentPhase === "timer" && sessionSetup && !isBreakRunning && (
+            <TimerPhase
+              timerState={timerState}
+              sessionSetup={sessionSetup}
+              onPauseTimer={pauseTimer}
+              onFinishEarly={handleFinishEarly}
+              onQuitSession={handleQuitSession}
+            />
+          )}
+          
+          {isBreakRunning && (
+            <div className="max-w-md mx-auto text-center py-12">
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Coffee className="h-8 w-8 text-amber-600" />
+                </div>
+                <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Mono, monospace' }}>
+                  Break Time!
+                </h2>
+                <div className="text-4xl font-bold text-amber-600 mb-6" style={{ fontFamily: 'Space Mono, monospace' }}>
+                  {Math.floor(timerState.timeRemaining / 60)}:{(timerState.timeRemaining % 60).toString().padStart(2, '0')}
+                </div>
+                <p className="text-gray-600 mb-6">
+                  Take a well-deserved break
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={handleSkipBreak}
+                  className="btn-secondary"
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  <SkipForward className="mr-2 h-4 w-4" />
+                  Skip Break
+                </Button>
               </div>
-              <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Mono, monospace' }}>
-                Break Time!
-              </h2>
-              <div className="text-4xl font-bold text-amber-600 mb-6" style={{ fontFamily: 'Space Mono, monospace' }}>
-                {Math.floor(timerState.timeRemaining / 60)}:{(timerState.timeRemaining % 60).toString().padStart(2, '0')}
-              </div>
-              <p className="text-gray-600 mb-6">
-                Take a well-deserved break
-              </p>
-              <Button 
-                variant="outline" 
-                onClick={handleSkipBreak}
-                className="btn-secondary"
-                style={{ fontFamily: 'Space Mono, monospace' }}
-              >
-                <SkipForward className="mr-2 h-4 w-4" />
-                Skip Break
-              </Button>
             </div>
-          </div>
-        )}
-        
-        {currentPhase === "reports" && <ReportsPhase />}
+          )}
+          
+          {currentPhase === "reports" && <ReportsPhase />}
+        </div>
       </main>
 
       {/* Task Completion Modal */}
