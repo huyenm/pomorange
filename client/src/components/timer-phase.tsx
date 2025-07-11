@@ -53,7 +53,7 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 px-4">
+    <div className="max-w-3xl mx-auto space-y-6">
       {/* Timer Display */}
       <Card>
         <CardHeader>

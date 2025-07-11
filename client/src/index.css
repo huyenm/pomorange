@@ -211,11 +211,14 @@
     font-size: 14px !important;
   }
   
-  /* Remove default px-4 padding on mobile for main container */
-  @media (max-width: 640px) {
-    .px-4 {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
+  /* Ensure consistent 16px padding for all pages and navigation */
+  .page-padding {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  .nav-padding {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
   }
 }
