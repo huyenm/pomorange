@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { Trash2, Plus, Clock, Coffee, Headphones, List, Calendar as CalendarIcon, Check, Edit2, Save, X } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, List, Calendar as CalendarIcon, Clock, Coffee, Headphones } from "lucide-react";
+import { TaskItem } from "@/components/task-item";
 import { useTasks } from "@/hooks/use-tasks";
 import { useSessions } from "@/hooks/use-sessions";
 import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
@@ -17,8 +17,7 @@ interface PlanningPhaseProps {
 export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   const [newTaskText, setNewTaskText] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-  const [editingTaskText, setEditingTaskText] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const { tasks, addTask, deleteTask, updateTask, toggleTaskCompletion } = useTasks();
   
   const activeTasks = tasks.filter(task => !task.completed);
@@ -38,30 +37,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
     }
   };
 
-  const handleEditTask = (task: any) => {
-    setEditingTaskId(task.id);
-    setEditingTaskText(task.text);
-  };
-
-  const handleSaveEdit = () => {
-    if (editingTaskId && editingTaskText.trim()) {
-      updateTask(editingTaskId, editingTaskText.trim());
-      setEditingTaskId(null);
-      setEditingTaskText("");
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditingTaskId(null);
-    setEditingTaskText("");
-  };
-
-  const handleEditKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSaveEdit();
-    } else if (e.key === "Escape") {
-      handleCancelEdit();
-    }
+  const handleSelectTask = (taskId: string) => {
+    setSelectedTaskId(taskId);
   };
 
   // Get sessions for a specific date
@@ -109,70 +86,15 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               </div>
             ) : (
               activeTasks.map((task) => (
-                <div
+                <TaskItem
                   key={task.id}
-                  className="flex items-center justify-between p-3 sm:p-4 bg-orange-50 rounded-lg border border-orange-200 hover:border-orange-300 transition-colors mobile-task-card"
-                >
-                  <div className="flex items-center space-x-3 flex-1">
-                    <Checkbox
-                      checked={task.completed}
-                      onCheckedChange={() => toggleTaskCompletion(task.id)}
-                      className="data-[state=checked]:bg-[#147E50] data-[state=checked]:border-[#147E50] flex-shrink-0"
-                    />
-                    {editingTaskId === task.id ? (
-                      <Input
-                        value={editingTaskText}
-                        onChange={(e) => setEditingTaskText(e.target.value)}
-                        onKeyDown={handleEditKeyPress}
-                        className="text-heading-custom font-medium flex-1"
-                        autoFocus
-                      />
-                    ) : (
-                      <span className="text-heading-custom font-medium flex-1">{task.text}</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 ml-2">
-                    {editingTaskId === task.id ? (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleSaveEdit}
-                          className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                        >
-                          <Save className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleCancelEdit}
-                          className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditTask(task)}
-                          className="text-slate-400 hover:text-blue-500"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteTask(task.id)}
-                          className="text-slate-400 hover:text-red-500"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
+                  task={task}
+                  isSelected={selectedTaskId === task.id}
+                  onSelect={() => handleSelectTask(task.id)}
+                  onUpdate={updateTask}
+                  onDelete={deleteTask}
+                  onToggleComplete={toggleTaskCompletion}
+                />
               ))
             )}
           </div>

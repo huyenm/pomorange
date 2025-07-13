@@ -4,6 +4,8 @@ import { z } from "zod";
 export const taskSchema = z.object({
   id: z.string(),
   text: z.string().min(1, "Task text is required"),
+  notes: z.string().optional(),
+  tags: z.array(z.string()).default([]),
   createdAt: z.date(),
   completed: z.boolean().default(false),
 });

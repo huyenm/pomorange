@@ -12,6 +12,8 @@ export const storage = {
       const parsed = JSON.parse(stored);
       return parsed.map((task: any) => ({
         ...task,
+        notes: task.notes || "",
+        tags: task.tags || [],
         createdAt: new Date(task.createdAt),
       }));
     } catch (error) {
@@ -28,10 +30,12 @@ export const storage = {
     }
   },
 
-  addTask(text: string): Task {
+  addTask(text: string, notes: string = "", tags: string[] = []): Task {
     const newTask: Task = {
       id: crypto.randomUUID(),
       text,
+      notes,
+      tags,
       createdAt: new Date(),
       completed: false,
     };
@@ -47,12 +51,12 @@ export const storage = {
     this.saveTasks(tasks);
   },
 
-  updateTask(id: string, newText: string): void {
+  updateTask(id: string, updates: Partial<Pick<Task, 'text' | 'notes' | 'tags'>>): void {
     try {
       const tasks = this.getTasks();
       const updatedTasks = tasks.map(task => {
         if (task.id === id) {
-          return { ...task, text: newText };
+          return { ...task, ...updates };
         }
         return task;
       });
