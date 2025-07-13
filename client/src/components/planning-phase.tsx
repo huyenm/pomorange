@@ -70,7 +70,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 value={newTaskText}
                 onChange={(e) => setNewTaskText(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="flex-1"
+                className="flex-1 h-10"
+                style={{ paddingLeft: '4px', paddingRight: '4px' }}
               />
               <Button onClick={handleAddTask} className="btn-primary w-10 h-10 p-0">
                 <Plus className="h-4 w-4" />
@@ -142,7 +143,6 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
             <Button
               onClick={onStartSession}
               className="btn-primary w-full py-4 text-base font-semibold"
-              style={{ fontFamily: 'Space Mono, monospace' }}
               disabled={activeTasks.length === 0}
             >
               Start Setting up Session
