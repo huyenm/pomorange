@@ -145,8 +145,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               className="btn-primary w-full py-4 text-base font-semibold"
               disabled={activeTasks.length === 0}
             >
+              <Clock className="mr-2 h-5 w-5" />
               Start Setting up Session
-              <Clock className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </CardContent>

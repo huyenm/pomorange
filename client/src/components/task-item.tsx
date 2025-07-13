@@ -105,7 +105,7 @@ export function TaskItem({
 
   if (isEditing) {
     return (
-      <div className="bg-white border-2 border-blue-200 rounded-lg p-4 space-y-3">
+      <div className="bg-white rounded-lg p-4 space-y-3">
         {/* Task Title Edit */}
         <div className="flex items-start space-x-3">
           <div 
@@ -124,7 +124,7 @@ export function TaskItem({
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
               onKeyDown={handleKeyPress}
-              className="text-base border-none p-0 focus:ring-0 font-medium"
+              className="text-base border-none p-0 focus:ring-0 font-medium bg-transparent focus:bg-transparent"
               placeholder="Task title..."
             />
             
@@ -135,7 +135,7 @@ export function TaskItem({
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
                 placeholder="Notes"
-                className="text-sm text-gray-600 border-none p-0 resize-none focus:ring-0 min-h-[24px]"
+                className="text-sm text-gray-600 border-none p-0 resize-none focus:ring-0 min-h-[24px] bg-transparent focus:bg-transparent"
                 rows={editNotes ? Math.max(1, editNotes.split('\n').length) : 1}
               />
               
@@ -144,7 +144,7 @@ export function TaskItem({
                 value={editTags}
                 onChange={(e) => setEditTags(e.target.value)}
                 placeholder="Add Tags (comma separated)"
-                className="text-sm text-blue-500 border-none p-0 focus:ring-0"
+                className="text-sm text-blue-500 border-none p-0 focus:ring-0 bg-transparent focus:bg-transparent"
               />
             </div>
           </div>
@@ -158,7 +158,7 @@ export function TaskItem({
             onClick={handleCancelEdit}
             className="h-7 px-3 text-xs"
           >
-            <X className="w-3 h-3 mr-1" />
+            <X className="w-3 h-3" />
             Cancel
           </Button>
           <Button
@@ -166,7 +166,7 @@ export function TaskItem({
             onClick={handleSaveEdit}
             className="h-7 px-3 text-xs btn-primary"
           >
-            <Check className="w-3 h-3 mr-1" />
+            <Check className="w-3 h-3" />
             Save
           </Button>
         </div>
