@@ -105,7 +105,7 @@ export function TaskItem({
 
   if (isEditing) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-3">
+      <div className="bg-white border border-gray-200 rounded-lg p-4 min-h-[72px]">
         {/* Task Title Edit */}
         <div className="flex items-start space-x-3">
           <div 
@@ -118,7 +118,7 @@ export function TaskItem({
             {task.completed && <Check className="w-3 h-3 text-white m-auto" />}
           </div>
           
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 space-y-2">
             <Input
               ref={textInputRef}
               value={editText}
@@ -129,7 +129,7 @@ export function TaskItem({
             />
             
             {/* Notes Section */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Textarea
                 ref={notesInputRef}
                 value={editNotes}
@@ -151,7 +151,7 @@ export function TaskItem({
         </div>
         
         {/* Edit Actions */}
-        <div className="flex justify-end space-x-2 pt-2">
+        <div className="flex justify-end space-x-2 pt-1">
           <Button
             size="sm"
             variant="ghost"
