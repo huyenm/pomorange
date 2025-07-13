@@ -83,6 +83,12 @@ export function TaskItem({
     }
   };
 
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    setShowDetails(true);
+  };
+
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsEditing(true);
@@ -120,7 +126,6 @@ export function TaskItem({
               onKeyDown={handleKeyPress}
               className="text-base border-none p-0 focus:ring-0 font-medium"
               placeholder="Task title..."
-              style={{ fontFamily: 'Space Mono, monospace' }}
             />
             
             {/* Notes Section */}
@@ -160,7 +165,6 @@ export function TaskItem({
             size="sm"
             onClick={handleSaveEdit}
             className="h-7 px-3 text-xs btn-primary"
-            style={{ fontFamily: 'Space Mono, monospace' }}
           >
             <Check className="w-3 h-3 mr-1" />
             Save
@@ -178,6 +182,7 @@ export function TaskItem({
           : "bg-white border-gray-200 hover:border-orange-200 hover:shadow-sm"
       } ${task.completed ? "opacity-75" : ""}`}
       onClick={handleTaskClick}
+      onDoubleClick={handleDoubleClick}
     >
       <div className="flex items-start space-x-3">
         {/* Completion Circle */}
@@ -197,8 +202,7 @@ export function TaskItem({
         
         {/* Task Content */}
         <div className="flex-1 min-w-0">
-          <div className={`text-base font-medium ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}
-               style={{ fontFamily: 'Space Mono, monospace' }}>
+          <div className={`text-base font-medium ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}>
             {task.text}
           </div>
           
@@ -231,14 +235,6 @@ export function TaskItem({
         
         {/* Action Buttons */}
         <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={handleEditClick}
-            className="h-7 w-7 p-0"
-          >
-            <Edit3 className="w-3 h-3" />
-          </Button>
           <Button
             size="sm"
             variant="ghost"

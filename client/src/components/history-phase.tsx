@@ -150,12 +150,13 @@ export function ReportsPhase() {
       <Card className="card-orange-border">
         <CardHeader>
           <div className="flex flex-col gap-4">
-            <CardTitle className="text-lg sm:text-xl font-semibold card-heading text-heading-custom flex items-center mobile-text-2xl">
-              <BarChart3 className="mr-2 h-6 w-6 text-[#F3793A]" />
-              Reports & Analytics
-            </CardTitle>
-            <div className="flex flex-col gap-3">
-              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <CardTitle className="text-lg sm:text-xl font-semibold card-heading text-heading-custom flex items-center mobile-text-2xl">
+                <BarChart3 className="mr-2 h-6 w-6 text-[#F3793A]" />
+                Reports & Analytics
+              </CardTitle>
+              <div className="flex flex-col sm:flex-row gap-3 lg:gap-4">
+                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-full sm:w-48 justify-between btn-secondary mobile-button-compact">
                     {viewMode === "today" && "Today"}
@@ -222,11 +223,12 @@ export function ReportsPhase() {
                     </div>
                   </div>
                 </PopoverContent>
-              </Popover>
-              <Button variant="outline" onClick={handleExport} className="btn-secondary w-full sm:w-auto mobile-button-compact">
-                <Download className="mr-2 h-4 w-4" />
-                Export Data
-              </Button>
+                </Popover>
+                <Button variant="outline" onClick={handleExport} className="btn-secondary w-full sm:w-auto mobile-button-compact">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export Data
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
