@@ -135,8 +135,8 @@ export function TaskItem({
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
                 placeholder="Notes"
-                className="text-sm text-gray-600 border-none p-0 resize-none focus:ring-0 h-6 bg-transparent focus:bg-transparent outline-none focus:outline-none editing-input"
-                rows={editNotes ? Math.max(1, editNotes.split('\n').length) : 1}
+                className="text-sm text-gray-600 border-none p-0 resize-none focus:ring-0 min-h-6 bg-transparent focus:bg-transparent outline-none focus:outline-none editing-input overflow-hidden"
+                rows={1}
               />
               
               {/* Tags Section */}
