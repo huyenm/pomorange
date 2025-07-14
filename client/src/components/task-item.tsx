@@ -187,14 +187,14 @@ export function TaskItem({
       onClick={handleTaskClick}
       onDoubleClick={handleDoubleClick}
     >
-      <div className="flex items-start space-x-3">
+      <div className="flex items-center space-x-3">
         {/* Completion Circle */}
         <button
           onClick={(e) => {
             e.stopPropagation();
             onToggleComplete(task.id);
           }}
-          className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-colors ${
+          className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-colors ${
             task.completed 
               ? "" 
               : "border-gray-300 hover:border-orange-400"
