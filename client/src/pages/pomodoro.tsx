@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Clock, Menu, X, Coffee, SkipForward } from "lucide-react";
-import pomorangeLogo from "@assets/pomologo_1751004068165.png";
+import logoNew from "@assets/logonew_1752473435452.png";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlanningPhase } from "@/components/planning-phase";
@@ -342,7 +342,7 @@ export default function PomodoroPage() {
                 className="cursor-pointer hover:opacity-80 transition-opacity"
               >
                 <img 
-                  src="@assets/logonew_1752473435452.png" 
+                  src={logoNew} 
                   alt="Pomorange Logo" 
                   className="w-[120px] h-[30px] sm:w-[160px] sm:h-[41.03px] object-contain"
                 />
