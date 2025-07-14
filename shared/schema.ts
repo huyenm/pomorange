@@ -1,33 +1,18 @@
 import { z } from "zod";
-import { pgTable, serial, text, boolean, timestamp, integer, varchar, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, boolean, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 
-// Session storage table (required for Replit Auth)
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)],
-);
-
-// User storage table (required for Replit Auth)
+// Drizzle table definitions
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
 });
 
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id),
   text: text("text").notNull(),
   notes: text("notes").default(""),
   tags: text("tags").array().default([]),
@@ -37,7 +22,7 @@ export const tasks = pgTable("tasks", {
 
 export const sessionRecords = pgTable("session_records", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id),
   taskId: integer("task_id").references(() => tasks.id),
   taskName: text("task_name").notNull(),
   startTimestamp: timestamp("start_timestamp").notNull(),
@@ -75,14 +60,13 @@ export const sessionRecordsRelations = relations(sessionRecords, ({ one }) => ({
 }));
 
 // Insert schemas
-export const insertUserSchema = createInsertSchema(users).omit({ createdAt: true, updatedAt: true });
+export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true });
 export const insertSessionRecordSchema = createInsertSchema(sessionRecords).omit({ id: true });
 
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type UpsertUser = typeof users.$inferInsert;
 export type Task = typeof tasks.$inferSelect;
 export type InsertTask = z.infer<typeof insertTaskSchema>;
 export type SessionRecord = typeof sessionRecords.$inferSelect;

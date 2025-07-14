@@ -1,47 +1,44 @@
-import { users, tasks, sessionRecords, type User, type UpsertUser, type Task, type InsertTask, type SessionRecord, type InsertSessionRecord } from "@shared/schema";
+import { users, tasks, sessionRecords, type User, type InsertUser, type Task, type InsertTask, type SessionRecord, type InsertSessionRecord } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
 // Storage interface for all data operations
 export interface IStorage {
-  // User operations (required for Replit Auth)
-  getUser(id: string): Promise<User | undefined>;
-  upsertUser(user: UpsertUser): Promise<User>;
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
   
   // Task operations
-  getTasks(userId: string): Promise<Task[]>;
+  getTasks(userId: number): Promise<Task[]>;
   createTask(task: InsertTask): Promise<Task>;
   updateTask(id: number, updates: Partial<InsertTask>): Promise<Task | undefined>;
   deleteTask(id: number): Promise<boolean>;
   
   // Session record operations
-  getSessionRecords(userId: string): Promise<SessionRecord[]>;
+  getSessionRecords(userId: number): Promise<SessionRecord[]>;
   createSessionRecord(record: InsertSessionRecord): Promise<SessionRecord>;
 }
 
 export class DatabaseStorage implements IStorage {
-  // User operations (required for Replit Auth)
-  async getUser(id: string): Promise<User | undefined> {
+  async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user;
+    return user || undefined;
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
+      .values(insertUser)
       .returning();
     return user;
   }
 
-  async getTasks(userId: string): Promise<Task[]> {
+  async getTasks(userId: number): Promise<Task[]> {
     return await db.select().from(tasks).where(eq(tasks.userId, userId));
   }
 
@@ -67,7 +64,7 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
-  async getSessionRecords(userId: string): Promise<SessionRecord[]> {
+  async getSessionRecords(userId: number): Promise<SessionRecord[]> {
     return await db.select().from(sessionRecords).where(eq(sessionRecords.userId, userId));
   }
 

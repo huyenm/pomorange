@@ -1,130 +1,84 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { apiRequest, queryClient } from '@/lib/queryClient';
-import type { Task } from '@shared/schema';
-import { isUnauthorizedError } from '@/lib/authUtils';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { Task } from "@shared/schema";
+import { storage } from "@/lib/storage";
 
 export function useTasks() {
-  const { toast } = useToast();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data: tasks = [], isLoading } = useQuery({
-    queryKey: ['/api/tasks'],
-    retry: false,
-  });
-
-  const addTaskMutation = useMutation({
-    mutationFn: async (taskData: { text: string; notes?: string; tags?: string[] }) => {
-      return await apiRequest('/api/tasks', {
-        method: 'POST',
-        body: JSON.stringify(taskData),
-        headers: { 'Content-Type': 'application/json' },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-    },
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
+  useEffect(() => {
+    const loadTasks = () => {
+      try {
+        const storedTasks = storage.getTasks();
+        setTasks(storedTasks);
+      } catch (error) {
+        console.error("Failed to load tasks:", error);
+      } finally {
+        setIsLoading(false);
       }
-      toast({
-        title: "Error",
-        description: "Failed to add task",
-        variant: "destructive",
-      });
-    },
-  });
+    };
 
-  const updateTaskMutation = useMutation({
-    mutationFn: async ({ id, updates }: { id: number; updates: Partial<Task> }) => {
-      return await apiRequest(`/api/tasks/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(updates),
-        headers: { 'Content-Type': 'application/json' },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-    },
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Error",
-        description: "Failed to update task",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const deleteTaskMutation = useMutation({
-    mutationFn: async (id: number) => {
-      return await apiRequest(`/api/tasks/${id}`, {
-        method: 'DELETE',
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-    },
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Error",
-        description: "Failed to delete task",
-        variant: "destructive",
-      });
-    },
-  });
+    loadTasks();
+    
+    // Listen for storage events to refresh tasks
+    const handleStorageChange = () => {
+      loadTasks();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const addTask = (text: string, notes: string = "", tags: string[] = []) => {
-    addTaskMutation.mutate({ text, notes, tags });
-  };
-
-  const deleteTask = (id: string) => {
-    deleteTaskMutation.mutate(parseInt(id));
-  };
-
-  const updateTask = (id: string, updates: Partial<Pick<Task, 'text' | 'notes' | 'tags'>>) => {
-    updateTaskMutation.mutate({ id: parseInt(id), updates });
-  };
-
-  const toggleTaskCompletion = (id: string) => {
-    const task = tasks.find((t: Task) => t.id.toString() === id);
-    if (task) {
-      updateTaskMutation.mutate({ 
-        id: parseInt(id), 
-        updates: { completed: !task.completed } 
-      });
+    try {
+      const newTask = storage.addTask(text, notes, tags);
+      setTasks(prev => [...prev, newTask]);
+      return newTask;
+    } catch (error) {
+      console.error("Failed to add task:", error);
+      throw error;
     }
   };
 
+  const deleteTask = (id: string) => {
+    try {
+      storage.deleteTask(id);
+      setTasks(prev => prev.filter(task => task.id !== id));
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+      throw error;
+    }
+  };
+
+  const toggleTaskCompletion = (id: string) => {
+    try {
+      storage.toggleTaskCompletion(id);
+      
+      // Reload tasks from storage to ensure consistency
+      const updatedTasks = storage.getTasks();
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error("Failed to toggle task completion:", error);
+      throw error;
+    }
+  };
+
+  const updateTask = (id: string, updates: Partial<Pick<Task, 'text' | 'notes' | 'tags'>>) => {
+    try {
+      storage.updateTask(id, updates);
+      
+      // Reload tasks from storage to ensure consistency
+      const updatedTasks = storage.getTasks();
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      throw error;
+    }
+  };
+  
   return {
     tasks,
     addTask,

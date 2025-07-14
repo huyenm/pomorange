@@ -4,23 +4,12 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import PomodoroPage from "@/pages/pomodoro";
-import Landing from "@/pages/landing";
-import Profile from "@/pages/profile";
-import { useAuth } from "@/hooks/useAuth";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          <Route path="/" component={PomodoroPage} />
-          <Route path="/profile" component={Profile} />
-        </>
-      )}
+      <Route path="/" component={PomodoroPage} />
+      <Route path="/pomodoro" component={PomodoroPage} />
       <Route>
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
           <div className="text-center">

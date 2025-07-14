@@ -33,19 +33,19 @@ export function ReportsPhase() {
 
   // Helper function to get proper task name with fallback logic
   const getTaskName = (session: any) => {
-    // First try to find the task by ID in current tasks
+    // If taskName exists and is not "Unknown Task", use it
+    if (session.taskName && session.taskName !== "Unknown Task") {
+      return session.taskName;
+    }
+    
+    // Try to find the task by ID in current tasks
     const currentTask = tasks.find(t => t.id === session.taskId);
     if (currentTask) {
       return currentTask.text;
     }
     
-    // If taskName exists and is not "Unknown Task" and doesn't start with "Task ", use it
-    if (session.taskName && session.taskName !== "Unknown Task" && !session.taskName.startsWith("Task ")) {
-      return session.taskName;
-    }
-    
-    // If all else fails, show a friendly name
-    return "Deleted Task";
+    // If still no task found, use the taskId as a fallback
+    return session.taskName || `Task ${session.taskId}`;
   };
 
   const getStatusBadge = (record: any) => {

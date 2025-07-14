@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
-import { Coffee, SkipForward } from "lucide-react";
-import { NavigationHeader } from "@/components/navigation-header";
+import { Clock, Menu, X, Coffee, SkipForward } from "lucide-react";
+import logoNew from "@assets/logonew_1752473435452.png";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { PlanningPhase } from "@/components/planning-phase";
 import { SessionSetupPhase } from "@/components/session-setup-phase";
 import { TimerPhase } from "@/components/timer-phase";
+import { ReportsPhase } from "@/components/history-phase";
 import { TaskCompletionModal } from "@/components/task-completion-modal";
+
 import { ConfettiModal } from "@/components/confetti-modal";
 import { usePomodoro } from "@/hooks/use-pomodoro";
 import { useTasks } from "@/hooks/use-tasks";
@@ -14,7 +18,7 @@ import { audioManager } from "@/lib/audio";
 import { storage } from "@/lib/storage";
 import { SessionSetup } from "@shared/schema";
 
-type Phase = "planning" | "session" | "timer";
+type Phase = "planning" | "session" | "timer" | "reports";
 
 export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
@@ -25,7 +29,7 @@ export default function PomodoroPage() {
 
   const [isBreakRunning, setIsBreakRunning] = useState(false);
   const [showConfettiModal, setShowConfettiModal] = useState(false);
-
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEarlyFinish, setIsEarlyFinish] = useState(false);
   
   // Backup session setup to ensure continuity after breaks
@@ -346,7 +350,122 @@ export default function PomodoroPage() {
 
   return (
     <div className="min-h-screen bg-[#FEF5F0]">
-      <NavigationHeader />
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-orange-200">
+        <div className="max-w-6xl mx-auto py-4" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center flex-shrink-0">
+              <button 
+                onClick={() => setCurrentPhase("planning")}
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <img 
+                  src={logoNew} 
+                  alt="Pomorange Logo" 
+                  className="w-[120px] h-[30px] sm:w-[160px] sm:h-[41.03px] object-contain"
+                />
+              </button>
+            </div>
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-1 bg-orange-100 rounded-lg p-1 mobile-navigation">
+              <Button
+                variant={currentPhase === "planning" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setCurrentPhase("planning")}
+                className={currentPhase === "planning" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
+                style={{ fontFamily: 'Space Mono, monospace' }}
+              >
+                Planning
+              </Button>
+              <Button
+                variant={currentPhase === "session" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setCurrentPhase("session")}
+                className={currentPhase === "session" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
+                style={{ fontFamily: 'Space Mono, monospace' }}
+              >
+                Setup
+              </Button>
+              <Button
+                variant={currentPhase === "reports" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setCurrentPhase("reports")}
+                className={currentPhase === "reports" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
+                style={{ fontFamily: 'Space Mono, monospace' }}
+              >
+                Reports
+              </Button>
+            </nav>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
+
+          {/* Mobile Navigation */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden mt-4 pt-4 border-t border-[#BE8669]/20">
+              <nav className="flex flex-col space-y-2">
+                <Button
+                  variant={currentPhase === "planning" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("planning");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Planning
+                </Button>
+                <Button
+                  variant={currentPhase === "session" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("session");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "session" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Session
+                </Button>
+                <Button
+                  variant={currentPhase === "timer" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("timer");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "timer" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Timer
+                </Button>
+                <Button
+                  variant={currentPhase === "reports" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => {
+                    setCurrentPhase("reports");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`justify-start ${currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
+                  style={{ fontFamily: 'Space Mono, monospace' }}
+                >
+                  Reports
+                </Button>
+              </nav>
+            </div>
+          )}
+        </div>
+      </header>
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto py-4 sm:py-8 min-h-screen" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
@@ -399,7 +518,7 @@ export default function PomodoroPage() {
             </div>
           )}
           
-
+          {currentPhase === "reports" && <ReportsPhase />}
       </main>
 
       {/* Task Completion Modal */}
