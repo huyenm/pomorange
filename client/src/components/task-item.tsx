@@ -111,9 +111,10 @@ export function TaskItem({
           <div 
             className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 ${
               task.completed 
-                ? "bg-green-500 border-green-500" 
+                ? "" 
                 : "border-gray-300 hover:border-orange-400"
             }`}
+            style={task.completed ? { backgroundColor: 'rgb(20, 126, 80)', borderColor: 'rgb(20, 126, 80)' } : {}}
           >
             {task.completed && <Check className="w-3 h-3 text-white m-auto" />}
           </div>
@@ -195,9 +196,18 @@ export function TaskItem({
           }}
           className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-colors ${
             task.completed 
-              ? "bg-green-500 border-green-500 hover:bg-green-600 hover:border-green-600" 
+              ? "" 
               : "border-gray-300 hover:border-orange-400"
           }`}
+          style={task.completed ? { backgroundColor: 'rgb(20, 126, 80)', borderColor: 'rgb(20, 126, 80)' } : {}}
+          onMouseEnter={task.completed ? (e) => {
+            e.currentTarget.style.backgroundColor = 'rgb(16, 100, 64)';
+            e.currentTarget.style.borderColor = 'rgb(16, 100, 64)';
+          } : undefined}
+          onMouseLeave={task.completed ? (e) => {
+            e.currentTarget.style.backgroundColor = 'rgb(20, 126, 80)';
+            e.currentTarget.style.borderColor = 'rgb(20, 126, 80)';
+          } : undefined}
         >
           {task.completed && <Check className="w-3 h-3 text-white m-auto" />}
         </button>

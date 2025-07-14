@@ -114,12 +114,21 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 {completedTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200"
+                    className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-gray-200"
                   >
                     <div className="flex items-center space-x-3">
                       <button
                         onClick={() => toggleTaskCompletion(task.id)}
-                        className="w-5 h-5 rounded-full bg-green-500 border-2 border-green-500 flex-shrink-0 hover:bg-green-600 hover:border-green-600 transition-colors"
+                        className="w-5 h-5 rounded-full flex-shrink-0 transition-colors"
+                        style={{ backgroundColor: 'rgb(20, 126, 80)', borderColor: 'rgb(20, 126, 80)', borderWidth: '2px' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgb(16, 100, 64)';
+                          e.currentTarget.style.borderColor = 'rgb(16, 100, 64)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'rgb(20, 126, 80)';
+                          e.currentTarget.style.borderColor = 'rgb(20, 126, 80)';
+                        }}
                       >
                         <Check className="w-3 h-3 text-white m-auto" />
                       </button>
