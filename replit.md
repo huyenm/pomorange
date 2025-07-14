@@ -17,9 +17,10 @@ Pomorange is a modern Pomodoro timer application designed to help users manage t
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript
 - **Runtime**: Node.js 20
-- **Database**: PostgreSQL with Drizzle ORM
+- **Database**: PostgreSQL with Drizzle ORM (using Neon serverless driver)
 - **Session Management**: Connect-pg-simple for PostgreSQL session storage
 - **Development**: Hot module replacement via Vite integration
+- **Data Storage**: Database-backed storage for users, tasks, and session records
 
 ### Key Components
 
@@ -91,6 +92,7 @@ Pomorange is a modern Pomodoro timer application designed to help users manage t
 ## Changelog
 
 Changelog:
+- July 14, 2025. Added PostgreSQL database with Drizzle ORM. Migrated from in-memory storage to database-backed storage for users, tasks, and session records.
 - June 27, 2025. Initial setup
 
 ## User Preferences
