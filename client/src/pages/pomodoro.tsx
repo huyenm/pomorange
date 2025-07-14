@@ -31,6 +31,9 @@ export default function PomodoroPage() {
   const [showConfettiModal, setShowConfettiModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isEarlyFinish, setIsEarlyFinish] = useState(false);
+  
+  // Backup session setup to ensure continuity after breaks
+  const [breakSessionSetup, setBreakSessionSetup] = useState<SessionSetup | null>(null);
 
   const { timerState, startTimer, pauseTimer, stopTimer, startBreak } = usePomodoro();
   const { tasks, addTask, deleteTask, updateTask, toggleTaskCompletion } = useTasks();
@@ -65,35 +68,49 @@ export default function PomodoroPage() {
         setIsBreakRunning(false);
         notifications.showBreakEnd();
         
-        if (sessionSetup) {
-          const task = tasks.find(t => t.id === sessionSetup.taskId);
+        // Use primary sessionSetup or backup
+        const setupForContinuation = sessionSetup || breakSessionSetup;
+        
+        if (setupForContinuation) {
+          const task = tasks.find(t => t.id === setupForContinuation.taskId);
           console.log("Found task after break:", task);
           
           if (task && !task.completed) {
             // Automatically start a new focus session with the same task
             console.log("Starting new focus session after break with same task");
+            // Stop the break timer first
+            stopTimer();
+            
+            // Use a longer delay to ensure clean state transition
             setTimeout(() => {
               setCurrentPhase("timer");
-              startTimer(sessionSetup, "focus");
+              startTimer(setupForContinuation, "focus");
               notifications.showSessionStart();
               audioManager.playSessionStart();
-            }, 100); // Small delay to ensure clean state transition
+              // Clear backup after successful continuation
+              setBreakSessionSetup(null);
+            }, 200);
           } else {
             // Task completed, go to session setup
             console.log("Task was completed during break, going to session setup");
-            setCurrentPhase("session");
-            setSessionSetup(null);
+            stopTimer();
+            setTimeout(() => {
+              setCurrentPhase("session");
+              setSessionSetup(null);
+              setBreakSessionSetup(null);
+            }, 100);
           }
         } else {
           console.log("No sessionSetup found after break, going to session setup");
-          setCurrentPhase("session");
+          stopTimer();
+          setTimeout(() => {
+            setCurrentPhase("session");
+            setBreakSessionSetup(null);
+          }, 100);
         }
-        
-        // Stop the timer to prevent re-triggers
-        stopTimer();
       }
     }
-  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, isEarlyFinish]); // Removed functions that cause re-renders
+  }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, isEarlyFinish, tasks, stopTimer, startTimer, addRecord, toggleTaskCompletion, audioManager, notifications]);
 
   const handleStartSession = () => {
     setCurrentPhase("session");
@@ -204,6 +221,8 @@ export default function PomodoroPage() {
     const setupToUse = completionSessionSetup || sessionSetup;
     const startTimeToUse = completionStartTime || timerState.startTime;
     
+    console.log("handleTaskNotCompleted called with setup:", setupToUse);
+    
     if (setupToUse && startTimeToUse) {
       const task = tasks.find(t => t.id === setupToUse.taskId);
       
@@ -227,7 +246,8 @@ export default function PomodoroPage() {
     // Start break automatically - keeping the same setup to continue after break
     if (setupToUse) {
       // CRITICAL: Ensure sessionSetup is preserved for after-break continuation
-      setSessionSetup(setupToUse); 
+      setSessionSetup(setupToUse);
+      setBreakSessionSetup(setupToUse); // Extra backup
       setIsBreakRunning(true);
       
       // Clear completion state since we're moving to break
@@ -240,29 +260,48 @@ export default function PomodoroPage() {
       audioManager.playBreakStart();
       
       console.log("Break started with preserved sessionSetup:", setupToUse);
-      console.log("Current sessionSetup state after setting:", sessionSetup);
     }
   };
 
   const handleSkipBreak = () => {
+    console.log("Skip break clicked! Current sessionSetup:", sessionSetup);
+    
     stopTimer();
     setIsBreakRunning(false);
     
-    if (sessionSetup) {
-      const task = tasks.find(t => t.id === sessionSetup.taskId);
+    // Use primary sessionSetup or backup
+    const setupForContinuation = sessionSetup || breakSessionSetup;
+    
+    if (setupForContinuation) {
+      const task = tasks.find(t => t.id === setupForContinuation.taskId);
+      console.log("Found task for skip break:", task);
+      
       if (task && !task.completed) {
         // Continue with same task after skipping break
-        setCurrentPhase("timer");
-        startTimer(sessionSetup, "focus");
-        notifications.showSessionStart();
-        audioManager.playSessionStart();
+        console.log("Continuing with same task after skipping break");
+        setTimeout(() => {
+          setCurrentPhase("timer");
+          startTimer(setupForContinuation, "focus");
+          notifications.showSessionStart();
+          audioManager.playSessionStart();
+          // Clear backup after successful continuation
+          setBreakSessionSetup(null);
+        }, 100);
       } else {
         // Task was completed, go to session setup
-        setCurrentPhase("session");
-        setSessionSetup(null);
+        console.log("Task completed, going to session setup");
+        setTimeout(() => {
+          setCurrentPhase("session");
+          setSessionSetup(null);
+          setBreakSessionSetup(null);
+        }, 100);
       }
     } else {
-      setCurrentPhase("session");
+      console.log("No sessionSetup found, going to session setup");
+      setTimeout(() => {
+        setCurrentPhase("session");
+        setBreakSessionSetup(null);
+      }, 100);
     }
   };
 
