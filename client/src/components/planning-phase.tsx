@@ -136,11 +136,10 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                     </div>
                     <Button
                       variant="ghost"
-                      size="sm"
                       onClick={() => deleteTask(task.id)}
-                      className="text-slate-400 hover:text-red-500"
+                      className="text-slate-400 hover:text-red-500 w-9 h-9 p-0"
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}
