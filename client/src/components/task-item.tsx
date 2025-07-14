@@ -111,11 +111,11 @@ export function TaskItem({
           <div 
             className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 ${
               task.completed 
-                ? "border-green-500" 
+                ? "bg-green-500 border-green-500" 
                 : "border-gray-300 hover:border-orange-400"
             }`}
           >
-            {task.completed && <Check className="w-3 h-3 text-green-500 m-auto" />}
+            {task.completed && <Check className="w-3 h-3 text-white m-auto" />}
           </div>
           
           <div className="flex-1 space-y-2">
@@ -195,11 +195,11 @@ export function TaskItem({
           }}
           className={`w-5 h-5 rounded-full border-2 flex-shrink-0 mt-0.5 transition-colors ${
             task.completed 
-              ? "border-green-500 hover:border-green-600" 
+              ? "bg-green-500 border-green-500 hover:bg-green-600 hover:border-green-600" 
               : "border-gray-300 hover:border-orange-400"
           }`}
         >
-          {task.completed && <Check className="w-3 h-3 text-green-500 m-auto" />}
+          {task.completed && <Check className="w-3 h-3 text-white m-auto" />}
         </button>
         
         {/* Task Content */}

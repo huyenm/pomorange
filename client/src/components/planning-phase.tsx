@@ -119,9 +119,9 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                     <div className="flex items-center space-x-3">
                       <button
                         onClick={() => toggleTaskCompletion(task.id)}
-                        className="w-5 h-5 rounded-full border-2 border-green-500 flex-shrink-0 hover:border-green-600 transition-colors"
+                        className="w-5 h-5 rounded-full bg-green-500 border-2 border-green-500 flex-shrink-0 hover:bg-green-600 hover:border-green-600 transition-colors"
                       >
-                        <Check className="w-3 h-3 text-green-500 m-auto" />
+                        <Check className="w-3 h-3 text-white m-auto" />
                       </button>
                       <span className="text-muted-custom line-through text-sm">{task.text}</span>
                     </div>
