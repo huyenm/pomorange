@@ -16,6 +16,10 @@ export function ReportsPhase() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState<"today" | "week" | "month" | "year" | "all">("today");
   const [calendarOpen, setCalendarOpen] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const sessionsPerPage = 6;
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -56,6 +60,12 @@ export function ReportsPhase() {
     a.download = 'pomodoro-reports.csv';
     a.click();
     window.URL.revokeObjectURL(url);
+  };
+
+  // Reset pagination when view mode changes
+  const handleViewModeChange = (newViewMode: typeof viewMode) => {
+    setViewMode(newViewMode);
+    setCurrentPage(1);
   };
 
   // Get sessions for a specific date
@@ -175,35 +185,35 @@ export function ReportsPhase() {
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => { setViewMode("today"); setCalendarOpen(false); }}
+                          onClick={() => { handleViewModeChange("today"); setCalendarOpen(false); }}
                         >
                           Today
                         </Button>
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => { setViewMode("week"); setCalendarOpen(false); }}
+                          onClick={() => { handleViewModeChange("week"); setCalendarOpen(false); }}
                         >
                           Last 7 days
                         </Button>
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => { setViewMode("month"); setCalendarOpen(false); }}
+                          onClick={() => { handleViewModeChange("month"); setCalendarOpen(false); }}
                         >
                           This month
                         </Button>
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => { setViewMode("year"); setCalendarOpen(false); }}
+                          onClick={() => { handleViewModeChange("year"); setCalendarOpen(false); }}
                         >
                           This year
                         </Button>
                         <Button
                           variant="ghost"
                           className="w-full justify-start"
-                          onClick={() => { setViewMode("all"); setCalendarOpen(false); }}
+                          onClick={() => { handleViewModeChange("all"); setCalendarOpen(false); }}
                         >
                           All time
                         </Button>
@@ -214,7 +224,7 @@ export function ReportsPhase() {
                           selected={selectedDate}
                           onSelect={(date) => {
                             setSelectedDate(date);
-                            setViewMode("custom" as any);
+                            handleViewModeChange("custom" as any);
                             setCalendarOpen(false);
                           }}
                           className="rounded-md border-0"
@@ -286,7 +296,21 @@ export function ReportsPhase() {
               <p className="text-muted-foreground">Complete your first Pomodoro session to see your timeline here.</p>
             </div>
           ) : (
-            <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="space-y-4">
+              {/* Pagination and session count info */}
+              <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                <span>
+                  {filteredRecords.length} session{filteredRecords.length !== 1 ? 's' : ''} found
+                </span>
+                {Math.ceil(filteredRecords.length / sessionsPerPage) > 1 && (
+                  <span>
+                    Page {currentPage} of {Math.ceil(filteredRecords.length / sessionsPerPage)}
+                  </span>
+                )}
+              </div>
+              
+              {/* Sessions container with fixed height for 6 cards */}
+              <div className="min-h-[600px] max-h-[600px] overflow-y-auto space-y-4">
               {/* Group sessions by month for year view */}
               {viewMode === "year" ? (
                 (() => {
@@ -360,9 +384,16 @@ export function ReportsPhase() {
                   ));
                 })()
               ) : (
-                filteredRecords
-                  .sort((a, b) => b.startTimestamp.getTime() - a.startTimestamp.getTime())
-                  .map((session) => {
+                (() => {
+                  const sortedRecords = filteredRecords
+                    .sort((a, b) => b.startTimestamp.getTime() - a.startTimestamp.getTime());
+                  
+                  // Apply pagination for non-year views
+                  const startIndex = (currentPage - 1) * sessionsPerPage;
+                  const endIndex = startIndex + sessionsPerPage;
+                  const paginatedRecords = sortedRecords.slice(startIndex, endIndex);
+                  
+                  return paginatedRecords.map((session) => {
                   const duration = session.actualMinutes;
                   const startTime = formatTime(session.startTimestamp);
                   const endTime = formatTime(session.endTimestamp);
@@ -413,7 +444,61 @@ export function ReportsPhase() {
                       </div>
                     </div>
                     );
-                  })
+                  });
+                })()
+              )}
+              </div>
+              
+              {/* Pagination Controls */}
+              {Math.ceil(filteredRecords.length / sessionsPerPage) > 1 && (
+                <div className="flex items-center justify-center space-x-2 mt-6">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="btn-secondary"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  
+                  {/* Page numbers */}
+                  <div className="flex items-center space-x-1">
+                    {Array.from({ length: Math.ceil(filteredRecords.length / sessionsPerPage) }, (_, i) => i + 1)
+                      .filter(page => {
+                        // Show first page, last page, current page, and pages around current
+                        const totalPages = Math.ceil(filteredRecords.length / sessionsPerPage);
+                        return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
+                      })
+                      .map((page, index, array) => (
+                        <div key={page} className="flex items-center">
+                          {index > 0 && array[index - 1] !== page - 1 && (
+                            <span className="px-2 text-muted-foreground">...</span>
+                          )}
+                          <Button
+                            variant={currentPage === page ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(page)}
+                            className={currentPage === page ? "btn-primary" : "btn-secondary"}
+                          >
+                            {page}
+                          </Button>
+                        </div>
+                      ))}
+                  </div>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredRecords.length / sessionsPerPage)))}
+                    disabled={currentPage === Math.ceil(filteredRecords.length / sessionsPerPage)}
+                    className="btn-secondary"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
             </div>
           )}
