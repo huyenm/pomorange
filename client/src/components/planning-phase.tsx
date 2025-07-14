@@ -72,7 +72,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg sm:text-xl font-semibold card-heading text-heading-custom mobile-text-2xl">Today's Tasks</CardTitle>
-            <Badge variant="secondary">{activeTasks.length} active</Badge>
+            <Badge variant="outline" className="text-[#F3793A] border-[#F3793A] bg-orange-50">{activeTasks.length} active</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-4 sm:space-y-6 mobile-task-card">
@@ -172,7 +172,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
             <div className="pt-6 border-t border-orange-200">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium text-heading-custom">Completed Tasks</h4>
-                <Badge variant="outline" className="text-[#147E50] border-[#147E50]">
+                <Badge variant="outline" className="text-[#147E50] border-[#147E50] bg-green-50">
                   {completedTasks.length} completed
                 </Badge>
               </div>
