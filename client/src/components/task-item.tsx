@@ -266,7 +266,7 @@ export function TaskItem({
               e.stopPropagation();
               onDelete(task.id);
             }}
-            className="text-red-500 hover:text-red-700 w-9 h-9 p-0"
+            className="text-slate-400 hover:text-red-500 w-9 h-9 p-0"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
