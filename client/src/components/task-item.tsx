@@ -194,7 +194,7 @@ export function TaskItem({
             e.stopPropagation();
             onToggleComplete(task.id);
           }}
-          className={`w-5 h-5 rounded-full border-2 flex-shrink-0 my-1.5 transition-colors ${
+          className={`w-5 h-5 rounded-full border-2 flex-shrink-0 py-2.5 transition-colors ${
             task.completed 
               ? "" 
               : "border-gray-300 hover:border-orange-400"
@@ -213,8 +213,8 @@ export function TaskItem({
         </button>
         
         {/* Task Content */}
-        <div className="flex-1 min-w-0 py-1.5">
-          <div className={`text-base font-medium leading-5 ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}>
+        <div className="flex-1 min-w-0">
+          <div className={`text-base font-medium leading-5 py-2.5 ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}>
             {task.text}
           </div>
           
@@ -246,7 +246,7 @@ export function TaskItem({
         </div>
         
         {/* Action Buttons */}
-        <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity self-start my-1.5">
+        <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity self-start">
           {!task.completed && (
             <Button
               variant="ghost"
