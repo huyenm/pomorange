@@ -78,7 +78,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
         <CardContent className="space-y-4 sm:space-y-6 mobile-task-card">
           {/* Add Task Form */}
           {!isAddingTask ? (
-            <div className="p-4 bg-orange-50 rounded-lg border-2 border-dashed border-orange-200">
+            <div className="bg-orange-50 rounded-lg border-2 border-dashed border-orange-200" style={{ padding: '10px' }}>
               <Button
                 onClick={() => setIsAddingTask(true)}
                 variant="ghost"
@@ -123,7 +123,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 </div>
               </div>
               
-              <div className="flex justify-end space-x-2 pt-2 mt-3">
+              <div className="flex justify-end space-x-2 pt-1">
                 <Button
                   size="sm"
                   variant="ghost"
