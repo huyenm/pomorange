@@ -84,12 +84,12 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 variant="ghost"
                 className="w-full h-10 text-left justify-start text-gray-500 hover:text-gray-700 hover:bg-transparent"
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4" />
                 Add task
               </Button>
             </div>
           ) : (
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="bg-white border border-gray-200 rounded-lg py-4 px-2">
               <div className="flex items-start space-x-3">
                 <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 mt-0.5"></div>
                 
