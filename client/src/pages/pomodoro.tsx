@@ -337,11 +337,16 @@ export default function PomodoroPage() {
         <div className="max-w-6xl mx-auto py-4" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center flex-shrink-0">
-              <img 
-                src="/pomologo.png" 
-                alt="Pomorange Logo" 
-                className="w-[120px] h-[30px] sm:w-[160px] sm:h-[41.03px] object-contain"
-              />
+              <button 
+                onClick={() => setCurrentPhase("planning")}
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                <img 
+                  src="/pomologo.png" 
+                  alt="Pomorange Logo" 
+                  className="w-[120px] h-[30px] sm:w-[160px] sm:h-[41.03px] object-contain"
+                />
+              </button>
             </div>
             
             {/* Desktop Navigation */}
