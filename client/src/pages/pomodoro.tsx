@@ -342,7 +342,7 @@ export default function PomodoroPage() {
                 className="cursor-pointer hover:opacity-80 transition-opacity"
               >
                 <img 
-                  src="/pomologo.png" 
+                  src="@assets/logonew_1752473435452.png" 
                   alt="Pomorange Logo" 
                   className="w-[120px] h-[30px] sm:w-[160px] sm:h-[41.03px] object-contain"
                 />
