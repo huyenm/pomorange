@@ -138,9 +138,15 @@ export default function PomodoroPage() {
     toggleTaskCompletion(sessionSetup.taskId);
     
     // Record the session as completed
+    console.log("Recording early finish session - Task lookup:", { 
+      taskId: sessionSetup.taskId, 
+      foundTask: task, 
+      allTasks: tasks.map(t => ({ id: t.id, text: t.text }))
+    });
+    
     addRecord({
       taskId: sessionSetup.taskId,
-      taskName: task?.text || "Unknown Task",
+      taskName: task?.text || `Task ${sessionSetup.taskId}`,
       startTimestamp: timerState.startTime,
       endTimestamp: new Date(),
       plannedMinutes: sessionSetup.focusDuration,
@@ -186,9 +192,15 @@ export default function PomodoroPage() {
     console.log("Task toggled in storage");
     
     // Record the session
+    console.log("Recording completed session - Task lookup:", { 
+      taskId: setupToUse.taskId, 
+      foundTask: task, 
+      allTasks: tasks.map(t => ({ id: t.id, text: t.text }))
+    });
+    
     addRecord({
       taskId: setupToUse.taskId,
-      taskName: task?.text || "Unknown Task",
+      taskName: task?.text || `Task ${setupToUse.taskId}`,
       startTimestamp: startTimeToUse,
       endTimestamp: new Date(),
       plannedMinutes: setupToUse.focusDuration,
@@ -227,9 +239,15 @@ export default function PomodoroPage() {
       const task = tasks.find(t => t.id === setupToUse.taskId);
       
       // Record the session but not completed
+      console.log("Recording not completed session - Task lookup:", { 
+        taskId: setupToUse.taskId, 
+        foundTask: task, 
+        allTasks: tasks.map(t => ({ id: t.id, text: t.text }))
+      });
+      
       addRecord({
         taskId: setupToUse.taskId,
-        taskName: task?.text || "Unknown Task",
+        taskName: task?.text || `Task ${setupToUse.taskId}`,
         startTimestamp: startTimeToUse,
         endTimestamp: new Date(),
         plannedMinutes: setupToUse.focusDuration,

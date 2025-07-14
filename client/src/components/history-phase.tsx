@@ -8,10 +8,12 @@ import { Download, BarChart3, Calendar as CalendarIcon, ChevronLeft, ChevronRigh
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSessions } from "@/hooks/use-sessions";
+import { useTasks } from "@/hooks/use-tasks";
 import { format, startOfDay, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, startOfYear, endOfYear, isWithinInterval } from "date-fns";
 
 export function ReportsPhase() {
   const { records, getStats } = useSessions();
+  const { tasks } = useTasks();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState<"today" | "week" | "month" | "year" | "all">("today");
@@ -29,6 +31,23 @@ export function ReportsPhase() {
     return date.toLocaleDateString();
   };
 
+  // Helper function to get proper task name with fallback logic
+  const getTaskName = (session: any) => {
+    // If taskName exists and is not "Unknown Task", use it
+    if (session.taskName && session.taskName !== "Unknown Task") {
+      return session.taskName;
+    }
+    
+    // Try to find the task by ID in current tasks
+    const currentTask = tasks.find(t => t.id === session.taskId);
+    if (currentTask) {
+      return currentTask.text;
+    }
+    
+    // If still no task found, use the taskId as a fallback
+    return session.taskName || `Task ${session.taskId}`;
+  };
+
   const getStatusBadge = (record: any) => {
     if (record.completed && record.actualFinishedEarly) {
       return <Badge className="bg-yellow-100 text-yellow-800">Early Finish</Badge>;
@@ -43,7 +62,7 @@ export function ReportsPhase() {
     const csvContent = [
       ['Task', 'Date', 'Start Time', 'End Time', 'Planned (min)', 'Actual (min)', 'Status'],
       ...records.map(record => [
-        record.taskName,
+        getTaskName(record),
         formatDate(record.startTimestamp),
         formatTime(record.startTimestamp),
         formatTime(record.endTimestamp),
@@ -345,7 +364,7 @@ export function ReportsPhase() {
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center space-x-2 mb-1">
-                                  <h4 className="font-semibold text-slate-900">{session.taskName}</h4>
+                                  <h4 className="font-semibold text-slate-900">{getTaskName(session)}</h4>
                                   {getStatusBadge(session)}
                                 </div>
                                 
@@ -409,7 +428,7 @@ export function ReportsPhase() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
-                            <h4 className="font-semibold text-slate-900">{session.taskName}</h4>
+                            <h4 className="font-semibold text-slate-900">{getTaskName(session)}</h4>
                             {getStatusBadge(session)}
                           </div>
                           

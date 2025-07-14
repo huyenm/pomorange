@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Play, Clock, Pause } from "lucide-react";
+import { ArrowLeft, Play, Clock, Pause, CheckSquare } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { SessionSetup } from "@shared/schema";
 
@@ -57,8 +57,8 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
         <CardContent className="space-y-6">
           {/* Task Selection */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              <Clock className="inline mr-2 h-4 w-4" />
+            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+              <CheckSquare className="inline mr-2 h-4 w-4" />
               Select Task
             </label>
             <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
@@ -102,7 +102,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
           {/* Duration Settings */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
                 <Clock className="inline mr-2 h-4 w-4" />
                 Focus Duration (minutes)
               </label>
@@ -159,7 +159,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
                 <Pause className="inline mr-2 h-4 w-4" />
                 Break Duration (minutes)
               </label>
