@@ -176,7 +176,9 @@ export function TaskItem({
 
   return (
     <div 
-      className={`group border rounded-lg p-4 cursor-pointer transition-all duration-200 ${
+      className={`group border rounded-lg cursor-pointer transition-all duration-200 ${
+        task.completed ? "p-4" : "p-4"
+      } ${
         isSelected 
           ? "bg-orange-50 border-orange-200 shadow-sm" 
           : "bg-white border-gray-200 hover:border-orange-200 hover:shadow-sm"

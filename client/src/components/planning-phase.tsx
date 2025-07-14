@@ -71,7 +71,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 onChange={(e) => setNewTaskText(e.target.value)}
                 onKeyPress={handleKeyPress}
                 className="flex-1 h-10"
-                style={{ paddingLeft: '4px', paddingRight: '4px' }}
+                style={{ paddingLeft: '10px', paddingRight: '10px' }}
               />
               <Button onClick={handleAddTask} className="btn-primary w-10 h-10 p-0">
                 <Plus className="h-4 w-4" />
@@ -114,14 +114,15 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 {completedTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200"
+                    className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200"
                   >
                     <div className="flex items-center space-x-3">
-                      <Checkbox
-                        checked={task.completed}
-                        onCheckedChange={() => toggleTaskCompletion(task.id)}
-                        className="data-[state=checked]:bg-[#147E50] data-[state=checked]:border-[#147E50]"
-                      />
+                      <button
+                        onClick={() => toggleTaskCompletion(task.id)}
+                        className="w-5 h-5 rounded-full border-2 border-green-500 flex-shrink-0 hover:border-green-600 transition-colors"
+                      >
+                        <Check className="w-3 h-3 text-green-500 m-auto" />
+                      </button>
                       <span className="text-muted-custom line-through text-sm">{task.text}</span>
                     </div>
                     <Button
