@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { Plus, List, Calendar as CalendarIcon, Clock, Coffee, Headphones, Trash2, Check } from "lucide-react";
+import { Plus, List, Calendar as CalendarIcon, Clock, Coffee, Headphones, Trash2, Check, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TaskItem } from "@/components/task-item";
 import { useTasks } from "@/hooks/use-tasks";
@@ -17,6 +17,9 @@ interface PlanningPhaseProps {
 
 export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   const [newTaskText, setNewTaskText] = useState("");
+  const [newTaskNotes, setNewTaskNotes] = useState("");
+  const [newTaskTags, setNewTaskTags] = useState("");
+  const [isAddingTask, setIsAddingTask] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const { tasks, addTask, deleteTask, updateTask, toggleTaskCompletion } = useTasks();
@@ -27,14 +30,26 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
 
   const handleAddTask = () => {
     if (newTaskText.trim()) {
-      addTask(newTaskText.trim());
+      const task = addTask(newTaskText.trim(), newTaskNotes.trim(), newTaskTags ? newTaskTags.split(",").map(tag => tag.trim()).filter(tag => tag) : []);
       setNewTaskText("");
+      setNewTaskNotes("");
+      setNewTaskTags("");
+      setIsAddingTask(false);
     }
+  };
+
+  const handleCancelAddTask = () => {
+    setNewTaskText("");
+    setNewTaskNotes("");
+    setNewTaskTags("");
+    setIsAddingTask(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleAddTask();
+    } else if (e.key === "Escape") {
+      handleCancelAddTask();
     }
   };
 
@@ -62,22 +77,73 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
         </CardHeader>
         <CardContent className="space-y-4 sm:space-y-6 mobile-task-card">
           {/* Add Task Form */}
-          <div className="p-4 bg-orange-50 rounded-lg border-2 border-dashed border-orange-200">
-            <div className="flex space-x-3">
-              <Input
-                type="text"
-                placeholder="Add a new task..."
-                value={newTaskText}
-                onChange={(e) => setNewTaskText(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1 h-10"
-                style={{ paddingLeft: '10px', paddingRight: '10px' }}
-              />
-              <Button onClick={handleAddTask} className="btn-primary w-10 h-10 p-0">
-                <Plus className="h-4 w-4" />
+          {!isAddingTask ? (
+            <div className="p-4 bg-orange-50 rounded-lg border-2 border-dashed border-orange-200">
+              <Button
+                onClick={() => setIsAddingTask(true)}
+                variant="ghost"
+                className="w-full h-10 text-left justify-start text-gray-500 hover:text-gray-700 hover:bg-transparent"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add task
               </Button>
             </div>
-          </div>
+          ) : (
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 mt-0.5"></div>
+                
+                <div className="flex-1 space-y-2">
+                  <Input
+                    type="text"
+                    placeholder="Task title..."
+                    value={newTaskText}
+                    onChange={(e) => setNewTaskText(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    className="text-base border-none p-0 focus:ring-0 font-medium bg-transparent focus:bg-transparent outline-none focus:outline-none editing-input h-6"
+                    autoFocus
+                  />
+                  
+                  <div className="space-y-1">
+                    <textarea
+                      placeholder="Notes"
+                      value={newTaskNotes}
+                      onChange={(e) => setNewTaskNotes(e.target.value)}
+                      className="text-sm text-gray-600 border-none p-0 resize-none focus:ring-0 min-h-6 bg-transparent focus:bg-transparent outline-none focus:outline-none editing-input overflow-hidden w-full"
+                      rows={1}
+                    />
+                    
+                    <Input
+                      placeholder="Add Tags (comma separated)"
+                      value={newTaskTags}
+                      onChange={(e) => setNewTaskTags(e.target.value)}
+                      className="text-sm text-blue-500 border-none p-0 focus:ring-0 bg-transparent focus:bg-transparent outline-none focus:outline-none editing-input h-6"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2 pt-2 mt-3">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleCancelAddTask}
+                  className="h-7 px-3 text-xs"
+                >
+                  <X className="w-3 h-3" />
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleAddTask}
+                  className="h-7 px-3 text-xs btn-primary"
+                >
+                  <Check className="w-3 h-3" />
+                  Add Task
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Active Task List */}
           <div className="space-y-3">

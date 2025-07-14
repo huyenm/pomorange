@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Check, X, Edit3, Trash2, Hash } from "lucide-react";
+import { Check, X, Edit3, Trash2, Hash, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -247,6 +247,20 @@ export function TaskItem({
         
         {/* Action Buttons */}
         <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {!task.completed && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+                setShowDetails(true);
+              }}
+              className="h-7 w-7 p-0 text-gray-500 hover:text-blue-600"
+            >
+              <Edit className="h-3 w-3" />
+            </Button>
+          )}
           <Button
             size="sm"
             variant="ghost"
