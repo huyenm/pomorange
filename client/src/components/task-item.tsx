@@ -215,9 +215,11 @@ export function TaskItem({
         </div>
         
         {/* Task Content */}
-        <div className="flex-1 min-w-0 h-6 flex items-center">
-          <div className={`text-base font-medium leading-5 ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}>
-            {task.text}
+        <div className="flex-1 min-w-0">
+          <div className="h-6 flex items-center">
+            <div className={`text-base font-medium leading-5 ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}>
+              {task.text}
+            </div>
           </div>
           
           {/* Show notes and tags when selected or when they exist */}
