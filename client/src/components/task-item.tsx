@@ -189,32 +189,34 @@ export function TaskItem({
     >
       <div className="flex items-start space-x-3">
         {/* Completion Circle */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleComplete(task.id);
-          }}
-          className={`w-5 h-5 rounded-full border-2 flex-shrink-0 py-2.5 transition-colors ${
-            task.completed 
-              ? "" 
-              : "border-gray-300 hover:border-orange-400"
-          }`}
-          style={task.completed ? { backgroundColor: 'rgb(20, 126, 80)', borderColor: 'rgb(20, 126, 80)' } : {}}
-          onMouseEnter={task.completed ? (e) => {
-            e.currentTarget.style.backgroundColor = 'rgb(16, 100, 64)';
-            e.currentTarget.style.borderColor = 'rgb(16, 100, 64)';
-          } : undefined}
-          onMouseLeave={task.completed ? (e) => {
-            e.currentTarget.style.backgroundColor = 'rgb(20, 126, 80)';
-            e.currentTarget.style.borderColor = 'rgb(20, 126, 80)';
-          } : undefined}
-        >
-          {task.completed && <Check className="w-3 h-3 text-white m-auto" />}
-        </button>
+        <div className="h-6 flex items-center">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleComplete(task.id);
+            }}
+            className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-colors ${
+              task.completed 
+                ? "" 
+                : "border-gray-300 hover:border-orange-400"
+            }`}
+            style={task.completed ? { backgroundColor: 'rgb(20, 126, 80)', borderColor: 'rgb(20, 126, 80)' } : {}}
+            onMouseEnter={task.completed ? (e) => {
+              e.currentTarget.style.backgroundColor = 'rgb(16, 100, 64)';
+              e.currentTarget.style.borderColor = 'rgb(16, 100, 64)';
+            } : undefined}
+            onMouseLeave={task.completed ? (e) => {
+              e.currentTarget.style.backgroundColor = 'rgb(20, 126, 80)';
+              e.currentTarget.style.borderColor = 'rgb(20, 126, 80)';
+            } : undefined}
+          >
+            {task.completed && <Check className="w-3 h-3 text-white m-auto" />}
+          </button>
+        </div>
         
         {/* Task Content */}
-        <div className="flex-1 min-w-0">
-          <div className={`text-base font-medium leading-5 py-2.5 ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}>
+        <div className="flex-1 min-w-0 h-6 flex items-center">
+          <div className={`text-base font-medium leading-5 ${task.completed ? "line-through text-gray-500" : "text-gray-900"}`}>
             {task.text}
           </div>
           
@@ -246,7 +248,7 @@ export function TaskItem({
         </div>
         
         {/* Action Buttons */}
-        <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity self-start">
+        <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 items-center">
           {!task.completed && (
             <Button
               variant="ghost"
