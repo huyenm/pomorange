@@ -89,7 +89,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               </Button>
             </div>
           ) : (
-            <div className="bg-white border border-gray-200 rounded-lg py-4 px-2">
+            <div className="bg-white border border-gray-200 rounded-lg py-4 px-4">
               <div className="flex items-start space-x-3">
                 <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 mt-0.5"></div>
                 
