@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { Plus, List, Calendar as CalendarIcon, Clock, Coffee, Headphones, Trash2 } from "lucide-react";
+import { Plus, List, Calendar as CalendarIcon, Clock, Coffee, Headphones, Trash2, Check } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TaskItem } from "@/components/task-item";
 import { useTasks } from "@/hooks/use-tasks";
