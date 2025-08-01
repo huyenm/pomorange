@@ -1,5 +1,5 @@
 [build]
-  # Run Yarn 
+  # Run Yarn inside `client/`
   command   = "yarn build"
   publish   = "dist/public"
 
