@@ -81,7 +81,8 @@ export default function PomodoroPage() {
           // Play session finish sound when Time's up modal appears
           audioManager.playSessionFinish();
           notifications.showSessionComplete();
-          
+
+          setIsMobileMenuOpen(false);
           setShowCompletionModal(true);
           stopTimer(); // Stop timer to prevent re-triggers
         }
@@ -156,6 +157,9 @@ export default function PomodoroPage() {
 
   const handleFinishEarly = () => {
     if (!sessionSetup || !timerState.startTime) return;
+
+    setIsMobileMenuOpen(false);
+    if (!sessionSetup || !timerState.startTime) return;
     
     // 1. Compute actual elapsed minutes
     const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
@@ -200,6 +204,9 @@ export default function PomodoroPage() {
   };
 
   const handleTaskCompleted = () => {
+    console.log("handleTaskCompleted called");
+
+    setIsMobileMenuOpen(false);
     console.log("handleTaskCompleted called");
 
     const setupToUse = completionSessionSetup || sessionSetup;
