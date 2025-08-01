@@ -20,7 +20,12 @@ export const notifications = {
   },
 
   show(title: string, options?: NotificationOptions): void {
-    if (Notification.permission === "granted") {
+    //if (Notification.permission === "granted") {
+      if (!("Notification" in window) || Notification.permission !== "granted") {
+        console.warn("Notifications unavailable or permission not granted");
+        return;
+      }
+      
       new Notification(title, {
         icon: "/favicon.ico",
         ...options,
