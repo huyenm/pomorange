@@ -466,20 +466,9 @@ export default function PomodoroPage() {
                   className={`justify-start ${currentPhase === "session" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
                   style={{ fontFamily: 'Space Mono, monospace' }}
                 >
-                  Session
+                  Setup
                 </Button>
-                <Button
-                  variant={currentPhase === "timer" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => {
-                    setCurrentPhase("timer");
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className={`justify-start ${currentPhase === "timer" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
-                  style={{ fontFamily: 'Space Mono, monospace' }}
-                >
-                  Timer
-                </Button>
+      
                 <Button
                   variant={currentPhase === "reports" ? "default" : "ghost"}
                   size="sm"
