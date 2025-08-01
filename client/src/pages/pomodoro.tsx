@@ -74,6 +74,7 @@ export default function PomodoroPage() {
       if (timerState.sessionType === "focus") {
         // Focus session completed naturally - play sound and show completion modal
         if (sessionSetup) {
+          setIsMobileMenuOpen(false);
           // Save sessionSetup and startTime for the completion modal before showing it
           setCompletionSessionSetup(sessionSetup);
           setCompletionStartTime(timerState.startTime);
@@ -82,7 +83,6 @@ export default function PomodoroPage() {
           audioManager.playSessionFinish();
           notifications.showSessionComplete();
 
-          setIsMobileMenuOpen(false);
           setShowCompletionModal(true);
           stopTimer(); // Stop timer to prevent re-triggers
         }
