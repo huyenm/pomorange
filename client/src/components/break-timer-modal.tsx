@@ -18,9 +18,21 @@ export function BreakTimerModal({ isOpen, timerState, onSkipBreak }: BreakTimerM
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  const remaining = formatTime(timerState.timeRemaining);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.title = `${remaining} – Break`;
+    } else {
+      document.title = "Pomorange";
+    }
+    return () => { document.title = "Pomorange"; };
+  }, [isOpen, remaining]);
+
+
   const progress = timerState.totalTime > 0 
-    ? ((timerState.totalTime - timerState.timeRemaining) / timerState.totalTime) * 100
-    : 0;
+  ? ((timerState.totalTime - timerState.timeRemaining) / timerState.totalTime) * 100
+  : 0;
 
   const formatFinishTime = (date: Date | null) => {
     if (!date) return "--:--";

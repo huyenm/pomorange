@@ -29,6 +29,15 @@ export function TimerPhase({ timerState, sessionSetup, onPauseTimer, onFinishEar
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  const remaining = formatTime(timerState.timeRemaining);
+
+  useEffect(() => {
+    document.title = `${remaining} – Focus Session`;
+    return () => {
+      document.title = "Pomorange";
+    };
+  }, [remaining]);
+
   const formatTimeSmall = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);

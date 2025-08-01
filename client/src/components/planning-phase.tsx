@@ -31,6 +31,11 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   const handleAddTask = () => {
     if (newTaskText.trim()) {
       const task = addTask(newTaskText.trim(), newTaskNotes.trim(), newTaskTags ? newTaskTags.split(",").map(tag => tag.trim()).filter(tag => tag) : []);
+
+       // Notify all useTasks() hooks to reload from storage
+      window.dispatchEvent(new Event("storage"));
+
+      //Reset form
       setNewTaskText("");
       setNewTaskNotes("");
       setNewTaskTags("");
@@ -167,6 +172,18 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
             )}
           </div>
 
+          {/* Start Session Button */}
+          <div className="pt-6 border-t border-orange-200">
+            <Button
+              onClick={onStartSession}
+              className="btn-primary w-full py-4 text-base font-semibold"
+              disabled={activeTasks.length === 0}
+            >
+              <Clock className="h-5 w-5" />
+              <span className="ml-2">Start Setting up Session</span>
+            </Button>
+          </div>
+
           {/* Completed Tasks Section */}
           {completedTasks.length > 0 && (
             <div className="pt-6 border-t border-orange-200">
@@ -212,19 +229,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
               </div>
             </div>
           )}
-
-          {/* Start Session Button */}
-          <div className="pt-6 border-t border-orange-200">
-            <Button
-              onClick={onStartSession}
-              className="btn-primary w-full py-4 text-base font-semibold"
-              disabled={activeTasks.length === 0}
-            >
-              <Clock className="h-5 w-5" />
-              <span className="ml-2">Start Setting up Session</span>
-            </Button>
-          </div>
-        </CardContent>
+          </CardContent>
       </Card>
     </div>
 
@@ -304,8 +309,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-              <List className="h-5 w-5 text-pink-600" />
+            <div className="w-6 h-6 bg-[#F5ECD7] rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+              <List className="h-5 w-5 text-[#964C18]" />
             </div>
             <div>
               <p className="text-sm font-medium text-heading-custom">Clear Your Workspace</p>

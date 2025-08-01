@@ -18,11 +18,13 @@ import { audioManager } from "@/lib/audio";
 import { storage } from "@/lib/storage";
 import { SessionSetup } from "@shared/schema";
 
+
 type Phase = "planning" | "session" | "timer" | "reports";
 
 export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
+  const [sessionTaskName, setSessionTaskName] = useState<string>("");
   const [completionSessionSetup, setCompletionSessionSetup] = useState<SessionSetup | null>(null);
   const [completionStartTime, setCompletionStartTime] = useState<Date | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
@@ -43,6 +45,27 @@ export default function PomodoroPage() {
   useEffect(() => {
     notifications.requestPermission();
   }, []);
+
+  useEffect(() => {
+    // Only update while a session is running
+     if (timerState.isRunning) {
+        const mm = String(Math.floor(timerState.timeRemaining / 60)).padStart(2, "0");
+         const ss = String(timerState.timeRemaining % 60).padStart(2, "0");
+         // Determine which label to show
+        const label = timerState.sessionType === "break" || isBreakRunning
+          ? "Break"
+          : "Pomodoro";
+         document.title = `${mm}:${ss} – ${label}`;
+      } else {
+         // Restore default when not running
+       document.title = "Pomorange";
+       }
+      }, [
+       timerState.isRunning,
+      timerState.timeRemaining,
+        timerState.sessionType,
+        isBreakRunning
+     ]);
 
   // Handle timer completion
   useEffect(() => {
@@ -117,7 +140,14 @@ export default function PomodoroPage() {
   };
 
   const handleStartTimer = (setup: SessionSetup) => {
+    // 1. Save the setup
     setSessionSetup(setup);
+
+    // 2. Capture the human‐readable name once, so we never look it up later
+    const task = tasks.find(t => t.id === setup.taskId);
+    setSessionTaskName(task?.text || "");
+
+    // 3. Move into timer phase
     setCurrentPhase("timer");
     startTimer(setup, "focus");
     notifications.showSessionStart();
@@ -127,26 +157,28 @@ export default function PomodoroPage() {
   const handleFinishEarly = () => {
     if (!sessionSetup || !timerState.startTime) return;
     
+    // 1. Compute actual elapsed minutes
     const actualMinutes = Math.ceil((Date.now() - timerState.startTime.getTime()) / 60000);
-    const task = tasks.find(t => t.id === sessionSetup.taskId);
+    //const task = tasks.find(t => t.id === sessionSetup.taskId);   
     
-    // Play finish sound and show notification
+    // 2. Mark task as completed
+    toggleTaskCompletion(sessionSetup.taskId);
+
+    // 3. Play finish sound and show notification
     audioManager.playSessionFinish();
     notifications.showSessionComplete();
     
-    // Mark task as completed
-    toggleTaskCompletion(sessionSetup.taskId);
-    
-    // Record the session as completed
+    // 4. Record the session as completed
     console.log("Recording early finish session - Task lookup:", { 
       taskId: sessionSetup.taskId, 
-      foundTask: task, 
+      foundTask: sessionTaskName || `Task ${sessionSetup.taskId}`,
       allTasks: tasks.map(t => ({ id: t.id, text: t.text }))
     });
-    
+
+    //5. Record
     addRecord({
       taskId: sessionSetup.taskId,
-      taskName: task?.text || `Task ${sessionSetup.taskId}`,
+      taskName: sessionTaskName || `Task ${sessionSetup.taskId}`,
       startTimestamp: timerState.startTime,
       endTimestamp: new Date(),
       plannedMinutes: sessionSetup.focusDuration,
@@ -169,6 +201,7 @@ export default function PomodoroPage() {
 
   const handleTaskCompleted = () => {
     console.log("handleTaskCompleted called");
+
     const setupToUse = completionSessionSetup || sessionSetup;
     const startTimeToUse = completionStartTime || timerState.startTime;
     
@@ -179,28 +212,28 @@ export default function PomodoroPage() {
     
     console.log("Proceeding with task completion for:", setupToUse.taskId);
     
-    // First stop timer and close modal
+    // 1. First stop timer and close modal
     stopTimer();
     setShowCompletionModal(false);
     setIsEarlyFinish(true);
+
+    //2. Mark the task completed
+    toggleTaskCompletion(setupToUse.taskId);
     
-    const task = tasks.find(t => t.id === setupToUse.taskId);
+    //const task = tasks.find(t => t.id === setupToUse.taskId);
     console.log("Found task:", task);
-    
-    // Mark task as completed in storage
-    storage.toggleTaskCompletion(setupToUse.taskId);
-    console.log("Task toggled in storage");
-    
-    // Record the session
+
+    // 3. Record the session
     console.log("Recording completed session - Task lookup:", { 
       taskId: setupToUse.taskId, 
-      foundTask: task, 
+      foundTask: sessionTaskName || `Task ${setupToUse.taskId}`,
       allTasks: tasks.map(t => ({ id: t.id, text: t.text }))
     });
     
+    // 3. Record using the up-to-date name
     addRecord({
       taskId: setupToUse.taskId,
-      taskName: task?.text || `Task ${setupToUse.taskId}`,
+      taskName: sessionTaskName || `Task ${setupToUse.taskId}`,
       startTimestamp: startTimeToUse,
       endTimestamp: new Date(),
       plannedMinutes: setupToUse.focusDuration,
@@ -222,8 +255,6 @@ export default function PomodoroPage() {
     
     // Force tasks refresh after a short delay
     setTimeout(() => {
-      const freshTasks = storage.getTasks();
-      console.log("Fresh tasks from storage:", freshTasks);
       // This will force the useTasks hook to re-render with new data
       window.dispatchEvent(new Event('storage'));
     }, 50);

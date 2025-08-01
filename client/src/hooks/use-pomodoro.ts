@@ -13,18 +13,20 @@ export function usePomodoro() {
     finishTime: null,
   });
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const clearTimer = useCallback(() => {
+
+  //const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  /*const clearTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  }, []);
+  }, []);*/
 
+  // Start either focus or break sessions by setting absolute timestamps
   const startTimer = useCallback((setup: SessionSetup, sessionType: "focus" | "break" = "focus") => {
-    clearTimer();
-    
+    //clearTimer();
     const duration = sessionType === "focus" ? setup.focusDuration : setup.breakDuration;
     const timeInSeconds = duration * 60;
     const now = new Date();
@@ -39,8 +41,11 @@ export function usePomodoro() {
       startTime: now,
       finishTime,
     });
+  },
+  []
+);
 
-    intervalRef.current = setInterval(() => {
+   /* intervalRef.current = setInterval(() => {
       setTimerState(prev => {
         if (prev.isPaused || !prev.isRunning) return prev;
         
@@ -63,7 +68,7 @@ export function usePomodoro() {
         };
       });
     }, 1000);
-  }, [clearTimer]);
+  }, [clearTimer]); */
 
   const pauseTimer = useCallback(() => {
     setTimerState(prev => ({
@@ -73,24 +78,26 @@ export function usePomodoro() {
   }, []);
 
   const stopTimer = useCallback(() => {
-    clearTimer();
+    //clearTimer();
     setTimerState(prev => ({
       ...prev,
       isRunning: false,
       isPaused: false,
       timeRemaining: 0,
+      totalTime: 0,
       startTime: null, // Clear start time to prevent duplicate completion detection
+      finishTime: null,
     }));
-  }, [clearTimer]);
+  }, []);
 
   const startBreak = useCallback((breakDuration: number) => {
-    clearTimer();
+    //clearTimer();
+    notifications.showBreakStart(breakDuration);
     
     const timeInSeconds = breakDuration * 60;
     const now = new Date();
     const finishTime = new Date(now.getTime() + timeInSeconds * 1000);
 
-    notifications.showBreakStart(breakDuration);
 
     setTimerState({
       isRunning: true,
@@ -101,8 +108,11 @@ export function usePomodoro() {
       startTime: now,
       finishTime,
     });
+  },
+  []
+);
 
-    intervalRef.current = setInterval(() => {
+   /* intervalRef.current = setInterval(() => {
       setTimerState(prev => {
         if (prev.isPaused || !prev.isRunning) return prev;
         
@@ -125,11 +135,44 @@ export function usePomodoro() {
         };
       });
     }, 1000);
-  }, [clearTimer]);
+  }, [clearTimer]); */
 
   useEffect(() => {
-    return () => clearTimer();
-  }, [clearTimer]);
+    const { startTime, totalTime, isPaused } = timerState;
+    if (!startTime || totalTime <= 0) return;
+
+    let timeoutId: number;
+    const finishMs = startTime.getTime() + totalTime * 1000;
+
+    const tick = () => {
+      if (timerState.isPaused) {
+        // while paused, check again in 1s
+        timeoutId = window.setTimeout(tick, 1000);
+        return;
+      }
+
+      const nowMs = Date.now();
+      const msLeft = finishMs - nowMs;
+      const secondsLeft = Math.max(0, Math.ceil(msLeft / 1000));
+
+      setTimerState(prev => ({
+        ...prev,
+        timeRemaining: secondsLeft,
+        isRunning: secondsLeft > 0,
+      }));
+
+      if (secondsLeft > 0) {
+        // schedule next tick aligned to next full second
+        const delay = msLeft % 1000 || 1000;
+        timeoutId = window.setTimeout(tick, delay);
+      }
+    };
+
+    // start immediately
+    timeoutId = window.setTimeout(tick, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [timerState.startTime, timerState.totalTime, timerState.isPaused]);
 
   return {
     timerState,

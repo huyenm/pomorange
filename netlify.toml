@@ -1,0 +1,12 @@
+[build]
+  # 1) Run your build inside the client folder
+  command = "yarn --prefix client run build"
+  # 2) Publish the client folder—Netlify will serve client/index.html 
+  #    and automatically expose /dist/index.js, /dist/assets/… etc.
+  publish = "client"
+
+# Single-page-app fallback
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

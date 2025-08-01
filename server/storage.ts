@@ -2,6 +2,7 @@ import { users, tasks, sessionRecords, type User, type InsertUser, type Task, ty
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
+
 // Storage interface for all data operations
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
