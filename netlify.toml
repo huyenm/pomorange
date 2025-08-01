@@ -1,7 +1,7 @@
 [build]
   # Run Yarn inside `client/`
   command   = "yarn --cwd client build"
-  publish   = "client"
+  publish   = "client/dist"
 
 [[redirects]]
   from = "/*"
