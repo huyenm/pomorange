@@ -206,8 +206,8 @@ export default function PomodoroPage() {
   const handleTaskCompleted = () => {
     console.log("handleTaskCompleted called");
 
-    setIsMobileMenuOpen(false);
-    console.log("handleTaskCompleted called");
+    //setIsMobileMenuOpen(false);
+    //console.log("handleTaskCompleted called");
 
     const setupToUse = completionSessionSetup || sessionSetup;
     const startTimeToUse = completionStartTime || timerState.startTime;
@@ -227,8 +227,8 @@ export default function PomodoroPage() {
     //2. Mark the task completed
     toggleTaskCompletion(setupToUse.taskId);
     
-    const task = tasks.find(t => t.id === setupToUse.taskId);
-    console.log("Found task:", task);
+    //const task = tasks.find(t => t.id === setupToUse.taskId);
+    console.log("Found task:", tasks);
 
     // 3. Record the session
     console.log("Recording completed session - Task lookup:", { 
