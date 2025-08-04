@@ -75,6 +75,7 @@ export default function PomodoroPage() {
         // Focus session completed naturally - play sound and show completion modal
         if (sessionSetup) {
           setIsMobileMenuOpen(false);
+          setIsMobileMenuOpen(false);
           // Save sessionSetup and startTime for the completion modal before showing it
           setCompletionSessionSetup(sessionSetup);
           setCompletionStartTime(timerState.startTime);
@@ -84,6 +85,7 @@ export default function PomodoroPage() {
           notifications.showSessionComplete();
 
           setShowCompletionModal(true);
+          
           stopTimer(); // Stop timer to prevent re-triggers
         }
       } else if (timerState.sessionType === "break") {
@@ -157,7 +159,6 @@ export default function PomodoroPage() {
 
   const handleFinishEarly = () => {
     if (!sessionSetup || !timerState.startTime) return;
-
     setIsMobileMenuOpen(false);
     if (!sessionSetup || !timerState.startTime) return;
     
@@ -206,8 +207,8 @@ export default function PomodoroPage() {
   const handleTaskCompleted = () => {
     console.log("handleTaskCompleted called");
 
-    //setIsMobileMenuOpen(false);
-    //console.log("handleTaskCompleted called");
+    setIsMobileMenuOpen(false);
+    console.log("handleTaskCompleted called");
 
     const setupToUse = completionSessionSetup || sessionSetup;
     const startTimeToUse = completionStartTime || timerState.startTime;
@@ -474,8 +475,10 @@ export default function PomodoroPage() {
                   style={{ fontFamily: 'Space Mono, monospace' }}
                 >
                   Setup
+                  Setup
                 </Button>
-      
+
+
                 <Button
                   variant={currentPhase === "reports" ? "default" : "ghost"}
                   size="sm"
