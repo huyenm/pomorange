@@ -20,20 +20,17 @@ export const notifications = {
   },
 
   show(title: string, options?: NotificationOptions) {
-    //if (Notification.permission === "granted") {
-      if (!("Notification" in window) || Notification.permission !== "granted") {
-        console.warn("Notifications unavailable or permission not granted");
-        return;
-      }
-      
-      new Notification(title, {
-        icon: "/favicon.ico",
-        ...options,
-      });
+    if (!("Notification" in window) || Notification.permission !== "granted") {
+      console.warn("Notifications unavailable or permission not granted");
+      return;
     }
+    new Notification(title, {
+      icon: "/favicon.ico",
+      ...options,
+    });
   },
 
-  showSessionStart(){
+  showSessionStart() {
     this.show("Focus Session Started! 🎯", {
       body: "Your focus session has begun. Stay concentrated!",
       tag: "session-start",
