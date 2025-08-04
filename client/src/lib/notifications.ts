@@ -1,7 +1,7 @@
 import { audioManager } from "./audio";
 
 export const notifications = {
-  async requestPermission(): Promise<boolean> {
+  async requestPermission() {
     if (!("Notification" in window)) {
       console.warn("This browser does not support notifications");
       return false;
@@ -19,7 +19,7 @@ export const notifications = {
     return permission === "granted";
   },
 
-  show(title: string, options?: NotificationOptions): void {
+  show(title: string, options?: NotificationOptions) {
     //if (Notification.permission === "granted") {
       if (!("Notification" in window) || Notification.permission !== "granted") {
         console.warn("Notifications unavailable or permission not granted");
@@ -33,7 +33,7 @@ export const notifications = {
     }
   },
 
-  showSessionStart(): void {
+  showSessionStart(){
     this.show("Focus Session Started! 🎯", {
       body: "Your focus session has begun. Stay concentrated!",
       tag: "session-start",
@@ -41,7 +41,7 @@ export const notifications = {
     audioManager.playSessionStart();
   },
 
-  showBreakStart(breakDuration: number): void {
+  showBreakStart(breakDuration: number) {
     this.show("Break Time! 🧘", {
       body: `Take a ${breakDuration}-minute break. You've earned it!`,
       tag: "break-start",
@@ -49,7 +49,7 @@ export const notifications = {
     audioManager.playBreakStart();
   },
 
-  showBreakEnd(): void {
+  showBreakEnd() {
     this.show("Break's Over! 💪", {
       body: "Time to get back to work. You've got this!",
       tag: "break-end",
@@ -57,7 +57,7 @@ export const notifications = {
     audioManager.playBreakFinish();
   },
 
-  showSessionComplete(): void {
+  showSessionComplete() {
     this.show("Session Complete! 🎉", {
       body: "Great job! You've completed your focus session.",
       tag: "session-complete",
@@ -65,7 +65,7 @@ export const notifications = {
     audioManager.playSessionFinish();
   },
 
-  showPreparationComplete(): void {
+  showPreparationComplete() {
     this.show("Ready to Focus! 🎯", {
       body: "Preparation time is over. Let's start your focus session!",
       tag: "preparation-complete",
