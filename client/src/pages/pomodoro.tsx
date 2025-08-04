@@ -228,7 +228,7 @@ export default function PomodoroPage() {
     toggleTaskCompletion(setupToUse.taskId);
     
     //const task = tasks.find(t => t.id === setupToUse.taskId);
-    console.log("Found task:", tasks);
+    //console.log("Found task:", tasks);
 
     // 3. Record the session
     console.log("Recording completed session - Task lookup:", { 
