@@ -36,7 +36,7 @@ export function ConfettiModal({ isOpen, taskName, onClose }: ConfettiModalProps)
           {/* Content overlay matching modal size */}
           <div className="relative bg-white/95 backdrop-blur-sm rounded-lg p-8 shadow-xl min-h-[200px] flex flex-col items-center justify-center">
             <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-2xl font-bold text-green-600 mb-3" style={{ fontFamily: 'Space Mono, monospace' }}>
+            <h2 className="text-2xl font-bold text-green-600 mb-3">
               Task Completed!
             </h2>
             <p className="text-gray-700 mb-6 text-center">

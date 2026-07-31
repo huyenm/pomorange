@@ -1,7 +1,8 @@
-import { Task, SessionRecord } from "@shared/schema";
+import { Task, SessionRecord, TaskLabel } from "@shared/schema";
 
 const TASKS_KEY = "pomodoro_tasks";
 const RECORDS_KEY = "pomodoro_records";
+const LABELS_KEY = "pomodoro_labels";
 
 export const storage = {
   // Tasks
@@ -14,6 +15,7 @@ export const storage = {
         ...task,
         notes: task.notes || "",
         tags: task.tags || [],
+        labelId: task.labelId || null,
         createdAt: new Date(task.createdAt),
       }));
     } catch (error) {
@@ -30,12 +32,18 @@ export const storage = {
     }
   },
 
-  addTask(text: string, notes: string = "", tags: string[] = []): Task {
+  addTask(
+    text: string,
+    notes: string = "",
+    tags: string[] = [],
+    labelId: string | null = null,
+  ): Task {
     const newTask: Task = {
       id: crypto.randomUUID(),
       text,
       notes,
       tags,
+      labelId,
       createdAt: new Date(),
       completed: false,
     };
@@ -51,7 +59,7 @@ export const storage = {
     this.saveTasks(tasks);
   },
 
-  updateTask(id: string, updates: Partial<Pick<Task, 'text' | 'notes' | 'tags'>>): void {
+  updateTask(id: string, updates: Partial<Pick<Task, 'text' | 'notes' | 'tags' | 'labelId'>>): void {
     try {
       const tasks = this.getTasks();
       const updatedTasks = tasks.map(task => {
@@ -65,6 +73,44 @@ export const storage = {
       console.error("Error updating task:", error);
       throw error;
     }
+  },
+
+  // Labels
+  getLabels(): TaskLabel[] {
+    try {
+      const stored = localStorage.getItem(LABELS_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+      console.error("Error reading labels from storage:", error);
+      return [];
+    }
+  },
+
+  saveLabels(labels: TaskLabel[]): void {
+    localStorage.setItem(LABELS_KEY, JSON.stringify(labels));
+  },
+
+  addLabel(name: string, color: string): TaskLabel {
+    const label = { id: crypto.randomUUID(), name, color };
+    this.saveLabels([...this.getLabels(), label]);
+    return label;
+  },
+
+  updateLabel(id: string, updates: Partial<Pick<TaskLabel, "name" | "color">>): void {
+    this.saveLabels(
+      this.getLabels().map(label =>
+        label.id === id ? { ...label, ...updates } : label,
+      ),
+    );
+  },
+
+  deleteLabel(id: string): void {
+    this.saveLabels(this.getLabels().filter(label => label.id !== id));
+    this.saveTasks(
+      this.getTasks().map(task =>
+        task.labelId === id ? { ...task, labelId: null } : task,
+      ),
+    );
   },
 
   toggleTaskCompletion(id: string): void {

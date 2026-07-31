@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  --site-background: #FEF5F0;
   --background: 25 50% 97%; /* #FEF5F0 */
   --foreground: 25 25% 15%; /* #2D1B0F */
   --muted: 25 30% 92%; /* #F5EDE6 */
@@ -55,8 +56,13 @@
     @apply border-border;
   }
 
+  button {
+    border: 0 !important;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
+    background-color: var(--site-background);
     font-family: 'Inter', sans-serif;
     /* Prevent zoom on mobile when focusing inputs */
     -webkit-text-size-adjust: 100%;
@@ -64,7 +70,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Mono', monospace;
+    font-family: "Lato", sans-serif;
   }
 }
 
@@ -79,7 +85,16 @@
   }
   
   .card-heading {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Lato', sans-serif;
+  }
+
+  button.select-task-trigger {
+    border: 1px solid hsl(var(--input)) !important;
+  }
+
+  button.label-filter-trigger,
+  button.task-check-button {
+    border: 1px solid hsl(var(--input)) !important;
   }
   
   .card-orange-border {

@@ -67,10 +67,18 @@ export const insertSessionRecordSchema = createInsertSchema(sessionRecords).omit
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type Task = typeof tasks.$inferSelect;
+export type Task = typeof tasks.$inferSelect & {
+  labelId?: string | null;
+};
 export type InsertTask = z.infer<typeof insertTaskSchema>;
 export type SessionRecord = typeof sessionRecords.$inferSelect;
 export type InsertSessionRecord = z.infer<typeof insertSessionRecordSchema>;
+
+export type TaskLabel = {
+  id: string;
+  name: string;
+  color: string;
+};
 
 // Zod schemas (keeping existing ones for frontend validation, but renamed to avoid conflicts)
 export const taskFormSchema = z.object({
@@ -78,6 +86,7 @@ export const taskFormSchema = z.object({
   text: z.string().min(1, "Task text is required"),
   notes: z.string().optional(),
   tags: z.array(z.string()).default([]),
+  labelId: z.string().nullable().optional(),
   createdAt: z.date().optional(),
   completed: z.boolean().default(false),
 });

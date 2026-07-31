@@ -25,6 +25,7 @@ export default function PomodoroPage() {
   const [currentPhase, setCurrentPhase] = useState<Phase>("planning");
   const [sessionSetup, setSessionSetup] = useState<SessionSetup | null>(null);
   const [sessionTaskName, setSessionTaskName] = useState<string>("");
+  const [planningTaskId, setPlanningTaskId] = useState<string>();
   const [completionSessionSetup, setCompletionSessionSetup] = useState<SessionSetup | null>(null);
   const [completionStartTime, setCompletionStartTime] = useState<Date | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
@@ -138,7 +139,8 @@ export default function PomodoroPage() {
     }
   }, [timerState.isRunning, timerState.timeRemaining, timerState.sessionType, timerState.startTime, sessionSetup, isEarlyFinish, tasks, stopTimer, startTimer, addRecord, toggleTaskCompletion, audioManager, notifications]);
 
-  const handleStartSession = () => {
+  const handleStartSession = (selectedTaskId?: string) => {
+    setPlanningTaskId(selectedTaskId);
     setCurrentPhase("session");
   };
 
@@ -388,11 +390,11 @@ export default function PomodoroPage() {
   const completionTaskName = completionTask?.text || "Unknown task";
 
   return (
-    <div className="min-h-screen bg-[#FEF5F0]">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-orange-200">
+      <header className="sticky top-0 z-30 border-b border-orange-200 bg-white/30 shadow-sm backdrop-blur-md">
         <div className="max-w-6xl mx-auto py-4" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <div className="flex items-center flex-shrink-0">
               <button 
                 onClick={() => setCurrentPhase("planning")}
@@ -407,7 +409,7 @@ export default function PomodoroPage() {
             </div>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-1 bg-orange-100 rounded-lg p-1 mobile-navigation">
+            <nav className="ml-auto hidden space-x-1 rounded-lg bg-orange-100/30 p-1 mobile-navigation md:flex">
               <Button
                 variant={currentPhase === "planning" ? "default" : "ghost"}
                 size="sm"
@@ -437,21 +439,24 @@ export default function PomodoroPage() {
               </Button>
             </nav>
 
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden p-2"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
+            <div className="ml-auto flex items-center gap-2 md:hidden">
+              {/* Mobile Menu Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden p-2"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label={isMobileMenuOpen ? "Close navigation" : "Open navigation"}
+              >
+                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Navigation */}
           {isMobileMenuOpen && (
-            <div className="md:hidden mt-4 pt-4 border-t border-[#BE8669]/20">
-              <nav className="flex flex-col space-y-2">
+            <div className="mt-4 border-t border-[#BE8669]/20 pt-4 md:hidden">
+              <nav className="flex w-full flex-col space-y-2">
                 <Button
                   variant={currentPhase === "planning" ? "default" : "ghost"}
                   size="sm"
@@ -507,6 +512,7 @@ export default function PomodoroPage() {
             <SessionSetupPhase
               onStartTimer={handleStartTimer}
               onBackToPlanning={() => setCurrentPhase("planning")}
+              initialTaskId={planningTaskId}
             />
           )}
           
@@ -526,7 +532,7 @@ export default function PomodoroPage() {
                 <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Coffee className="h-8 w-8 text-amber-600" />
                 </div>
-                <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Mono, monospace' }}>
+                <h2 className="text-2xl font-bold mb-4">
                   Break Time!
                 </h2>
                 <div className="text-4xl font-bold text-amber-600 mb-6" style={{ fontFamily: 'Space Mono, monospace' }}>

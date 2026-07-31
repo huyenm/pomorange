@@ -10,15 +10,29 @@ import { SessionSetup } from "@shared/schema";
 interface SessionSetupPhaseProps {
   onStartTimer: (setup: SessionSetup) => void;
   onBackToPlanning: () => void;
+  initialTaskId?: string;
 }
 
-export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSetupPhaseProps) {
+export function SessionSetupPhase({
+  onStartTimer,
+  onBackToPlanning,
+  initialTaskId,
+}: SessionSetupPhaseProps) {
   const { tasks } = useTasks();
-  const [selectedTaskId, setSelectedTaskId] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState(initialTaskId || "");
   const [focusDuration, setFocusDuration] = useState("25");
   const [breakDuration, setBreakDuration] = useState("5");
   
   const activeTasks = tasks.filter(task => !task.completed);
+
+  useEffect(() => {
+    if (
+      initialTaskId &&
+      activeTasks.some(task => String(task.id) === initialTaskId)
+    ) {
+      setSelectedTaskId(initialTaskId);
+    }
+  }, [initialTaskId, tasks]);
 
   const selectedTask = tasks.find(task => task.id === selectedTaskId);
   
@@ -62,7 +76,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
               Select Task
             </label>
             <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
-              <SelectTrigger>
+              <SelectTrigger className="select-task-trigger">
                 <SelectValue placeholder={activeTasks.length === 0 ? "No active tasks" : "Choose a task..."} />
               </SelectTrigger>
               <SelectContent>
@@ -249,7 +263,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
             <Button
               variant="outline"
               onClick={onBackToPlanning}
-              className="btn-secondary flex-1 mobile-button-compact"
+              className="btn-secondary h-11 flex-1 mobile-button-compact"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Planning
@@ -257,7 +271,7 @@ export function SessionSetupPhase({ onStartTimer, onBackToPlanning }: SessionSet
             <Button
               onClick={handleBeginTimer}
               disabled={!selectedTaskId || !focusDuration || !breakDuration}
-              className="btn-primary flex-1 mobile-button-compact"
+              className="btn-primary h-11 flex-1 mobile-button-compact"
             >
               <Play className="mr-2 h-4 w-4" />
               Begin Timer

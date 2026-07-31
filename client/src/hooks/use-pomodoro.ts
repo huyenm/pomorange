@@ -71,10 +71,32 @@ export function usePomodoro() {
   }, [clearTimer]); */
 
   const pauseTimer = useCallback(() => {
-    setTimerState(prev => ({
-      ...prev,
-      isPaused: !prev.isPaused,
-    }));
+    setTimerState(prev => {
+      if (!prev.isRunning) return prev;
+
+      if (prev.isPaused) {
+        // Resume from the frozen remaining time with a new absolute deadline.
+        return {
+          ...prev,
+          isPaused: false,
+          finishTime: new Date(Date.now() + prev.timeRemaining * 1000),
+        };
+      }
+
+      // Capture the exact remaining time before freezing the timer.
+      const secondsLeft = prev.finishTime
+        ? Math.max(
+            0,
+            Math.ceil((prev.finishTime.getTime() - Date.now()) / 1000),
+          )
+        : prev.timeRemaining;
+
+      return {
+        ...prev,
+        isPaused: true,
+        timeRemaining: secondsLeft,
+      };
+    });
   }, []);
 
   const stopTimer = useCallback(() => {
@@ -138,19 +160,13 @@ export function usePomodoro() {
   }, [clearTimer]); */
 
   useEffect(() => {
-    const { startTime, totalTime, isPaused } = timerState;
-    if (!startTime || totalTime <= 0) return;
+    const { finishTime, totalTime, isPaused, isRunning } = timerState;
+    if (!finishTime || totalTime <= 0 || isPaused || !isRunning) return;
 
     let timeoutId: number;
-    const finishMs = startTime.getTime() + totalTime * 1000;
+    const finishMs = finishTime.getTime();
 
     const tick = () => {
-      if (timerState.isPaused) {
-        // while paused, check again in 1s
-        timeoutId = window.setTimeout(tick, 1000);
-        return;
-      }
-
       const nowMs = Date.now();
       const msLeft = finishMs - nowMs;
       const secondsLeft = Math.max(0, Math.ceil(msLeft / 1000));
@@ -172,7 +188,12 @@ export function usePomodoro() {
     timeoutId = window.setTimeout(tick, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [timerState.startTime, timerState.totalTime, timerState.isPaused]);
+  }, [
+    timerState.finishTime,
+    timerState.totalTime,
+    timerState.isPaused,
+    timerState.isRunning,
+  ]);
 
   return {
     timerState,

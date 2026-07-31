@@ -32,9 +32,14 @@ export function useTasks() {
     };
   }, []);
 
-  const addTask = (text: string, notes: string = "", tags: string[] = []) => {
+  const addTask = (
+    text: string,
+    notes: string = "",
+    tags: string[] = [],
+    labelId: string | null = null,
+  ) => {
     try {
-      const newTask = storage.addTask(text, notes, tags);
+      const newTask = storage.addTask(text, notes, tags, labelId);
       setTasks(prev => [...prev, newTask]);
       return newTask;
     } catch (error) {
@@ -66,7 +71,7 @@ export function useTasks() {
     }
   };
 
-  const updateTask = (id: string, updates: Partial<Pick<Task, 'text' | 'notes' | 'tags'>>) => {
+  const updateTask = (id: string, updates: Partial<Pick<Task, 'text' | 'notes' | 'tags' | 'labelId'>>) => {
     try {
       storage.updateTask(id, updates);
       

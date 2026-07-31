@@ -4,33 +4,59 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { Plus, List, Calendar as CalendarIcon, Clock, Coffee, Headphones, Trash2, Check, X } from "lucide-react";
+import { Plus, List, Calendar as CalendarIcon, Clock, Coffee, Headphones, Trash2, Check, X, Tags, ChevronDown, Pipette } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TaskItem } from "@/components/task-item";
 import { useTasks } from "@/hooks/use-tasks";
 import { useSessions } from "@/hooks/use-sessions";
 import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
+import { LABEL_COLORS, useLabels } from "@/hooks/use-labels";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface PlanningPhaseProps {
-  onStartSession: () => void;
+  onStartSession: (selectedTaskId?: string) => void;
 }
 
 export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   const [newTaskText, setNewTaskText] = useState("");
   const [newTaskNotes, setNewTaskNotes] = useState("");
-  const [newTaskTags, setNewTaskTags] = useState("");
+  const [newTaskLabelId, setNewTaskLabelId] = useState("none");
+  const [newLabelName, setNewLabelName] = useState("");
+  const [newLabelColor, setNewLabelColor] = useState("#F3793A");
+  const [labelFilter, setLabelFilter] = useState("all");
+  const [labelMenuOpen, setLabelMenuOpen] = useState(false);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const { tasks, addTask, deleteTask, updateTask, toggleTaskCompletion } = useTasks();
+  const { labels, addLabel, updateLabelColor, deleteLabel } = useLabels();
   
   const activeTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
+  const filteredActiveTasks = activeTasks.filter(task =>
+    labelFilter === "all"
+      ? true
+      : labelFilter === "none"
+        ? !task.labelId
+        : task.labelId === labelFilter,
+  );
+  const filteredCompletedTasks = completedTasks.filter(task =>
+    labelFilter === "all"
+      ? true
+      : labelFilter === "none"
+        ? !task.labelId
+        : task.labelId === labelFilter,
+  );
   const { records } = useSessions();
 
   const handleAddTask = () => {
     if (newTaskText.trim()) {
-      const task = addTask(newTaskText.trim(), newTaskNotes.trim(), newTaskTags ? newTaskTags.split(",").map(tag => tag.trim()).filter(tag => tag) : []);
+      addTask(
+        newTaskText.trim(),
+        newTaskNotes.trim(),
+        [],
+        newTaskLabelId === "none" ? null : newTaskLabelId,
+      );
 
        // Notify all useTasks() hooks to reload from storage
       window.dispatchEvent(new Event("storage"));
@@ -38,7 +64,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
       //Reset form
       setNewTaskText("");
       setNewTaskNotes("");
-      setNewTaskTags("");
+      setNewTaskLabelId("none");
       setIsAddingTask(false);
     }
   };
@@ -46,7 +72,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   const handleCancelAddTask = () => {
     setNewTaskText("");
     setNewTaskNotes("");
-    setNewTaskTags("");
+    setNewTaskLabelId("none");
     setIsAddingTask(false);
   };
 
@@ -81,6 +107,79 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4 sm:space-y-6 mobile-task-card">
+          {/* Compact Label Filter */}
+          {labels.length > 0 && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="label-filter-trigger h-8 gap-0 rounded-full bg-white px-3 text-xs font-medium"
+                >
+                  <Tags className="mr-1.5 h-3.5 w-3.5 text-[#F3793A]" />
+                  {labelFilter === "all"
+                    ? "All labels"
+                    : labelFilter === "none"
+                      ? "Unlabeled"
+                      : labels.find(label => label.id === labelFilter)?.name || "All labels"}
+                  <ChevronDown className="ml-1.5 h-3.5 w-3.5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-56 p-2">
+                <button
+                  type="button"
+                  onClick={() => setLabelFilter("all")}
+                  className="flex w-full items-center rounded px-2 py-2 text-left text-sm hover:bg-orange-50"
+                >
+                  All labels
+                  {labelFilter === "all" && <Check className="ml-auto h-4 w-4 text-[#147E50]" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLabelFilter("none")}
+                  className="flex w-full items-center rounded px-2 py-2 text-left text-sm hover:bg-orange-50"
+                >
+                  Unlabeled
+                  {labelFilter === "none" && <Check className="ml-auto h-4 w-4 text-[#147E50]" />}
+                </button>
+                {labels.map(label => (
+                  <div key={label.id} className="group/label flex items-center rounded hover:bg-orange-50">
+                    <button
+                      type="button"
+                      onClick={() => setLabelFilter(label.id)}
+                      className="flex flex-1 items-center gap-2 px-2 py-2 text-left text-sm"
+                    >
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: label.color }} />
+                      {label.name}
+                      {labelFilter === label.id && <Check className="ml-auto h-4 w-4 text-[#147E50]" />}
+                    </button>
+                    <input
+                      type="color"
+                      value={label.color}
+                      onChange={(event) => updateLabelColor(label.id, event.target.value)}
+                      onClick={(event) => event.stopPropagation()}
+                      className="mr-1 h-6 w-7 cursor-pointer rounded border bg-white p-0.5"
+                      aria-label={`Change ${label.name} color`}
+                      title={`Change ${label.name} color`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        deleteLabel(label.id);
+                        if (labelFilter === label.id) setLabelFilter("all");
+                      }}
+                      className="mr-1 rounded p-1 text-gray-400 opacity-0 hover:bg-red-50 hover:text-red-600 group-hover/label:opacity-100 focus:opacity-100"
+                      aria-label={`Delete ${label.name} label`}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </PopoverContent>
+            </Popover>
+          )}
+
           {/* Add Task Form */}
           {!isAddingTask ? (
             <div className="bg-orange-50 rounded-lg border-2 border-dashed border-orange-200" style={{ padding: '10px' }}>
@@ -118,17 +217,137 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                       rows={1}
                     />
                     
-                    <Input
-                      placeholder="Add Tags (comma separated)"
-                      value={newTaskTags}
-                      onChange={(e) => setNewTaskTags(e.target.value)}
-                      className="text-sm text-blue-500 border-none p-0 focus:ring-0 bg-transparent focus:bg-transparent outline-none focus:outline-none editing-input h-6"
-                    />
+                    <Popover open={labelMenuOpen} onOpenChange={setLabelMenuOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-8 justify-start bg-white text-sm font-normal"
+                        >
+                          <Tags className="mr-2 h-4 w-4 text-[#F3793A]" />
+                          {newTaskLabelId === "none"
+                            ? "Add label"
+                            : labels.find(label => label.id === newTaskLabelId)?.name || "Add label"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" className="w-64 p-2">
+                        <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Add label
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewTaskLabelId("none");
+                            setLabelMenuOpen(false);
+                          }}
+                          className="w-full rounded px-2 py-2 text-left text-sm hover:bg-orange-50"
+                        >
+                          No label
+                        </button>
+                        {labels.map(label => (
+                          <button
+                            key={label.id}
+                            type="button"
+                            onClick={() => {
+                              setNewTaskLabelId(label.id);
+                              setLabelMenuOpen(false);
+                            }}
+                            className="flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm hover:bg-orange-50"
+                          >
+                            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: label.color }} />
+                            {label.name}
+                            {newTaskLabelId === label.id && <Check className="ml-auto h-4 w-4 text-[#147E50]" />}
+                          </button>
+                        ))}
+                        <div className="mt-2 border-t pt-2">
+                          <p className="px-2 pb-2 text-xs font-medium text-muted-foreground">
+                            Create new label
+                          </p>
+                          <div className="flex gap-2">
+                            <span
+                              className="h-6 w-6 shrink-0 self-center rounded-full border-2 border-white shadow-sm"
+                              style={{ backgroundColor: newLabelColor }}
+                              aria-label={`Selected label color ${newLabelColor}`}
+                              role="img"
+                            />
+                            <Input
+                              value={newLabelName}
+                              onChange={(event) => setNewLabelName(event.target.value)}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                  event.preventDefault();
+                                  event.stopPropagation();
+                                  const label = addLabel(newLabelName, newLabelColor);
+                                  if (label) {
+                                    setNewTaskLabelId(label.id);
+                                    setNewLabelName("");
+                                    setNewLabelColor("#F3793A");
+                                    setLabelMenuOpen(false);
+                                  }
+                                }
+                              }}
+                              placeholder="Label name"
+                              className="h-8"
+                            />
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="btn-primary h-8 px-3"
+                              disabled={!newLabelName.trim()}
+                              onClick={() => {
+                                const label = addLabel(newLabelName, newLabelColor);
+                                if (label) {
+                                  setNewTaskLabelId(label.id);
+                                  setNewLabelName("");
+                                  setNewLabelColor("#F3793A");
+                                  setLabelMenuOpen(false);
+                                }
+                              }}
+                            >
+                              Create
+                            </Button>
+                          </div>
+                          <div className="mt-2 flex items-center gap-1.5 px-1">
+                            {LABEL_COLORS.map(color => (
+                              <button
+                                key={color}
+                                type="button"
+                                onClick={() => setNewLabelColor(color)}
+                                className={`h-6 w-6 rounded-full border-2 transition-transform hover:scale-110 ${
+                                  newLabelColor.toLowerCase() === color.toLowerCase()
+                                    ? "border-[#41210A] ring-1 ring-white"
+                                    : "border-white"
+                                }`}
+                                style={{ backgroundColor: color }}
+                                aria-label={`Use ${color}`}
+                                aria-pressed={newLabelColor.toLowerCase() === color.toLowerCase()}
+                              />
+                            ))}
+                            <label
+                              className="relative flex h-6 w-6 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-white shadow-sm transition-transform hover:scale-110"
+                              style={{ backgroundColor: newLabelColor }}
+                              title="Choose a custom color"
+                            >
+                              <Pipette className="h-3.5 w-3.5 text-white drop-shadow" aria-hidden="true" />
+                              <span className="sr-only">Choose a custom label color</span>
+                              <input
+                                type="color"
+                                value={newLabelColor}
+                                onChange={(event) => setNewLabelColor(event.target.value)}
+                                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                aria-label="Choose a custom label color"
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </div>
               
-              <div className="flex justify-end space-x-2 pt-1">
+              <div className="flex justify-end space-x-2 pt-3">
                 <Button
                   size="sm"
                   variant="ghost"
@@ -152,13 +371,15 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
 
           {/* Active Task List */}
           <div className="space-y-3">
-            {activeTasks.length === 0 ? (
+            {filteredActiveTasks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <List className="h-12 w-12 mx-auto mb-3 text-orange-300" />
-                <p className="text-muted-custom">No active tasks yet. Add your first task above!</p>
+                <p className="text-muted-custom">
+                  {activeTasks.length === 0 ? "No active tasks yet. Add your first task above!" : "No tasks match this label."}
+                </p>
               </div>
             ) : (
-              activeTasks.map((task) => (
+              filteredActiveTasks.map((task) => (
                 <TaskItem
                   key={task.id}
                   task={task}
@@ -167,6 +388,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                   onUpdate={updateTask}
                   onDelete={deleteTask}
                   onToggleComplete={toggleTaskCompletion}
+                  labels={labels}
+                  onAddLabel={addLabel}
                 />
               ))
             )}
@@ -175,26 +398,26 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           {/* Start Session Button */}
           <div className="pt-6 border-t border-orange-200">
             <Button
-              onClick={onStartSession}
-              className="btn-primary w-full py-4 text-base font-semibold"
+              onClick={() => onStartSession(selectedTaskId || undefined)}
+              className="btn-primary h-[46px] w-full rounded-[10px] py-0 text-base font-semibold"
               disabled={activeTasks.length === 0}
             >
               <Clock className="h-5 w-5" />
-              <span className="ml-2">Start Setting up Session</span>
+              <span className="ml-2">Start setting up session</span>
             </Button>
           </div>
 
           {/* Completed Tasks Section */}
-          {completedTasks.length > 0 && (
+          {filteredCompletedTasks.length > 0 && (
             <div className="pt-6 border-t border-orange-200">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium text-heading-custom">Completed Tasks</h4>
                 <Badge variant="outline" className="text-[#147E50] border-[#147E50] bg-green-50">
-                  {completedTasks.length} completed
+                  {filteredCompletedTasks.length} completed
                 </Badge>
               </div>
               <div className="space-y-2">
-                {completedTasks.map((task) => (
+                {filteredCompletedTasks.map((task) => (
                   <div
                     key={task.id}
                     className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-gray-200"
@@ -202,7 +425,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                     <div className="flex items-center space-x-3">
                       <button
                         onClick={() => toggleTaskCompletion(task.id)}
-                        className="w-5 h-5 rounded-full flex-shrink-0 transition-colors"
+                        className="task-check-button w-5 h-5 rounded-full flex-shrink-0 transition-colors"
                         style={{ backgroundColor: 'rgb(20, 126, 80)', borderColor: 'rgb(20, 126, 80)', borderWidth: '2px' }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = 'rgb(16, 100, 64)';
@@ -215,7 +438,14 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                       >
                         <Check className="w-3 h-3 text-white m-auto" />
                       </button>
-                      <span className="text-muted-custom line-through text-sm">{task.text}</span>
+                      <div>
+                        <span className="text-muted-custom line-through text-sm">{task.text}</span>
+                        {task.labelId && labels.find(label => label.id === task.labelId) && (
+                          <Badge variant="outline" className="ml-2 text-xs">
+                            {labels.find(label => label.id === task.labelId)?.name}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <Button
                       variant="ghost"
