@@ -17,6 +17,7 @@ import { notifications } from "@/lib/notifications";
 import { audioManager } from "@/lib/audio";
 import { storage } from "@/lib/storage";
 import { SessionSetup } from "@shared/schema";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 
 type Phase = "planning" | "session" | "timer" | "reports";
@@ -392,8 +393,8 @@ export default function PomodoroPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-orange-200 bg-white/30 shadow-sm backdrop-blur-md">
-        <div className="max-w-6xl mx-auto py-4" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+      <header className="sticky top-0 z-30 px-4 py-3">
+        <div className="mx-auto max-w-6xl rounded-[28px] border border-white/80 bg-white/80 px-3 py-2 shadow-[0_10px_30px_rgba(65,33,10,0.16)] backdrop-blur-xl dark:border-white/10 dark:bg-[#211d1a]/90 sm:px-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center flex-shrink-0">
               <button 
@@ -403,19 +404,22 @@ export default function PomodoroPage() {
                 <img 
                   src={logoNew} 
                   alt="Pomorange Logo" 
-                  className="w-[120px] h-[30px] sm:w-[160px] sm:h-[41.03px] object-contain"
+                  className="h-[30px] w-[116px] object-contain sm:h-[34px] sm:w-[132px]"
                 />
               </button>
             </div>
             
             {/* Desktop Navigation */}
-            <nav className="ml-auto hidden space-x-1 rounded-lg bg-orange-100/30 p-1 mobile-navigation md:flex">
+            <nav className="ml-auto hidden items-center gap-1 md:flex">
               <Button
                 variant={currentPhase === "planning" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("planning")}
-                className={currentPhase === "planning" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
-                style={{ fontFamily: 'Space Mono, monospace' }}
+                className={`h-9 rounded-full px-5 font-sans text-sm ${
+                  currentPhase === "planning"
+                    ? "bg-[#F3793A] font-semibold text-white shadow-sm hover:bg-[#E86A2B]"
+                    : "bg-transparent font-medium text-[#41210A] hover:bg-white/70 dark:text-orange-100 dark:hover:bg-white/10"
+                }`}
               >
                 Planning
               </Button>
@@ -423,8 +427,11 @@ export default function PomodoroPage() {
                 variant={currentPhase === "session" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("session")}
-                className={currentPhase === "session" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
-                style={{ fontFamily: 'Space Mono, monospace' }}
+                className={`h-9 rounded-full px-5 font-sans text-sm ${
+                  currentPhase === "session"
+                    ? "bg-[#F3793A] font-semibold text-white shadow-sm hover:bg-[#E86A2B]"
+                    : "bg-transparent font-medium text-[#41210A] hover:bg-white/70 dark:text-orange-100 dark:hover:bg-white/10"
+                }`}
               >
                 Setup
               </Button>
@@ -432,19 +439,24 @@ export default function PomodoroPage() {
                 variant={currentPhase === "reports" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentPhase("reports")}
-                className={currentPhase === "reports" ? "btn-primary mobile-button-compact font-bold" : "btn-secondary mobile-button-compact font-normal"}
-                style={{ fontFamily: 'Space Mono, monospace' }}
+                className={`h-9 rounded-full px-5 font-sans text-sm ${
+                  currentPhase === "reports"
+                    ? "bg-[#F3793A] font-semibold text-white shadow-sm hover:bg-[#E86A2B]"
+                    : "bg-transparent font-medium text-[#41210A] hover:bg-white/70 dark:text-orange-100 dark:hover:bg-white/10"
+                }`}
               >
                 Reports
               </Button>
             </nav>
+            <ThemeToggle className="hidden md:inline-flex" />
 
             <div className="ml-auto flex items-center gap-2 md:hidden">
+              <ThemeToggle />
               {/* Mobile Menu Button */}
               <Button
                 variant="ghost"
                 size="sm"
-                className="md:hidden p-2"
+                className="h-9 w-9 rounded-full bg-transparent p-2 hover:bg-white/70 md:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-label={isMobileMenuOpen ? "Close navigation" : "Open navigation"}
               >
@@ -455,8 +467,8 @@ export default function PomodoroPage() {
 
           {/* Mobile Navigation */}
           {isMobileMenuOpen && (
-            <div className="mt-4 border-t border-[#BE8669]/20 pt-4 md:hidden">
-              <nav className="flex w-full flex-col space-y-2">
+            <div className="mt-2 border-t border-white/70 pt-2 md:hidden">
+              <nav className="flex w-full flex-col gap-1">
                 <Button
                   variant={currentPhase === "planning" ? "default" : "ghost"}
                   size="sm"
@@ -464,8 +476,11 @@ export default function PomodoroPage() {
                     setCurrentPhase("planning");
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`justify-start ${currentPhase === "planning" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
-                  style={{ fontFamily: 'Space Mono, monospace' }}
+                  className={`h-10 justify-start rounded-full px-4 font-sans text-sm ${
+                    currentPhase === "planning"
+                      ? "bg-[#F3793A] font-semibold text-white hover:bg-[#E86A2B]"
+                      : "bg-transparent font-medium text-[#41210A] hover:bg-white/70 dark:text-orange-100 dark:hover:bg-white/10"
+                  }`}
                 >
                   Planning
                 </Button>
@@ -476,10 +491,12 @@ export default function PomodoroPage() {
                     setCurrentPhase("session");
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`justify-start ${currentPhase === "session" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
-                  style={{ fontFamily: 'Space Mono, monospace' }}
+                  className={`h-10 justify-start rounded-full px-4 font-sans text-sm ${
+                    currentPhase === "session"
+                      ? "bg-[#F3793A] font-semibold text-white hover:bg-[#E86A2B]"
+                      : "bg-transparent font-medium text-[#41210A] hover:bg-white/70 dark:text-orange-100 dark:hover:bg-white/10"
+                  }`}
                 >
-                  Setup
                   Setup
                 </Button>
 
@@ -491,8 +508,11 @@ export default function PomodoroPage() {
                     setCurrentPhase("reports");
                     setIsMobileMenuOpen(false);
                   }}
-                  className={`justify-start ${currentPhase === "reports" ? "btn-primary px-4 py-2 text-sm font-bold" : "btn-secondary px-4 py-2 text-sm font-normal"}`}
-                  style={{ fontFamily: 'Space Mono, monospace' }}
+                  className={`h-10 justify-start rounded-full px-4 font-sans text-sm ${
+                    currentPhase === "reports"
+                      ? "bg-[#F3793A] font-semibold text-white hover:bg-[#E86A2B]"
+                      : "bg-transparent font-medium text-[#41210A] hover:bg-white/70 dark:text-orange-100 dark:hover:bg-white/10"
+                  }`}
                 >
                   Reports
                 </Button>
@@ -503,7 +523,7 @@ export default function PomodoroPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto py-4 sm:py-8 min-h-screen" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+      <main className="mx-auto min-h-screen max-w-6xl px-4 py-4 sm:py-8 lg:px-0">
           {currentPhase === "planning" && (
             <PlanningPhase onStartSession={handleStartSession} />
           )}

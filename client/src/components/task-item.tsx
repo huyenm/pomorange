@@ -143,7 +143,7 @@ export function TaskItem({
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="h-8 w-full justify-start bg-white text-sm font-normal"
+                    className="h-8 w-full justify-start gap-0 bg-white text-sm font-normal"
                   >
                     <Tags className="mr-2 h-4 w-4 text-[#F3793A]" />
                     {editLabelId === "none"

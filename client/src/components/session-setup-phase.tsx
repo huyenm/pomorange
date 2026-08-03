@@ -62,16 +62,16 @@ export function SessionSetupPhase({
   return (
     <div className="max-w-2xl mx-auto">
       <Card className="card-orange-border">
-        <CardHeader>
+        <CardHeader className="pt-8">
           <div className="text-center">
-            <CardTitle className="text-xl sm:text-2xl font-semibold mb-2 card-heading text-heading-custom mobile-text-2xl">Setup Your Session</CardTitle>
-            <p className="text-sm sm:text-base text-muted-custom mobile-text-p">Configure your focus and break durations</p>
+            <CardTitle className="mb-1 text-xl font-semibold card-heading text-heading-custom mobile-text-2xl sm:text-2xl">Setup Your Session</CardTitle>
+            <p className="text-[14px] text-muted-custom">Configure your focus and break durations</p>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Task Selection */}
           <div>
-            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+            <label className="mb-2 flex items-center text-sm font-medium text-slate-700 dark:text-orange-100">
               <CheckSquare className="inline mr-2 h-4 w-4" />
               Select Task
             </label>
@@ -116,7 +116,7 @@ export function SessionSetupPhase({
           {/* Duration Settings */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+              <label className="mb-2 flex items-center text-sm font-medium text-slate-700 dark:text-orange-100">
                 <Clock className="inline mr-2 h-4 w-4" />
                 Focus Duration (minutes)
               </label>
@@ -132,7 +132,7 @@ export function SessionSetupPhase({
                   variant={focusDuration === "25" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("25")}
-                  className={focusDuration === "25" ? "btn-primary" : "btn-secondary"}
+                  className={`focus-duration-button minute-preset-button ${focusDuration === "25" ? "btn-primary" : "btn-secondary"}`}
                 >
                   25
                 </Button>
@@ -140,7 +140,7 @@ export function SessionSetupPhase({
                   variant={focusDuration === "30" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("30")}
-                  className={focusDuration === "30" ? "btn-primary" : "btn-secondary"}
+                  className={`focus-duration-button minute-preset-button ${focusDuration === "30" ? "btn-primary" : "btn-secondary"}`}
                 >
                   30
                 </Button>
@@ -148,7 +148,7 @@ export function SessionSetupPhase({
                   variant={focusDuration === "45" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("45")}
-                  className={focusDuration === "45" ? "btn-primary" : "btn-secondary"}
+                  className={`focus-duration-button minute-preset-button ${focusDuration === "45" ? "btn-primary" : "btn-secondary"}`}
                 >
                   45
                 </Button>
@@ -156,7 +156,7 @@ export function SessionSetupPhase({
                   variant={focusDuration === "50" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("50")}
-                  className={focusDuration === "50" ? "btn-primary" : "btn-secondary"}
+                  className={`focus-duration-button minute-preset-button ${focusDuration === "50" ? "btn-primary" : "btn-secondary"}`}
                 >
                   50
                 </Button>
@@ -164,7 +164,7 @@ export function SessionSetupPhase({
                   variant={focusDuration === "60" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFocusDuration("60")}
-                  className={focusDuration === "60" ? "btn-primary" : "btn-secondary"}
+                  className={`focus-duration-button minute-preset-button ${focusDuration === "60" ? "btn-primary" : "btn-secondary"}`}
                 >
                   60
                 </Button>
@@ -173,7 +173,7 @@ export function SessionSetupPhase({
             </div>
             
             <div>
-              <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+              <label className="mb-2 flex items-center text-sm font-medium text-slate-700 dark:text-orange-100">
                 <Pause className="inline mr-2 h-4 w-4" />
                 Break Duration (minutes)
               </label>
@@ -189,7 +189,7 @@ export function SessionSetupPhase({
                   variant={breakDuration === "5" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setBreakDuration("5")}
-                  className={breakDuration === "5" ? "btn-primary" : "btn-secondary"}
+                  className={`break-duration-button minute-preset-button ${breakDuration === "5" ? "btn-primary" : "btn-secondary"}`}
                 >
                   5
                 </Button>
@@ -197,7 +197,7 @@ export function SessionSetupPhase({
                   variant={breakDuration === "10" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setBreakDuration("10")}
-                  className={breakDuration === "10" ? "btn-primary" : "btn-secondary"}
+                  className={`break-duration-button minute-preset-button ${breakDuration === "10" ? "btn-primary" : "btn-secondary"}`}
                 >
                   10
                 </Button>
@@ -205,7 +205,7 @@ export function SessionSetupPhase({
                   variant={breakDuration === "15" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setBreakDuration("15")}
-                  className={breakDuration === "15" ? "btn-primary" : "btn-secondary"}
+                  className={`break-duration-button minute-preset-button ${breakDuration === "15" ? "btn-primary" : "btn-secondary"}`}
                 >
                   15
                 </Button>
@@ -216,13 +216,13 @@ export function SessionSetupPhase({
 
           {/* Quick Presets */}
           <div>
-            <label className="block text-sm font-medium text-heading-custom mb-3">
+            <label className="mb-3 block text-sm font-medium text-heading-custom dark:text-orange-100">
               Quick Presets
             </label>
             <div className="grid grid-cols-3 gap-3">
               <Button
                 variant="outline"
-                className="p-4 h-auto flex-col"
+                className="quick-preset-button p-4 h-auto flex-col"
                 onClick={() => setPreset("25", "5")}
               >
                 <div className="font-medium">Pomodoro</div>
@@ -230,7 +230,7 @@ export function SessionSetupPhase({
               </Button>
               <Button
                 variant="outline"
-                className="p-4 h-auto flex-col"
+                className="quick-preset-button p-4 h-auto flex-col"
                 onClick={() => setPreset("15", "3")}
               >
                 <div className="font-medium">Short</div>
@@ -238,7 +238,7 @@ export function SessionSetupPhase({
               </Button>
               <Button
                 variant="outline"
-                className="p-4 h-auto flex-col"
+                className="quick-preset-button p-4 h-auto flex-col"
                 onClick={() => setPreset("45", "10")}
               >
                 <div className="font-medium">Long</div>

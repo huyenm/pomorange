@@ -13,6 +13,27 @@ import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from "
 import { LABEL_COLORS, useLabels } from "@/hooks/use-labels";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
+function BroomIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="m19 3-8.5 8.5" />
+      <path d="m8.5 10.5 5 5" />
+      <path d="M7.5 11.5 3 16l5 5 4.5-4.5" />
+      <path d="m4.5 17.5 3 3" />
+      <path d="m7 15 3 3" />
+    </svg>
+  );
+}
+
 interface PlanningPhaseProps {
   onStartSession: (selectedTaskId?: string) => void;
 }
@@ -26,7 +47,6 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   const [labelFilter, setLabelFilter] = useState("all");
   const [labelMenuOpen, setLabelMenuOpen] = useState(false);
   const [isAddingTask, setIsAddingTask] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const { tasks, addTask, deleteTask, updateTask, toggleTaskCompletion } = useTasks();
   const { labels, addLabel, updateLabelColor, deleteLabel } = useLabels();
@@ -223,7 +243,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="h-8 justify-start bg-white text-sm font-normal"
+                          className="h-8 justify-start gap-0 bg-white text-sm font-normal"
                         >
                           <Tags className="mr-2 h-4 w-4 text-[#F3793A]" />
                           {newTaskLabelId === "none"
@@ -352,7 +372,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                   size="sm"
                   variant="ghost"
                   onClick={handleCancelAddTask}
-                  className="h-7 px-3 text-xs"
+                  className="h-8 px-3 text-xs"
                 >
                   <X className="w-3 h-3" />
                   Cancel
@@ -360,7 +380,7 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
                 <Button
                   size="sm"
                   onClick={handleAddTask}
-                  className="h-7 px-3 text-xs btn-primary"
+                  className="h-8 px-3 text-xs btn-primary"
                 >
                   <Check className="w-3 h-3" />
                   Add Task
@@ -475,10 +495,11 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
         </CardHeader>
         <CardContent className="flex flex-col items-center">
           <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={setSelectedDate}
-            className="rounded-md border-0"
+            className="display-calendar rounded-md border-0"
+            classNames={{
+              day_today:
+                "bg-accent text-accent-foreground ring-2 ring-[#F3793A] ring-offset-2 ring-offset-background",
+            }}
             modifiers={{
               hasSession: (date) => getSessionsForDate(date).length > 0
             }}
@@ -509,8 +530,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-[#147E50] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-              <Clock className="h-5 w-5 text-[#147E50]" />
+            <div className="w-6 h-6 bg-[#147E50] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 dark:bg-emerald-500/35">
+              <Clock className="h-5 w-5 text-[#147E50] dark:text-emerald-300" />
             </div>
             <div>
               <p className="text-sm font-medium text-heading-custom">Turn on Focus Mode</p>
@@ -519,8 +540,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-[#F3793A] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-              <Coffee className="h-5 w-5 text-[#F3793A]" />
+            <div className="w-6 h-6 bg-[#F3793A] bg-opacity-20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0 dark:bg-orange-500/40">
+              <Coffee className="h-5 w-5 text-[#F3793A] dark:text-orange-200" />
             </div>
             <div>
               <p className="text-sm font-medium text-heading-custom">Prepare Your Drink</p>
@@ -529,8 +550,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-              <Headphones className="h-5 w-5 text-yellow-600" />
+            <div className="w-6 h-6 bg-yellow-500/20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+              <Headphones className="h-5 w-5 text-yellow-600 dark:text-yellow-300" />
             </div>
             <div>
               <p className="text-sm font-medium text-heading-custom">Use Background Music</p>
@@ -539,8 +560,8 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-6 h-6 bg-[#F5ECD7] rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-              <List className="h-5 w-5 text-[#964C18]" />
+            <div className="w-6 h-6 bg-sky-500/20 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+              <BroomIcon className="h-5 w-5 text-sky-700 dark:text-sky-300" />
             </div>
             <div>
               <p className="text-sm font-medium text-heading-custom">Clear Your Workspace</p>

@@ -54,6 +54,7 @@ export function BackgroundPicker() {
   } = useBackground();
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const [imageLink, setImageLink] = useState("");
   const [backgroundHistory, setBackgroundHistory] = useState<string[]>(() =>
     getBackgroundHistory(backgroundImage),
@@ -75,21 +76,25 @@ export function BackgroundPicker() {
 
   const applyImageFile = (file: File | Blob) => {
     if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file.");
+      setUploadError("Please choose an image file.");
       return;
     }
     if (file.size > 3 * 1024 * 1024) {
-      setError("Please choose an image smaller than 3 MB.");
+      setUploadError(
+        "This image is larger than 3 MB. Choose a smaller image so it can be saved reliably.",
+      );
       return;
     }
 
+    setUploadError("");
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
         rememberAndApplyImage(reader.result);
       }
     };
-    reader.onerror = () => setError("That image could not be loaded.");
+    reader.onerror = () =>
+      setUploadError("That image could not be loaded. Please try another file.");
     reader.readAsDataURL(file);
   };
 
@@ -256,6 +261,11 @@ export function BackgroundPicker() {
             </Button>
           )}
         </div>
+        {uploadError && (
+          <p className="mb-3 text-sm text-destructive" role="alert">
+            {uploadError}
+          </p>
+        )}
 
         <div className="mb-3 rounded-lg bg-orange-50 p-3">
           <div className="mb-2 flex items-start gap-2">

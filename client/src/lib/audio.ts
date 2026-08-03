@@ -23,7 +23,7 @@ class AudioManager {
     this.audioCache.set('achievement', achievement);
   }
 
-  private async playAudio(key: string) {
+  private async playAudio(key: string, volume?: number) {
     const audio = this.audioCache.get(key);
     if (audio) {
       try {
@@ -33,7 +33,7 @@ class AudioManager {
         
         // Create a clone to avoid conflicts with multiple rapid plays
         const audioClone = audio.cloneNode() as HTMLAudioElement;
-        audioClone.volume = audio.volume;
+        audioClone.volume = volume ?? audio.volume;
         await audioClone.play();
       } catch (error) {
         console.warn(`Could not play audio ${key}:`, error);
@@ -42,7 +42,7 @@ class AudioManager {
   }
 
   async playSessionStart() {
-    await this.playAudio('bell-begin');
+    await this.playAudio('bell-begin', 0.7);
   }
 
   async playSessionFinish() {

@@ -7,6 +7,7 @@ import PomodoroPage from "@/pages/pomodoro";
 import { BackgroundProvider } from "@/hooks/use-background";
 import { BackgroundPicker } from "@/components/background-picker";
 import { BackgroundMusicPlayer } from "@/components/background-music-player";
+import { ThemeProvider } from "@/hooks/use-theme";
 
 function Router() {
   return (
@@ -27,16 +28,18 @@ function Router() {
 
 function App() {
   return (
-    <BackgroundProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-          <BackgroundPicker />
-          <BackgroundMusicPlayer />
-        </TooltipProvider>
-      </QueryClientProvider>
-    </BackgroundProvider>
+    <ThemeProvider>
+      <BackgroundProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+            <BackgroundPicker />
+            <BackgroundMusicPlayer />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </BackgroundProvider>
+    </ThemeProvider>
   );
 }
 

@@ -44,8 +44,7 @@ export function ConfettiModal({ isOpen, taskName, onClose }: ConfettiModalProps)
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-              style={{ fontFamily: 'Space Mono, monospace' }}
+              className="rounded-lg bg-orange-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-orange-600"
             >
               Continue
             </button>

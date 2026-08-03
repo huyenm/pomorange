@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useTheme } from "@/hooks/use-theme";
 
 const BACKGROUND_KEY = "pomorange_background";
 const BACKGROUND_IMAGE_KEY = "pomorange_background_image";
@@ -31,6 +32,7 @@ function getSavedBackgroundImage() {
 }
 
 export function BackgroundProvider({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
   const [background, setBackgroundState] = useState(getSavedBackground);
   const [backgroundImage, setBackgroundImageState] = useState(
     getSavedBackgroundImage,
@@ -89,7 +91,10 @@ export function BackgroundProvider({ children }: { children: React.ReactNode }) 
       <div
         className="min-h-screen bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundColor: background,
+          backgroundColor:
+            theme === "dark" && background === DEFAULT_BACKGROUND
+              ? "#171412"
+              : background,
           backgroundImage: backgroundImage
             ? `url("${backgroundImage.replace(/"/g, '\\"')}")`
             : undefined,

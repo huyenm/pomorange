@@ -30,25 +30,25 @@
 }
 
 .dark {
-  --background: 224 71% 4%; /* #0F172A */
-  --foreground: 210 40% 98%; /* #F8FAFC */
-  --muted: 215 28% 12%; /* #1E293B */
-  --muted-foreground: 217 33% 64%; /* #94A3B8 */
-  --popover: 224 71% 4%; /* #0F172A */
-  --popover-foreground: 210 40% 98%; /* #F8FAFC */
-  --card: 224 71% 4%; /* #0F172A */
-  --card-foreground: 210 40% 98%; /* #F8FAFC */
-  --border: 215 28% 17%; /* #334155 */
-  --input: 215 28% 17%; /* #334155 */
-  --primary: 217 91% 60%; /* #3B82F6 */
-  --primary-foreground: 210 40% 98%; /* #F8FAFC */
-  --secondary: 215 28% 17%; /* #334155 */
-  --secondary-foreground: 210 40% 98%; /* #F8FAFC */
-  --accent: 215 28% 17%; /* #334155 */
-  --accent-foreground: 210 40% 98%; /* #F8FAFC */
+  --background: 24 12% 8%;
+  --foreground: 30 25% 94%;
+  --muted: 24 10% 15%;
+  --muted-foreground: 25 12% 65%;
+  --popover: 24 12% 11%;
+  --popover-foreground: 30 25% 94%;
+  --card: 24 12% 11%;
+  --card-foreground: 30 25% 94%;
+  --border: 24 10% 24%;
+  --input: 24 10% 28%;
+  --primary: 18 86% 59%;
+  --primary-foreground: 47 89% 95%;
+  --secondary: 24 10% 18%;
+  --secondary-foreground: 30 25% 94%;
+  --accent: 22 14% 28%;
+  --accent-foreground: 30 25% 94%;
   --destructive: 0 63% 31%; /* #991B1B */
   --destructive-foreground: 210 40% 98%; /* #F8FAFC */
-  --ring: 217 91% 60%; /* #3B82F6 */
+  --ring: 18 86% 59%;
 }
 
 @layer base {
@@ -89,6 +89,18 @@
   }
 
   button.select-task-trigger {
+    border: 1px solid hsl(var(--input)) !important;
+  }
+
+  button.quick-preset-button {
+    border: 1px solid hsl(var(--input)) !important;
+  }
+
+  button.focus-duration-button {
+    border: 1px solid hsl(var(--input)) !important;
+  }
+
+  button.break-duration-button {
     border: 1px solid hsl(var(--input)) !important;
   }
 
@@ -156,6 +168,72 @@
   }
 }
 
+/* Dark-mode compatibility for the app's existing warm utility palette. */
+.dark .btn-secondary,
+.dark .bg-white {
+  background-color: #211d1a !important;
+  color: #f7eee8 !important;
+}
+
+.dark .bg-orange-50,
+.dark .bg-orange-100 {
+  background-color: #2b211c !important;
+}
+
+.dark .bg-green-50 {
+  background-color: #14251d !important;
+}
+
+.dark .bg-yellow-50 {
+  background-color: #292412 !important;
+}
+
+.dark .bg-red-50 {
+  background-color: #2b1818 !important;
+}
+
+.dark .text-heading-custom,
+.dark .text-gray-900,
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-\[\#41210A\] {
+  color: #f7eee8 !important;
+}
+
+.dark .text-muted-custom,
+.dark .text-gray-600,
+.dark .text-slate-600,
+.dark .text-gray-500 {
+  color: #b9aaa1 !important;
+}
+
+.dark .border-gray-200,
+.dark .border-orange-200 {
+  border-color: #493b34 !important;
+}
+
+.dark .reports-total-sessions {
+  border-color: #f3793a !important;
+  box-shadow: 0 0 0 1px rgb(243 121 58 / 0.18),
+    0 8px 24px rgb(243 121 58 / 0.12);
+}
+
+.dark .hover\:bg-white\/70:hover {
+  background-color: rgb(255 255 255 / 0.1) !important;
+}
+
+.dark .hover\:bg-orange-50:hover,
+.dark .focus\:bg-orange-50:focus {
+  background-color: #513326 !important;
+  color: #fff4ed !important;
+}
+
+.dark button.minute-preset-button:not(.btn-primary):hover {
+  background-color: #67402e !important;
+  color: #fff4ed !important;
+  box-shadow: 0 0 0 2px rgb(243 121 58 / 0.35);
+}
+
 /* Custom styles for better visual hierarchy */
 .phase-container {
   @apply animate-in fade-in-50 duration-300;
@@ -185,6 +263,52 @@
 /* Notification positioning */
 .notification {
   @apply fixed top-4 right-4 z-50;
+}
+
+.music-playing-indicator {
+  display: inline-flex;
+  height: 14px;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.music-playing-indicator > span {
+  width: 3px;
+  height: 100%;
+  border-radius: 9999px;
+  background: #147E50;
+  animation: music-playing-bar 0.75s ease-in-out infinite alternate;
+}
+
+.music-playing-indicator > span:nth-child(2) {
+  height: 65%;
+  animation-delay: -0.45s;
+}
+
+.music-playing-indicator > span:nth-child(3) {
+  height: 85%;
+  animation-delay: -0.2s;
+}
+
+.display-calendar .rdp-day {
+  cursor: default !important;
+}
+
+.display-calendar .rdp-day:not(.rdp-day_today):hover,
+.display-calendar .rdp-day:not(.rdp-day_today):active,
+.display-calendar .rdp-day:not(.rdp-day_today):focus {
+  background-color: transparent;
+  color: inherit;
+  box-shadow: none;
+}
+
+@keyframes music-playing-bar {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(1);
+  }
 }
 
 /* Mobile Responsiveness */
