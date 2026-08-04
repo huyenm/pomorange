@@ -17,6 +17,7 @@ export const storage = {
         tags: task.tags || [],
         labelId: task.labelId || null,
         createdAt: new Date(task.createdAt),
+        completedAt: task.completedAt ? new Date(task.completedAt) : null,
       }));
     } catch (error) {
       console.error("Error reading tasks from storage:", error);
@@ -46,6 +47,7 @@ export const storage = {
       labelId,
       createdAt: new Date(),
       completed: false,
+      completedAt: null,
     };
     
     const tasks = this.getTasks();
@@ -119,7 +121,12 @@ export const storage = {
       
       const updatedTasks = tasks.map(task => {
         if (task.id === id) {
-          return { ...task, completed: !task.completed };
+          const completed = !task.completed;
+          return {
+            ...task,
+            completed,
+            completedAt: completed ? new Date() : null,
+          };
         }
         return task;
       });

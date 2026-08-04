@@ -584,7 +584,7 @@ export default function PomodoroPage() {
           const setupToUse = completionSessionSetup || sessionSetup;
           if (setupToUse) {
             const task = tasks.find(t => t.id === setupToUse.taskId);
-            return task?.text || setupToUse.taskName || "Focus Session";
+            return task?.text || "Focus Session";
           }
           return "Focus Session";
         })()}

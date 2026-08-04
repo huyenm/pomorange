@@ -1,4 +1,4 @@
-import { users, tasks, sessionRecords, type User, type InsertUser, type Task, type InsertTask, type SessionRecord, type InsertSessionRecord } from "@shared/schema";
+import { users, tasks, sessionRecords, type User, type InsertUser, type DatabaseTask, type InsertTask, type DatabaseSessionRecord, type InsertSessionRecord } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -10,14 +10,14 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   
   // Task operations
-  getTasks(userId: number): Promise<Task[]>;
-  createTask(task: InsertTask): Promise<Task>;
-  updateTask(id: number, updates: Partial<InsertTask>): Promise<Task | undefined>;
+  getTasks(userId: number): Promise<DatabaseTask[]>;
+  createTask(task: InsertTask): Promise<DatabaseTask>;
+  updateTask(id: number, updates: Partial<InsertTask>): Promise<DatabaseTask | undefined>;
   deleteTask(id: number): Promise<boolean>;
   
   // Session record operations
-  getSessionRecords(userId: number): Promise<SessionRecord[]>;
-  createSessionRecord(record: InsertSessionRecord): Promise<SessionRecord>;
+  getSessionRecords(userId: number): Promise<DatabaseSessionRecord[]>;
+  createSessionRecord(record: InsertSessionRecord): Promise<DatabaseSessionRecord>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -39,11 +39,11 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async getTasks(userId: number): Promise<Task[]> {
+  async getTasks(userId: number): Promise<DatabaseTask[]> {
     return await db.select().from(tasks).where(eq(tasks.userId, userId));
   }
 
-  async createTask(task: InsertTask): Promise<Task> {
+  async createTask(task: InsertTask): Promise<DatabaseTask> {
     const [newTask] = await db
       .insert(tasks)
       .values(task)
@@ -51,7 +51,7 @@ export class DatabaseStorage implements IStorage {
     return newTask;
   }
 
-  async updateTask(id: number, updates: Partial<InsertTask>): Promise<Task | undefined> {
+  async updateTask(id: number, updates: Partial<InsertTask>): Promise<DatabaseTask | undefined> {
     const [updatedTask] = await db
       .update(tasks)
       .set(updates)
@@ -65,11 +65,11 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount !== null && result.rowCount > 0;
   }
 
-  async getSessionRecords(userId: number): Promise<SessionRecord[]> {
+  async getSessionRecords(userId: number): Promise<DatabaseSessionRecord[]> {
     return await db.select().from(sessionRecords).where(eq(sessionRecords.userId, userId));
   }
 
-  async createSessionRecord(record: InsertSessionRecord): Promise<SessionRecord> {
+  async createSessionRecord(record: InsertSessionRecord): Promise<DatabaseSessionRecord> {
     const [newRecord] = await db
       .insert(sessionRecords)
       .values(record)

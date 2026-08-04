@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,6 +39,7 @@ interface PlanningPhaseProps {
 }
 
 export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
+  const [currentDay, setCurrentDay] = useState(() => new Date());
   const [newTaskText, setNewTaskText] = useState("");
   const [newTaskNotes, setNewTaskNotes] = useState("");
   const [newTaskLabelId, setNewTaskLabelId] = useState("none");
@@ -50,9 +51,36 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const { tasks, addTask, deleteTask, updateTask, toggleTaskCompletion } = useTasks();
   const { labels, addLabel, updateLabelColor, deleteLabel } = useLabels();
+  const { records } = useSessions();
+
+  useEffect(() => {
+    const nextMidnight = new Date();
+    nextMidnight.setHours(24, 0, 0, 0);
+
+    const timeout = window.setTimeout(
+      () => setCurrentDay(new Date()),
+      nextMidnight.getTime() - Date.now() + 100,
+    );
+
+    return () => window.clearTimeout(timeout);
+  }, [currentDay]);
   
   const activeTasks = tasks.filter(task => !task.completed);
-  const completedTasks = tasks.filter(task => task.completed);
+  const completedTasks = tasks.filter(task => {
+    if (!task.completed) return false;
+
+    if (task.completedAt) {
+      return isSameDay(task.completedAt, currentDay);
+    }
+
+    // Older saved tasks did not include completedAt. Use their latest completed
+    // session when available so today's list remains correct after upgrading.
+    return records.some(record =>
+      String(record.taskId) === String(task.id) &&
+      record.completed &&
+      isSameDay(record.endTimestamp, currentDay)
+    );
+  });
   const filteredActiveTasks = activeTasks.filter(task =>
     labelFilter === "all"
       ? true
@@ -67,8 +95,6 @@ export function PlanningPhase({ onStartSession }: PlanningPhaseProps) {
         ? !task.labelId
         : task.labelId === labelFilter,
   );
-  const { records } = useSessions();
-
   const handleAddTask = () => {
     if (newTaskText.trim()) {
       addTask(

@@ -67,11 +67,18 @@ export const insertSessionRecordSchema = createInsertSchema(sessionRecords).omit
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type Task = typeof tasks.$inferSelect & {
+export type DatabaseTask = typeof tasks.$inferSelect;
+export type Task = Omit<DatabaseTask, "id" | "userId"> & {
+  id: string;
   labelId?: string | null;
+  completedAt?: Date | null;
 };
 export type InsertTask = z.infer<typeof insertTaskSchema>;
-export type SessionRecord = typeof sessionRecords.$inferSelect;
+export type DatabaseSessionRecord = typeof sessionRecords.$inferSelect;
+export type SessionRecord = Omit<DatabaseSessionRecord, "id" | "taskId" | "userId"> & {
+  id: string;
+  taskId: string;
+};
 export type InsertSessionRecord = z.infer<typeof insertSessionRecordSchema>;
 
 export type TaskLabel = {
@@ -89,6 +96,7 @@ export const taskFormSchema = z.object({
   labelId: z.string().nullable().optional(),
   createdAt: z.date().optional(),
   completed: z.boolean().default(false),
+  completedAt: z.date().nullable().optional(),
 });
 
 // Session record schema for frontend forms
