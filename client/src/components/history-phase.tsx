@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import { Download, BarChart3, Calendar as CalendarIcon, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Download, BarChart3, Calendar as CalendarIcon, Check, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useSessions } from "@/hooks/use-sessions";
 import { useTasks } from "@/hooks/use-tasks";
@@ -306,38 +306,43 @@ export function ReportsPhase() {
                       <div className="w-full space-y-1 sm:w-40 sm:shrink-0">
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className={`w-full justify-between ${viewMode === "today" ? "bg-accent text-accent-foreground" : ""}`}
                           onClick={() => { handleViewModeChange("today"); setCalendarOpen(false); }}
                         >
-                          Today
+                          <span>Today</span>
+                          {viewMode === "today" && <Check className="h-4 w-4 text-[#F3793A] dark:text-[#FF9B68]" />}
                         </Button>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className={`w-full justify-between ${viewMode === "week" ? "bg-accent text-accent-foreground" : ""}`}
                           onClick={() => { handleViewModeChange("week"); setCalendarOpen(false); }}
                         >
-                          Last 7 days
+                          <span>Last 7 days</span>
+                          {viewMode === "week" && <Check className="h-4 w-4 text-[#F3793A] dark:text-[#FF9B68]" />}
                         </Button>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className={`w-full justify-between ${viewMode === "month" ? "bg-accent text-accent-foreground" : ""}`}
                           onClick={() => { handleViewModeChange("month"); setCalendarOpen(false); }}
                         >
-                          This month
+                          <span>This month</span>
+                          {viewMode === "month" && <Check className="h-4 w-4 text-[#F3793A] dark:text-[#FF9B68]" />}
                         </Button>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className={`w-full justify-between ${viewMode === "year" ? "bg-accent text-accent-foreground" : ""}`}
                           onClick={() => { handleViewModeChange("year"); setCalendarOpen(false); }}
                         >
-                          This year
+                          <span>This year</span>
+                          {viewMode === "year" && <Check className="h-4 w-4 text-[#F3793A] dark:text-[#FF9B68]" />}
                         </Button>
                         <Button
                           variant="ghost"
-                          className="w-full justify-start"
+                          className={`w-full justify-between ${viewMode === "all" ? "bg-accent text-accent-foreground" : ""}`}
                           onClick={() => { handleViewModeChange("all"); setCalendarOpen(false); }}
                         >
-                          All time
+                          <span>All time</span>
+                          {viewMode === "all" && <Check className="h-4 w-4 text-[#F3793A] dark:text-[#FF9B68]" />}
                         </Button>
                       </div>
                       <div className="border-t pt-3 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">
